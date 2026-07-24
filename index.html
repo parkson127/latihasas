@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Belajar Suku Kata & Seronok (4-6 Tahun)</title>
+    <!-- Font kanak-kanak -->
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        /* ===== GLOBAL ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Patrick Hand', 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(145deg, #fdf6ed 0%, #fff0e0 100%);
+            min-height: 100vh;
+            padding: 10px;
+            font-size: 1.2rem;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 60px 60px 30px 30px;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.12);
+            padding: 25px 30px 40px;
+            border: 5px solid #ffe6d0;
+        }
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            color: #6a1b4d;
+            text-shadow: 5px 5px 0 #f7d4e8, 8px 8px 0 rgba(106, 27, 77, 0.15);
+            margin-bottom: 5px;
+            word-break: break-word;
+            font-family: 'Patrick Hand', cursive;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 1.4rem;
+            color: #8b5a7b;
+            background: #fff0e8;
+            display: inline-block;
+            padding: 8px 35px;
+            border-radius: 60px;
+            margin: 0 auto 20px;
+            border: 3px dashed #d4a0c0;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-family: 'Patrick Hand', cursive;
+        }
+
+        /* ===== NAV ===== */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px 18px;
+            margin: 20px 0 30px;
+        }
+        .nav-tabs button {
+            background: #fce4ec;
+            border: none;
+            border-radius: 80px;
+            padding: 16px 32px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #5d2e4a;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #d4a0c0;
+            transition: all 0.15s ease;
+            border: 3px solid transparent;
+            font-family: 'Patrick Hand', cursive;
+            flex: 0 1 auto;
+            min-width: 100px;
+        }
+        .nav-tabs button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #d4a0c0;
+        }
+        .nav-tabs button.active {
+            background: #6a1b4d;
+            color: #fff;
+            box-shadow: 0 6px 0 #3d0f2c;
+            border-color: #ffd9e8;
+            transform: scale(1.06);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeUp 0.5s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== GRID & CARDS ===== */
+        .grid-large {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
+            margin: 20px 0;
+        }
+        .grid-medium {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            margin: 20px 0;
+        }
+        .card {
+            background: #ffffffec;
+            border-radius: 40px;
+            padding: 25px 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            border: 4px solid #f5d7e4;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        .card:hover {
+            transform: scale(1.04);
+            box-shadow: 0 15px 40px rgba(106, 27, 77, 0.15);
+        }
+        .card .big {
+            font-size: 4.2rem;
+            font-weight: bold;
+            color: #4a1e3a;
+            line-height: 1.2;
+        }
+        .card .big-jawi {
+            font-size: 4.5rem;
+            font-family: 'Traditional Arabic', 'Arial Unicode MS', serif;
+            color: #1d4a3e;
+        }
+        .card .emoji-row {
+            font-size: 3rem;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 8px 0;
+        }
+        .card .label {
+            font-size: 1.1rem;
+            color: #7a5a6a;
+            background: #fdeef6;
+            padding: 4px 20px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+        .card .sub-label {
+            font-size: 1rem;
+            color: #b28a9e;
+        }
+        .card.highlight {
+            border-color: #ffb07c;
+            background: #fff6ed;
+        }
+
+        /* ===== MODAL ZOOM ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #fffdf8;
+            max-width: 800px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 70px;
+            padding: 40px 35px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            border: 6px solid #f7d4e8;
+            position: relative;
+            animation: zoomIn 0.3s ease;
+            font-family: 'Patrick Hand', cursive;
+        }
+        @keyframes zoomIn {
+            0% { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .modal-close {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: #6a1b4d;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 2rem;
+            padding: 8px 22px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #3d0f2c;
+            transition: 0.15s;
+        }
+        .modal-close:hover {
+            transform: scale(1.08);
+        }
+        .modal-title {
+            font-size: 3.2rem;
+            color: #4a1e3a;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 4px solid #f7d4e8;
+            padding-bottom: 10px;
+            font-family: 'Patrick Hand', cursive;
+        }
+        .modal-examples {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+        .modal-examples .example-item {
+            background: #f8f0f5;
+            border-radius: 30px;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.8rem;
+            border: 3px solid #e8d0dc;
+        }
+        .modal-examples .example-item .en {
+            font-weight: bold;
+            color: #1a4a6a;
+        }
+        .modal-examples .example-item .ms {
+            color: #4a6a3a;
+        }
+        .modal-examples .example-item .emoji-big {
+            font-size: 3.6rem;
+            display: block;
+        }
+
+        /* ===== MATH ===== */
+        .math-box {
+            background: #e3f0fa;
+            border-radius: 50px;
+            padding: 25px 25px 30px;
+            margin: 20px 0;
+            border: 5px solid #b8d4e8;
+        }
+        .math-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 15px 0;
+        }
+        .math-item {
+            background: white;
+            border-radius: 40px;
+            padding: 18px 10px;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1a3a5c;
+            box-shadow: 0 6px 0 #b0c8d8;
+            border: 3px solid #c5ddee;
+            cursor: pointer;
+            transition: 0.1s ease;
+        }
+        .math-item:hover {
+            transform: scale(1.03);
+        }
+        .math-item .math-ops {
+            font-size: 2.2rem;
+            color: #d46a3a;
+        }
+        .math-item .math-result {
+            display: inline-block;
+            background: #d4edda;
+            padding: 0 20px;
+            border-radius: 60px;
+            color: #1d6b3a;
+            font-size: 1.8rem;
+            margin-top: 4px;
+        }
+        .math-item .math-result.wrong {
+            background: #f8d7da;
+            color: #a13a3a;
+        }
+        .math-answer-input {
+            width: 90px;
+            font-size: 2.2rem;
+            text-align: center;
+            border: 4px solid #b8d4e8;
+            border-radius: 40px;
+            padding: 8px 0;
+            font-weight: bold;
+            color: #1a3a5c;
+            background: #faffff;
+            outline: none;
+            transition: 0.15s;
+            font-family: 'Patrick Hand', cursive;
+        }
+        .math-answer-input:focus {
+            border-color: #6a1b4d;
+            box-shadow: 0 0 0 6px #f7d4e8;
+        }
+        .math-check-btn {
+            background: #6a1b4d;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            padding: 12px 40px;
+            font-size: 1.6rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: 'Patrick Hand', cursive;
+            box-shadow: 0 6px 0 #3d0f2c;
+        }
+        .math-check-btn:hover {
+            transform: scale(1.05);
+            background: #8a2d66;
+        }
+        .math-check-btn:active {
+            transform: scale(0.95);
+        }
+        .math-score {
+            text-align: center;
+            font-size: 1.8rem;
+            background: #fff5e6;
+            border-radius: 80px;
+            padding: 10px 30px;
+            display: inline-block;
+            border: 4px solid #f7d4a0;
+            margin: 10px auto;
+            font-family: 'Patrick Hand', cursive;
+        }
+        .math-oper-tabs {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 10px 0 20px;
+        }
+        .math-oper-tabs button {
+            padding: 14px 35px;
+            border-radius: 80px;
+            border: none;
+            font-size: 1.6rem;
+            font-weight: bold;
+            background: #e8f0fe;
+            color: #2a4a6a;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 5px 0 #b0c8d8;
+            font-family: 'Patrick Hand', cursive;
+        }
+        .math-oper-tabs button.active {
+            background: #2a4a6a;
+            color: white;
+            box-shadow: 0 5px 0 #0f2a3a;
+        }
+        .math-oper-tabs button:hover {
+            transform: translateY(-3px);
+        }
+
+        /* ===== JAWI & TAJWID ===== */
+        .jawi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 22px;
+        }
+        .jawi-card {
+            background: #faf6e8;
+            border-radius: 40px;
+            padding: 20px 12px;
+            border: 4px solid #c8b898;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .jawi-card:hover {
+            transform: scale(1.04);
+        }
+        .jawi-card .jawi-char {
+            font-size: 4.5rem;
+            font-family: 'Traditional Arabic', 'Arial Unicode MS', serif;
+            color: #1d3d2a;
+        }
+        .jawi-card .jawi-example {
+            font-size: 2.4rem;
+            font-family: 'Traditional Arabic', 'Arial Unicode MS', serif;
+            color: #3a5a3a;
+            margin: 4px 0;
+        }
+        .jawi-card .jawi-meaning {
+            font-size: 1.1rem;
+            color: #5a4a3a;
+            background: #ede6d8;
+            border-radius: 30px;
+            padding: 4px 16px;
+            display: inline-block;
+        }
+
+        .tajwid-section {
+            background: #f0f4e8;
+            border-radius: 50px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 4px solid #b8c8a8;
+        }
+        .tajwid-section h3 {
+            font-size: 2.2rem;
+            color: #2a5a3a;
+            text-align: center;
+            font-family: 'Patrick Hand', cursive;
+        }
+        .tajwid-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .tajwid-card {
+            background: #fffff0;
+            border-radius: 30px;
+            padding: 18px;
+            border: 3px solid #d0d8b8;
+            text-align: center;
+        }
+        .tajwid-card .tajwid-ar {
+            font-size: 2.8rem;
+            font-family: 'Traditional Arabic', 'Arial Unicode MS', serif;
+            color: #1d3d2a;
+        }
+        .tajwid-card .tajwid-rule {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #3a5a3a;
+        }
+        .tajwid-card .tajwid-ex {
+            font-size: 1.1rem;
+            color: #5a5a4a;
+        }
+
+        /* ===== ARABIC ACTIVITIES ===== */
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+        }
+        .activity-card {
+            background: #fff9f0;
+            border-radius: 50px;
+            padding: 20px 12px;
+            border: 4px solid #f7d4b8;
+            text-align: center;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .activity-card:hover {
+            transform: scale(1.04);
+        }
+        .activity-card .act-emoji {
+            font-size: 4.2rem;
+        }
+        .activity-card .act-ar {
+            font-size: 2.8rem;
+            font-family: 'Traditional Arabic', 'Arial Unicode MS', serif;
+            color: #1d3d2a;
+        }
+        .activity-card .act-ms {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #5a3a2a;
+        }
+
+        /* ===== CV ACTIVITIES (fill blank, spelling, stories) ===== */
+        .cv-activity-section {
+            background: #f0f8f0;
+            border-radius: 50px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 4px solid #b8d8b8;
+        }
+        .cv-activity-section h3 {
+            font-size: 2rem;
+            color: #2a5a3a;
+            text-align: center;
+            font-family: 'Patrick Hand', cursive;
+        }
+        .cv-activity-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 15px;
+        }
+        .cv-activity-card {
+            background: #fffff8;
+            border-radius: 40px;
+            padding: 20px;
+            border: 3px solid #c8d8c8;
+            text-align: center;
+        }
+        .cv-activity-card .question {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .cv-activity-card .answer-input {
+            font-size: 2rem;
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 3px solid #b8c8b8;
+            text-align: center;
+            font-family: 'Patrick Hand', cursive;
+            width: 150px;
+        }
+        .cv-activity-card .feedback {
+            font-size: 1.6rem;
+            margin-top: 8px;
+        }
+        .cv-activity-card .story-text {
+            font-size: 1.6rem;
+            text-align: left;
+            line-height: 2.2rem;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 30px;
+            border: 2px solid #d0e0d0;
+        }
+        .cv-activity-card .story-text .highlight {
+            background: #f7d4a0;
+            padding: 0 6px;
+            border-radius: 12px;
+        }
+        @media (max-width: 700px) {
+            .cv-activity-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 700px) {
+            .container { padding: 15px 15px 30px; border-radius: 35px; }
+            h1 { font-size: 2.2rem; }
+            .nav-tabs button { padding: 12px 20px; font-size: 1.1rem; min-width: 70px; }
+            .card .big { font-size: 3.2rem; }
+            .grid-large { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
+            .grid-medium { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+            .modal-examples { grid-template-columns: 1fr; }
+            .modal-title { font-size: 2.2rem; }
+            .math-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .math-item { font-size: 1.5rem; }
+            .math-answer-input { width: 70px; font-size: 1.6rem; }
+            .jawi-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+            .activity-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+        }
+        @media (max-width: 450px) {
+            .nav-tabs button { font-size: 0.9rem; padding: 8px 12px; min-width: 50px; }
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 1rem; padding: 4px 16px; }
+            .card .big { font-size: 2.6rem; }
+        }
+
+        .btn-reset-math {
+            background: #f5a0a0;
+            border: none;
+            border-radius: 60px;
+            padding: 10px 28px;
+            font-weight: bold;
+            color: #4a1a1a;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.2rem;
+            transition: 0.15s;
+            box-shadow: 0 4px 0 #b08080;
+        }
+        .btn-reset-math:hover {
+            transform: scale(1.05);
+            background: #f5b8b8;
+        }
+
+        .footer-note {
+            text-align: center;
+            color: #b08a9a;
+            font-size: 1rem;
+            margin-top: 40px;
+            border-top: 4px dashed #f0d8e0;
+            padding-top: 25px;
+            font-family: 'Patrick Hand', cursive;
+        }
+
+        .cv-card {
+            background: #f0f7fa;
+            border-radius: 40px;
+            padding: 20px 12px;
+            border: 4px solid #b8d8e8;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .cv-card:hover {
+            transform: scale(1.05);
+        }
+        .cv-card .cv-syllable {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #1a4a5c;
+        }
+        .cv-card .cv-examples {
+            font-size: 2.2rem;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 6px 0;
+        }
+        .cv-card .sound-btn {
+            background: #6a1b4d;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            padding: 6px 18px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+            margin-top: 6px;
+            box-shadow: 0 3px 0 #3d0f2c;
+            transition: 0.1s;
+        }
+        .cv-card .sound-btn:hover {
+            transform: scale(1.05);
+        }
+        .color-1 { background: #fff0f0; border-color: #f7b8b8; }
+        .color-2 { background: #f0fff0; border-color: #b8e0b8; }
+        .color-3 { background: #f0f0ff; border-color: #b8b8e8; }
+        .color-4 { background: #fff5e0; border-color: #f7d8a0; }
+        .color-5 { background: #f5f0ff; border-color: #d0b8e8; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <h1>🌈 Belajar Suku Kata & Seronok!</h1>
+    <div style="text-align:center;"><span class="subtitle">📚 4 – 6 Tahun • Jawi • Matematik • Alohabet • Arab</span></div>
+
+    <!-- Navigation -->
+    <div class="nav-tabs">
+        <button class="active" data-tab="tab-alphabet">🔤 Alohabet</button>
+        <button data-tab="tab-cv">🔡 Suku Kata</button>
+        <button data-tab="tab-jawi">🕌 Jawi & Tajwid</button>
+        <button data-tab="tab-arabic">🌙 Arab</button>
+        <button data-tab="tab-math">🧮 Matematik</button>
+    </div>
+
+    <!-- ===== TAB 1: ALPHABET ===== -->
+    <div id="tab-alphabet" class="tab-content active">
+        <div class="section-title" style="font-size:2.4rem; color:#6a1b4d; border-left:15px solid #d4a0c0; padding-left:25px; margin:15px 0 25px;">
+            🔤 Alohabet & Gambar <small style="font-size:1.2rem;">(klik untuk zum & lihat contoh)</small>
+        </div>
+        <div class="grid-large" id="alphabetGrid"></div>
+    </div>
+
+    <!-- ===== TAB 2: SUKU KATA ===== -->
+    <div id="tab-cv" class="tab-content">
+        <div class="section-title" style="font-size:2.4rem; color:#6a1b4d; border-left:15px solid #d4a0c0; padding-left:25px; margin:15px 0 25px;">
+            🔡 Suku Kata (Konsonan+Vokal) <small style="font-size:1.2rem;">klik untuk zum & dengar bunyi</small>
+        </div>
+        <div class="grid-medium" id="cvGrid"></div>
+
+        <!-- Aktiviti Suku Kata -->
+        <div class="cv-activity-section">
+            <h3>🎯 Aktiviti Suku Kata</h3>
+            <div class="cv-activity-grid" id="cvActivities"></div>
+        </div>
+    </div>
+
+    <!-- ===== TAB 3: JAWI & TAJWID ===== -->
+    <div id="tab-jawi" class="tab-content">
+        <div class="section-title" style="font-size:2.4rem; color:#6a1b4d; border-left:15px solid #d4a0c0; padding-left:25px; margin:15px 0 25px;">
+            🕌 Huruf Jawi & Contoh <small style="font-size:1.2rem;">(klik untuk zum)</small>
+        </div>
+        <div class="jawi-grid" id="jawiGrid"></div>
+
+        <div class="tajwid-section">
+            <h3>📖 Tajwid Asas (Nun Sakinah & Tanwin)</h3>
+            <div class="tajwid-grid" id="tajwidGrid"></div>
+        </div>
+    </div>
+
+    <!-- ===== TAB 4: ARABIC ===== -->
+    <div id="tab-arabic" class="tab-content">
+        <div class="section-title" style="font-size:2.4rem; color:#6a1b4d; border-left:15px solid #d4a0c0; padding-left:25px; margin:15px 0 25px;">
+            🌙 Perbuatan Harian dalam Arab <small style="font-size:1.2rem;">(klik untuk zum)</small>
+        </div>
+        <div class="activity-grid" id="activityGrid"></div>
+    </div>
+
+    <!-- ===== TAB 5: MATHEMATICS ===== -->
+    <div id="tab-math" class="tab-content">
+        <div class="section-title" style="font-size:2.4rem; color:#6a1b4d; border-left:15px solid #d4a0c0; padding-left:25px; margin:15px 0 25px;">
+            🧮 Matematik Seronok <small style="font-size:1.2rem;">+  –  ×</small>
+        </div>
+
+        <div class="math-oper-tabs">
+            <button class="active" data-mathop="add">➕ Tambah</button>
+            <button data-mathop="sub">➖ Tolak</button>
+            <button data-mathop="mul">✖️ Darab</button>
+        </div>
+
+        <div class="math-box" id="mathBox">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; gap:10px;">
+                <div class="math-score" id="mathScore">⭐ Skor: 0 / 20</div>
+                <div>
+                    <button class="btn-reset-math" id="resetMathBtn">🔄 Soalan Baru</button>
+                    <span style="font-size:1rem; color:#7a6a5a; margin-left:8px;">(tukar setiap hari)</span>
+                </div>
+            </div>
+            <div class="math-grid" id="mathGrid"></div>
+            <div style="text-align:center; margin-top:22px;">
+                <button class="math-check-btn" id="checkAllMath">✅ Semak Semua</button>
+            </div>
+        </div>
+        <p style="font-size:1.2rem; text-align:center; color:#5a4a5a;">💡 Klik pada mana-mana soalan untuk zum dan jawab dengan lebih selesa.</p>
+    </div>
+
+    <div class="footer-note">
+        🌟 Belajar sambil bermain • Setiap hari soalan baru • Klik untuk zum • Sesuai 4–6 tahun
+    </div>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box" id="modalBox">
+        <button class="modal-close" id="modalClose">✕</button>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
+<!-- Muatkan script.js -->
+<script src="script.js"></script>
+</body>
+</html>
