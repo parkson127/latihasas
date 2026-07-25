@@ -191,54 +191,121 @@ const shortStories = [
 // ================================================================
 // 1. RENDER FILL IN THE BLANKS
 // ================================================================
+// ================================================================
+// 1. RENDER FILL IN THE BLANKS – DENGAN PAGINATION (4 SOALAN SEHALAMAN)
+// ================================================================
 
 function renderFillBlank() {
     const container = document.getElementById('cvActivities');
     if (!container) return;
 
     const seed = getDateSeed();
-    const NUMBER_OF_FILL_BLANK = 20;
+    const TOTAL_QUESTIONS = 20;       // Jumlah soalan sehari
+    const PER_PAGE = 4;              // Soalan setiap halaman
 
+    // Pilih 20 soalan rawak
     const shuffled = shuffleArray(fillBlankQuestions, seed);
-    const selectedFill = shuffled.slice(0, NUMBER_OF_FILL_BLANK);
+    const selectedFill = shuffled.slice(0, TOTAL_QUESTIONS);
 
-    let html = `<div class="cv-activity-card" id="fillBlankSection">
-        <h3>✏️ Isi Tempat Kosong</h3>
-        <p style="font-size:1.2rem; color:#5a6a5a;">Tulis <strong>suku kata</strong> yang hilang.</p>`;
-
-    for (const q of selectedFill) {
-        html += `<div style="margin:15px 0; font-size:1.8rem; display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;">
-            <span style="font-size:3.2rem;">${q.image}</span>
-            <span style="font-weight:bold;">${q.display}</span>
-            <input type="text" class="answer-input" data-answer="${q.missing}" placeholder="?" style="width:140px; font-size:1.8rem; border-radius:40px; border:3px solid #b8c8b8; padding:6px 14px; text-align:center; font-family:'Patrick Hand',cursive;">
-            <button class="check-fill" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:6px 20px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">Semak</button>
-            <span class="fill-feedback" style="margin-left:8px; font-size:1.4rem;"></span>
-        </div>`;
+    // Bahagikan kepada halaman (setiap halaman 4 soalan)
+    const pages = [];
+    for (let i = 0; i < selectedFill.length; i += PER_PAGE) {
+        pages.push(selectedFill.slice(i, i + PER_PAGE));
     }
-    html += `</div>`;
 
-    container.insertAdjacentHTML('beforeend', html);
+    let currentPage = 0;
+    const totalPages = pages.length;
 
-    // Event listeners untuk semak
-    document.querySelectorAll('.check-fill').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const parent = this.parentElement;
-            const input = parent.querySelector('.answer-input');
-            const feedback = parent.querySelector('.fill-feedback');
-            const user = input.value.trim().toLowerCase();
-            const correct = input.dataset.answer.toLowerCase();
+    // Fungsi untuk memaparkan halaman tertentu
+    function renderPage(pageIndex) {
+        const pageQuestions = pages[pageIndex];
+        if (!pageQuestions) return;
 
-            if (user === correct) {
-                feedback.textContent = '✅ Betul!';
-                feedback.style.color = 'green';
-                const fullWord = fillBlankQuestions.find(q => q.missing === correct)?.word || '';
-                if (fullWord) speak(fullWord, 'ms-MY');
-            } else {
-                feedback.textContent = `❌ Cuba lagi. (Petunjuk: ${correct})`;
-                feedback.style.color = 'red';
-            }
+        // Cari atau cipta container untuk halaman
+        let pageContainer = document.getElementById('fillBlankPageContainer');
+        if (!pageContainer) {
+            pageContainer = document.createElement('div');
+            pageContainer.id = 'fillBlankPageContainer';
+            // Letakkan di dalam bahagian fill blank (kita akan bina semula)
+            // Kita akan gantikan keseluruhan bahagian fill blank
+        }
+
+        // Bina HTML untuk halaman ini
+        let html = `<div class="cv-activity-card" id="fillBlankSection">
+            <h3>✏️ Isi Tempat Kosong (Halaman ${pageIndex+1} daripada ${totalPages})</h3>
+            <p style="font-size:1.2rem; color:#5a6a5a;">Tulis <strong>suku kata</strong> yang hilang.</p>`;
+
+        for (const q of pageQuestions) {
+            html += `<div style="margin:15px 0; font-size:1.8rem; display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;">
+                <span style="font-size:3.2rem;">${q.image}</span>
+                <span style="font-weight:bold;">${q.display}</span>
+                <input type="text" class="answer-input" data-answer="${q.missing}" placeholder="?" style="width:140px; font-size:1.8rem; border-radius:40px; border:3px solid #b8c8b8; padding:6px 14px; text-align:center; font-family:'Patrick Hand',cursive;">
+                <button class="check-fill" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:6px 20px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">Semak</button>
+                <span class="fill-feedback" style="margin-left:8px; font-size:1.4rem;"></span>
+            </div>`;
+        }
+
+        // Butang navigasi
+        html += `<div style="display:flex; justify-content:center; gap:15px; margin-top:20px;">`;
+        if (pageIndex > 0) {
+            html += `<button class="page-nav-btn" data-direction="prev" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:8px 24px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">⬅️ Sebelum</button>`;
+        }
+        if (pageIndex < totalPages - 1) {
+            html += `<button class="page-nav-btn" data-direction="next" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:8px 24px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">Seterusnya ➡️</button>`;
+        }
+        html += `</div>`;
+        html += `<p style="margin-top:10px; font-size:1rem; color:#7a6a6a;">Soalan ${pageIndex*PER_PAGE+1} – ${Math.min((pageIndex+1)*PER_PAGE, TOTAL_QUESTIONS)} daripada ${TOTAL_QUESTIONS}</p>`;
+        html += `</div>`;
+
+        // Gantikan kandungan container fill blank (jika ada, atau tambah baru)
+        // Kita akan letakkan dalam container utama, tetapi kita akan gantikan bahagian fill blank sahaja.
+        // Cara mudah: cari div dengan id 'fillBlankSection', jika ada, gantikan innerHTML.
+        let existingSection = document.getElementById('fillBlankSection');
+        if (existingSection) {
+            existingSection.outerHTML = html;
+        } else {
+            // Jika tiada, tambah di hujung container
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        // Pasang semula event listener untuk butang "Semak" pada halaman ini
+        document.querySelectorAll('#fillBlankSection .check-fill').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const parent = this.parentElement;
+                const input = parent.querySelector('.answer-input');
+                const feedback = parent.querySelector('.fill-feedback');
+                const user = input.value.trim().toLowerCase();
+                const correct = input.dataset.answer.toLowerCase();
+
+                if (user === correct) {
+                    feedback.textContent = '✅ Betul!';
+                    feedback.style.color = 'green';
+                    const fullWord = fillBlankQuestions.find(q => q.missing === correct)?.word || '';
+                    if (fullWord) speak(fullWord, 'ms-MY');
+                } else {
+                    feedback.textContent = `❌ Cuba lagi. (Petunjuk: ${correct})`;
+                    feedback.style.color = 'red';
+                }
+            });
         });
-    });
+
+        // Pasang event listener untuk butang navigasi
+        document.querySelectorAll('#fillBlankSection .page-nav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const direction = this.dataset.direction;
+                if (direction === 'next' && currentPage < totalPages - 1) {
+                    currentPage++;
+                    renderPage(currentPage);
+                } else if (direction === 'prev' && currentPage > 0) {
+                    currentPage--;
+                    renderPage(currentPage);
+                }
+            });
+        });
+    }
+
+    // Mula dengan halaman pertama
+    renderPage(0);
 }
 
 // ================================================================
