@@ -1,10 +1,18 @@
-// ----- JADUAL SUKU KATA (seperti gambar) -----
 function renderSukuKataTable() {
     const container = document.getElementById('sukuKataTable');
     if (!container) return;
 
     const vowelOrder = ['a', 'e', 'i', 'o', 'u'];
     const consonantOrder = ['b','c','d','f','g','h','j','k','l','m','n','p','r','s','t','v','w','y','z'];
+
+    // Peta warna untuk vokal
+    const vowelColors = {
+        'a': '#e74c3c', // merah
+        'i': '#3498db', // biru
+        'u': '#9b59b6', // ungu
+        'e': '#2ecc71', // hijau
+        'o': '#f39c12'  // oren
+    };
 
     let html = `
         <div style="background:#f5faff; border-radius:50px; padding:20px 15px; border:5px solid #b8d8e8; box-shadow:0 10px 25px rgba(0,0,0,0.06); margin-bottom:25px;">
@@ -13,15 +21,15 @@ function renderSukuKataTable() {
                 <table style="width:100%; border-collapse:collapse; font-family:'Patrick Hand',cursive; font-size:2rem; text-align:center; min-width:500px;">
                     <thead>
                         <tr style="background:#6a1b4d; color:white; border-radius:20px 20px 0 0;">
-                            <th style="padding:14px 8px; border:3px solid #4a1a3a; border-radius:20px 0 0 0; font-size:2rem;">Konsonan</th>
-                            <th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem;">a</th>
-                            <th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem;">e</th>
-                            <th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem;">i</th>
-                            <th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem;">o</th>
-                            <th style="padding:14px 8px; border:3px solid #4a1a3a; border-radius:0 20px 0 0; font-size:2rem;">u</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+                            <th style="padding:14px 8px; border:3px solid #4a1a3a; border-radius:20px 0 0 0; font-size:2rem;">Konsonan</th>`;
+
+    // Header vokal dengan warna
+    for (const v of vowelOrder) {
+        const color = vowelColors[v];
+        html += `<th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem; color:${color};">${v}</th>`;
+    }
+
+    html += `</tr></thead><tbody>`;
 
     const colors = ['#fff0f0','#f0fff0','#f0f0ff','#fff5e0','#f5f0ff'];
     for (let i = 0; i < consonantOrder.length; i++) {
@@ -29,13 +37,21 @@ function renderSukuKataTable() {
         const color = colors[i % colors.length];
         html += `<tr style="background:${color}; border-bottom:3px solid #e0e0e0;">`;
         html += `<td style="padding:16px 8px; border:2px solid #d0d0d0; font-weight:bold; font-size:2.6rem; color:#4a1e3a; background:#ffffffdd;">${c}</td>`;
+
         for (const v of vowelOrder) {
             const syl = c + v;
+            // Pecah suku kata: konsonan + vokal
+            const consonant = syl.slice(0, -1);
+            const vowel = syl.slice(-1);
+            const vowelColor = vowelColors[vowel] || '#000000';
+            // Bina teks berwarna
+            const coloredSyl = `<span style="color:#000000;">${consonant}</span><span style="color:${vowelColor};">${vowel}</span>`;
+
             html += `<td style="padding:16px 8px; border:2px solid #d0d0d0; font-size:2.4rem; cursor:pointer; transition:0.15s; background:#ffffffcc;" 
                         class="syllable-cell" data-syl="${syl}"
                         onmouseover="this.style.background='#ffe6b0'" 
                         onmouseout="this.style.background='#ffffffcc'">
-                        ${syl}
+                        ${coloredSyl}
                     </td>`;
         }
         html += `</tr>`;
@@ -69,7 +85,8 @@ function renderSukuKataTable() {
             openModal(modalHtml);
         });
     });
-}// ===== SUKU KATA DATA =====
+}
+// ===== SUKU KATA DATA =====
 const consonants = 'bcdfghjklmnpqrstvwxyz'.split('');
 const vowels = ['a','e','i','o','u'];
 const cvExampleMap = {
