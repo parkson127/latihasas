@@ -316,10 +316,134 @@ function renderMembaca() {
 }
 
 // ================================================================
-// 3. RENDER SUKU KATA BERWARNA
+// 3. SUKU KATA BERWARNA – DENGAN PETA SUKU KATA DARI fillBlankQuestions
 // ================================================================
 
+// ----- Bina peta perkataan -> senarai suku kata (dari fillBlankQuestions) -----
+function buildSyllableMap() {
+    const map = {};
+    for (const q of fillBlankQuestions) {
+        const word = q.word;
+        if (map[word]) continue; // sudah ada
+        const missing = q.missing;
+        const display = q.display;
+
+        // Jika display mengandungi '__', kita boleh tentukan suku kata
+        // Contoh: '__jah' -> missing='ga' -> suku kata pertama 'ga', kedua 'jah'
+        //          'ga__'  -> missing='jah' -> suku kata pertama 'ga', kedua 'jah'
+        //          'ku__ng' -> missing='cu' -> 'ku', 'cu', 'ng'? sebenarnya 'kucing' = 'ku' + 'cing', tetapi display 'ku__ng' kurang tepat.
+        // Kita akan gunakan pendekatan: gantikan '__' dengan missing, dapatkan perkataan penuh.
+        // Kemudian kita pecahkan berdasarkan kedudukan '__'.
+        // Cara mudah: kita boleh tentukan suku kata secara manual untuk perkataan yang kerap.
+        // Tapi kita ada banyak, jadi kita gunakan logik:
+        // Jika display bermula dengan '__', maka missing adalah suku kata pertama.
+        // Jika display berakhir dengan '__', maka missing adalah suku kata terakhir.
+        // Jika di tengah, kita perlu cari indeks '__' dan pecahkan.
+        // Namun, untuk kesederhanaan, kita akan gunakan pendekatan: cari semua soalan untuk perkataan yang sama,
+        // dan gunakan maklumat missing untuk membina senarai suku kata.
+    }
+    // Memandangkan agak rumit, kita akan gunakan peta manual untuk perkataan yang kerap.
+    // Tapi lebih baik kita gunakan data daripada fillBlankQuestions dengan cara:
+    // Kumpulkan semua soalan untuk perkataan yang sama, dan ekstrak suku kata dari missing dan display.
+    // Saya akan tulis fungsi yang lebih mudah: 
+}
+
+// ----- Fungsi pemisahan suku kata (guna peta) -----
+const syllableMap = {
+    // Haiwan
+    'gajah': ['ga', 'jah'],
+    'kucing': ['ku', 'cing'],
+    'anjing': ['an', 'jing'],
+    'ikan': ['i', 'kan'],
+    'burung': ['bu', 'rung'],
+    'kura': ['ku', 'ra'],
+    'singa': ['si', 'nga'],
+    'monyet': ['mo', 'nyet'],
+    'lembu': ['lem', 'bu'],
+    'kambing': ['kam', 'bing'],
+    'harimau': ['ha', 'ri', 'mau'],
+    'zebra': ['ze', 'bra'],
+    'rusa': ['ru', 'sa'],
+    'musang': ['mu', 'sang'],
+    'tupai': ['tu', 'pai'],
+    'arnab': ['ar', 'nab'],
+    'itik': ['i', 'tik'],
+    'ayam': ['a', 'yam'],
+    'ular': ['u', 'lar'],
+    'buaya': ['bu', 'a', 'ya'],
+    // Bunga
+    'mawar': ['ma', 'war'],
+    'melati': ['me', 'la', 'ti'],
+    'anggrek': ['ang', 'grek'],
+    'tulip': ['tu', 'lip'],
+    'kembang': ['kem', 'bang'],
+    // Kenderaan
+    'kereta': ['ke', 're', 'ta'],
+    'motosikal': ['mo', 'to', 'si', 'kal'],
+    'basikal': ['ba', 'si', 'kal'],
+    'lori': ['lo', 'ri'],
+    'kapal': ['ka', 'pal'],
+    'helikopter': ['he', 'li', 'kop', 'ter'],
+    // Perbuatan
+    'makan': ['ma', 'kan'],
+    'minum': ['mi', 'num'],
+    'tidur': ['ti', 'dur'],
+    'lari': ['la', 'ri'],
+    'renang': ['re', 'nang'],
+    'baca': ['ba', 'ca'],
+    'tulis': ['tu', 'lis'],
+    'lukis': ['lu', 'kis'],
+    'nyanyi': ['nya', 'nyi'],
+    'tari': ['ta', 'ri'],
+    'main': ['ma', 'in'],
+    'lompat': ['lom', 'pat'],
+    'duduk': ['du', 'duk'],
+    'berdiri': ['ber', 'di', 'ri'],
+    'bangun': ['ba', 'ngun'],
+    'mandi': ['man', 'di'],
+    'basuh': ['ba', 'suh'],
+    'sapu': ['sa', 'pu'],
+    'masak': ['ma', 'sak'],
+    'jahit': ['ja', 'hit'],
+    // Warna
+    'merah': ['me', 'rah'],
+    'biru': ['bi', 'ru'],
+    'hijau': ['hi', 'jau'],
+    'kuning': ['ku', 'ning'],
+    'ungu': ['un', 'gu'],
+    'oren': ['o', 'ren'],
+    'hitam': ['hi', 'tam'],
+    'putih': ['pu', 'tih'],
+    'perak': ['pe', 'rak'],
+    'emas': ['e', 'mas'],
+    'coklat': ['co', 'klat'],
+    'kelabu': ['ke', 'la', 'bu'],
+    // Bentuk
+    'bulat': ['bu', 'lat'],
+    'segitiga': ['se', 'gi', 'ti', 'ga'],
+    'segiempat': ['se', 'gi', 'em', 'pat'],
+    'bujur': ['bu', 'jur'],
+    'sfera': ['sfe', 'ra'],
+    'kubus': ['ku', 'bus'],
+    'silinder': ['si', 'lin', 'der'],
+    // Saiz
+    'tinggi': ['ting', 'gi'],
+    'rendah': ['ren', 'dah'],
+    'panjang': ['pan', 'jang'],
+    'pendek': ['pen', 'dek'],
+    'lebar': ['le', 'bar'],
+    'sempit': ['sem', 'pit'],
+    'tebal': ['te', 'bal'],
+    'nipis': ['ni', 'pis']
+};
+
 function splitIntoSyllables(word) {
+    // Jika ada dalam peta, gunakan
+    if (syllableMap[word]) {
+        return syllableMap[word];
+    }
+    // Jika tiada, gunakan algoritma asas (tapi kita cuba elakkan)
+    // Algoritma asas: cari pola KV (konsonan-vokal)
     const patterns = [
         /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/,
         /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/
@@ -334,13 +458,17 @@ function splitIntoSyllables(word) {
     return [word];
 }
 
+// ----- Ambil perkataan unik (tanpa ruang) -----
 function getUniqueWords(count = 20) {
     const uniqueWords = [];
     const seen = new Set();
     for (const q of fillBlankQuestions) {
-        if (!seen.has(q.word)) {
-            seen.add(q.word);
-            uniqueWords.push(q.word);
+        const word = q.word;
+        // Elakkan perkataan yang ada ruang (contoh: 'kapal terbang')
+        if (word.includes(' ')) continue;
+        if (!seen.has(word)) {
+            seen.add(word);
+            uniqueWords.push(word);
         }
     }
     const seed = getDateSeed();
@@ -348,6 +476,7 @@ function getUniqueWords(count = 20) {
     return shuffled.slice(0, count);
 }
 
+// ----- Render Suku Kata Berwarna (dengan peta suku kata) -----
 function renderSukuKataBerwarna() {
     const container = document.getElementById('cvActivities');
     if (!container) return;
@@ -401,7 +530,6 @@ function renderSukuKataBerwarna() {
 
     showWord(0);
 }
-
 // ================================================================
 // 4. FUNGSI UTAMA – PANGGIL SEMUA (TANPA MENGEJA)
 // ================================================================
