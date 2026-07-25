@@ -3,7 +3,7 @@ function renderSukuKataTable() {
     const container = document.getElementById('sukuKataTable');
     if (!container) return;
 
-    const vowelOrder = ['a', 'i', 'u', 'e', 'o'];
+    const vowelOrder = ['a', 'e', 'i', 'o', 'u'];
     const consonantOrder = ['b','c','d','f','g','h','j','k','l','m','n','p','r','s','t','v','w','y','z'];
 
     let html = `
