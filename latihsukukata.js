@@ -311,21 +311,149 @@ function renderFillBlank() {
 // ================================================================
 // 2. RENDER MEMBACA (CERITA DENGAN POPUP PENUH SKRIN & WARNA SUKU KATA)
 // ================================================================
+ // ================================================================
+// MEMBACA.JS – Modul Cerita (Popup Penuh Skrin + Warna Suku Kata)
 // ================================================================
-// FUNGSI UNTUK MEWARNAKAN TEKS IKUT SUKU KATA (TANPA ROSAK HTML)
+
+// ----- DATA CERITA (16 cerita dengan ikon) -----
+const shortStories = [
+    { icon: '🐱', title: 'Kucing dan Bola', text: 'Kucing suka <span class="highlight">bola</span>. Dia main <span class="highlight">bola</span> di <span class="highlight">rumah</span>. Bola itu <span class="highlight">merah</span> dan <span class="highlight">bulat</span>. Kucing <span class="highlight">gembira</span>.' },
+    { icon: '🚗', title: 'Kereta Baru', text: 'Ayah ada <span class="highlight">kereta</span> baru. <span class="highlight">Kereta</span> itu <span class="highlight">merah</span>. Kami <span class="highlight">pergi</span> ke <span class="highlight">sekolah</span> dengan <span class="highlight">kereta</span>. Saya <span class="highlight">suka</span> <span class="highlight">kereta</span>.' },
+    { icon: '🐶', title: 'Anjing Comel', text: 'Saya ada <span class="highlight">anjing</span> comel. <span class="highlight">Anjing</span> itu <span class="highlight">bermain</span> di <span class="highlight">taman</span>. Dia <span class="highlight">lari</span> dan <span class="highlight">lompat</span>. Saya <span class="highlight">sayang</span> <span class="highlight">anjing</span> saya.' },
+    { icon: '🍎', title: 'Buah-buahan', text: 'Saya suka <span class="highlight">epal</span> dan <span class="highlight">pisang</span>. <span class="highlight">Epal</span> merah dan <span class="highlight">pisang</span> kuning. Saya <span class="highlight">makan</span> buah setiap <span class="highlight">hari</span>. Buah <span class="highlight">sedap</span> dan <span class="highlight">sihat</span>.' },
+    { icon: '🐄', title: 'Haiwan di Ladang', text: 'Di ladang ada <span class="highlight">lembu</span> dan <span class="highlight">kambing</span>. <span class="highlight">Lembu</span> makan <span class="highlight">rumput</span>. <span class="highlight">Kambing</span> suka <span class="highlight">melompat</span>. Budak <span class="highlight">gembira</span> melihat <span class="highlight">haiwan</span>.' },
+    { icon: '🛝', title: 'Main di Taman', text: 'Saya <span class="highlight">main</span> di <span class="highlight">taman</span>. Saya <span class="highlight">bawa</span> <span class="highlight">bola</span>. Saya <span class="highlight">tendang</span> bola. Bola <span class="highlight">masuk</span> ke <span class="highlight">gawang</span>. Saya <span class="highlight">berlari</span> dan <span class="highlight">ketawa</span>.' },
+    { icon: '🏫', title: 'Pagi di Sekolah', text: 'Pagi ini <span class="highlight">cerah</span>. Saya <span class="highlight">bangun</span> awal. Saya <span class="highlight">makan</span> nasi. Saya <span class="highlight">pergi</span> ke sekolah. Saya <span class="highlight">belajar</span> dan <span class="highlight">bermain</span>.' },
+    { icon: '🐘', title: 'Gajah Besar', text: 'Saya lihat <span class="highlight">gajah</span> di zoo. <span class="highlight">Gajah</span> itu <span class="highlight">besar</span> dan <span class="highlight">kelabu</span>. Dia <span class="highlight">minum</span> air dengan <span class="highlight">belalai</span>. Saya <span class="highlight">kagum</span> dengan <span class="highlight">gajah</span>.' },
+    { icon: '🌺', title: 'Bunga di Taman', text: 'Di taman ada <span class="highlight">bunga</span> yang cantik. <span class="highlight">Bunga</span> itu <span class="highlight">merah</span> dan <span class="highlight">kuning</span>. Saya <span class="highlight">cium</span> <span class="highlight">bunga</span>. Harum <span class="highlight">sekali</span>. Saya <span class="highlight">gembira</span> melihat <span class="highlight">bunga</span>.' },
+    { icon: '🚲', title: 'Basikal Kecil', text: 'Kakak ada <span class="highlight">basikal</span> baru. <span class="highlight">Basikal</span> itu <span class="highlight">biru</span>. Kami <span class="highlight">kayuh</span> <span class="highlight">basikal</span> di <span class="highlight">taman</span>. Saya <span class="highlight">suka</span> <span class="highlight">basikal</span>.' },
+    { icon: '🏊', title: 'Renang di Kolam', text: 'Hari ini <span class="highlight">panas</span>. Saya <span class="highlight">pergi</span> ke kolam <span class="highlight">renang</span>. Saya <span class="highlight">berenang</span> dengan <span class="highlight">gembira</span>. Saya <span class="highlight">main</span> air dan <span class="highlight">ketawa</span>. Saya <span class="highlight">suka</span> <span class="highlight">renang</span>.' },
+    { icon: '🎨', title: 'Lukisan Saya', text: 'Saya <span class="highlight">lukis</span> gambar di <span class="highlight">sekolah</span>. Saya <span class="highlight">lukis</span> <span class="highlight">rumah</span> dan <span class="highlight">pokok</span>. <span class="highlight">Rumah</span> saya <span class="highlight">merah</span>. <span class="highlight">Pokok</span> saya <span class="highlight">hijau</span>. Guru <span class="highlight">puji</span> lukisan saya.' },
+    { icon: '🐒', title: 'Monyet Nakal', text: 'Di zoo ada <span class="highlight">monyet</span> nakal. <span class="highlight">Monyet</span> itu <span class="highlight">lompat</span> dari <span class="highlight">pokok</span>. Dia <span class="highlight">makan</span> <span class="highlight">pisang</span>. Saya <span class="highlight">ketawa</span> melihat <span class="highlight">monyet</span>.' },
+    { icon: '🚁', title: 'Helikopter', text: 'Ayah <span class="highlight">bawa</span> saya ke <span class="highlight">helikopter</span>. <span class="highlight">Helikopter</span> itu <span class="highlight">besar</span>. Kami <span class="highlight">terbang</span> tinggi di <span class="highlight">langit</span>. Saya <span class="highlight">takut</span> tetapi <span class="highlight">seronok</span>.' },
+    { icon: '🌙', title: 'Malam Bulan', text: 'Malam ini <span class="highlight">bulan</span> terang. Saya <span class="highlight">lihat</span> <span class="highlight">bintang</span> di <span class="highlight">langit</span>. <span class="highlight">Bulan</span> seperti <span class="highlight">pisang</span>. Saya <span class="highlight">tidur</span> sambil <span class="highlight">mimpi</span>.' },
+    { icon: '🧸', title: 'Mainan Saya', text: 'Saya ada banyak <span class="highlight">mainan</span>. Saya suka <span class="highlight">main</span> dengan <span class="highlight">bola</span> dan <span class="highlight">beruang</span>. Saya <span class="highlight">simpan</span> mainan di <span class="highlight">kotak</span>. Saya <span class="highlight">rapi</span> dan <span class="highlight">gembira</span>.' },
+    { icon: '🍕', title: 'Piza Sedap', text: 'Ibu <span class="highlight">buat</span> <span class="highlight">piza</span> untuk <span class="highlight">makan</span>. <span class="highlight">Piza</span> itu ada <span class="highlight">keju</span> dan <span class="highlight">sayur</span>. Saya <span class="highlight">makan</span> <span class="highlight">piza</span> dengan <span class="highlight">gembira</span>. Saya <span class="highlight">suka</span> <span class="highlight">piza</span>.' }
+];
+
+// ================================================================
+// FUNGSI PEMISAH SUKU KATA (guna peta dari latihsukukata.js jika ada)
+// ================================================================
+
+// Jika splitIntoSyllables sudah wujud di luar, kita guna yang sedia ada.
+// Jika tidak, kita sediakan versi asas.
+if (typeof splitIntoSyllables === 'undefined') {
+    // Peta suku kata asas (untuk perkataan popular)
+    const syllableMap = {
+        'bola': ['bo','la'],
+        'kucing': ['ku','cing'],
+        'rumah': ['ru','mah'],
+        'buku': ['bu','ku'],
+        'gajah': ['ga','jah'],
+        'pisang': ['pi','sang'],
+        'nasi': ['na','si'],
+        'kereta': ['ke','re','ta'],
+        'baju': ['ba','ju'],
+        'tangan': ['ta','ngan'],
+        'merah': ['me','rah'],
+        'biru': ['bi','ru'],
+        'hijau': ['hi','jau'],
+        'epal': ['e','pal'],
+        'makan': ['ma','kan'],
+        'minum': ['mi','num'],
+        'tidur': ['ti','dur'],
+        'lari': ['la','ri'],
+        'renang': ['re','nang'],
+        'baca': ['ba','ca'],
+        'tulis': ['tu','lis'],
+        'lukis': ['lu','kis'],
+        'main': ['ma','in'],
+        'lompat': ['lom','pat'],
+        'duduk': ['du','duk'],
+        'berdiri': ['ber','di','ri'],
+        'bangun': ['bang','un'],
+        'mandi': ['man','di'],
+        'basuh': ['bas','uh'],
+        'sapu': ['sa','pu'],
+        'masak': ['ma','sak'],
+        'jahit': ['ja','hit'],
+        'kuning': ['ku','ning'],
+        'putih': ['pu','tih'],
+        'hitam': ['hi','tam'],
+        'coklat': ['co','klat'],
+        'kelabu': ['ke','la','bu'],
+        'bulat': ['bu','lat'],
+        'segitiga': ['se','gi','ti','ga'],
+        'segiempat': ['se','gi','em','pat'],
+        'bujur': ['bu','jur'],
+        'tinggi': ['ting','gi'],
+        'rendah': ['ren','dah'],
+        'panjang': ['pan','jang'],
+        'pendek': ['pen','dek'],
+        'lebar': ['le','bar'],
+        'sempit': ['sem','pit'],
+        'tebal': ['te','bal'],
+        'nipis': ['ni','pis'],
+        'kapal': ['ka','pal'],
+        'helikopter': ['he','li','kop','ter'],
+        'motosikal': ['mo','to','si','kal'],
+        'basikal': ['ba','si','kal'],
+        'lori': ['lo','ri'],
+        'kambing': ['kam','bing'],
+        'harimau': ['ha','ri','mau'],
+        'zebra': ['ze','bra'],
+        'rusa': ['ru','sa'],
+        'musang': ['mu','sang'],
+        'tupai': ['tu','pai'],
+        'arnab': ['ar','nab'],
+        'itik': ['i','tik'],
+        'ayam': ['a','yam'],
+        'ular': ['u','lar'],
+        'buaya': ['bu','a','ya'],
+        'mawar': ['ma','war'],
+        'melati': ['me','la','ti'],
+        'anggrek': ['ang','grek'],
+        'tulip': ['tu','lip'],
+        'kembang': ['kem','bang'],
+        'sfera': ['sfe','ra'],
+        'kubus': ['ku','bus'],
+        'silinder': ['si','lin','der'],
+        'perak': ['pe','rak'],
+        'emas': ['e','mas'],
+        'oren': ['o','ren'],
+        'ungu': ['un','gu']
+    };
+
+    function splitIntoSyllables(word) {
+        if (syllableMap[word]) return syllableMap[word];
+        // Algoritma asas jika tiada dalam peta
+        const patterns = [
+            /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/,
+            /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/
+        ];
+        for (const pattern of patterns) {
+            const match = word.match(pattern);
+            if (match) {
+                const parts = match.slice(1).filter(p => p !== '');
+                if (parts.length >= 2) return parts;
+            }
+        }
+        return [word];
+    }
+}
+
+// ================================================================
+// FUNGSI MEWARNAKAN TEKS IKUT SUKU KATA (TANPA ROSAK HTML)
 // ================================================================
 
 function colorizeHtmlText(htmlText) {
-    // Palet warna (anda boleh ubah suai)
+    // Palet warna (boleh ubah suai)
     const colorPalette = ['#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6', '#f39c12'];
-    // Jika mahu merah putih selang-seli, guna: ['#e74c3c', '#ffffff'] tapi putih tak nampak. Saya cadangkan merah + biru.
-    // Untuk merah putih, ganti dengan ['#e74c3c', '#f5f5f5'] (merah dan kelabu muda)
+    // Jika mahu merah putih: ['#e74c3c', '#f5f5f5']
 
-    // Bina DOM daripada HTML
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = htmlText;
 
-    // Kumpulkan semua text node secara berurutan
     const textNodes = [];
     const walker = document.createTreeWalker(
         tempDiv,
@@ -338,76 +466,60 @@ function colorizeHtmlText(htmlText) {
         textNodes.push(node);
     }
 
-    // Proses setiap text node
     let colorIndex = 0;
 
     for (const textNode of textNodes) {
         const text = textNode.textContent;
-        // Pecah teks kepada perkataan (pisah ruang dan tanda baca)
-        const words = text.split(/(\s+)/); // kekalkan ruang
+        const words = text.split(/(\s+)/);
         const fragment = document.createDocumentFragment();
 
         for (const token of words) {
             if (token.match(/^\s+$/)) {
-                // Ruang kosong
                 fragment.appendChild(document.createTextNode(token));
                 continue;
             }
-            // Bersihkan tanda baca untuk pemisahan suku kata, tapi kita akan simpan asal
             const cleanToken = token.replace(/[.,!?;:]/g, '');
             if (cleanToken.length === 0) {
                 fragment.appendChild(document.createTextNode(token));
                 continue;
             }
-            // Dapatkan suku kata
             const syllables = splitIntoSyllables(cleanToken);
             if (syllables.length === 0) {
                 fragment.appendChild(document.createTextNode(token));
                 continue;
             }
-            // Bina semula token dengan suku kata berwarna
-            let tokenHtml = '';
-            // Kita perlu letakkan semula tanda baca di akhir jika ada
             const punctuation = token.match(/[.,!?;:]+$/);
             const baseWord = punctuation ? token.slice(0, -punctuation[0].length) : token;
 
-            // Jika baseWord sama dengan cleanToken, kita boleh proceed
-            // Kita akan guna syllables dari cleanToken
-            // Bina span untuk setiap suku kata
-            let syllableIndex = 0;
+            let tokenHtml = '';
             for (const syl of syllables) {
                 const color = colorPalette[colorIndex % colorPalette.length];
                 tokenHtml += `<span style="color:${color};">${syl}</span>`;
                 colorIndex++;
-                syllableIndex++;
             }
-            // Tambah tanda baca jika ada
             if (punctuation) {
                 tokenHtml += punctuation[0];
             }
-            // Bungkus dalam span atau div? Kita akan masukkan sebagai HTML
             const wrapper = document.createElement('span');
             wrapper.innerHTML = tokenHtml;
             fragment.appendChild(wrapper);
         }
-
-        // Gantikan text node dengan fragment
         textNode.parentNode.replaceChild(fragment, textNode);
     }
 
     return tempDiv.innerHTML;
 }
 
-// ----- Fungsi untuk papar cerita dalam popup penuh skrin (DIPERBAIKI) -----
+// ================================================================
+// POPUP PENUH SKRIN
+// ================================================================
+
 function showFullScreenStory(story) {
-    // Cek jika sudah ada overlay
     const existingOverlay = document.getElementById('fullScreenStoryOverlay');
     if (existingOverlay) existingOverlay.remove();
 
-    // Warna teks (proses HTML dengan betul)
     const coloredHtml = colorizeHtmlText(story.text);
 
-    // Bina overlay
     const overlay = document.createElement('div');
     overlay.id = 'fullScreenStoryOverlay';
     overlay.style.cssText = `
@@ -427,7 +539,6 @@ function showFullScreenStory(story) {
         overflow-y: auto;
     `;
 
-    // Tambah keyframes animation jika belum ada
     if (!document.getElementById('storyFadeInStyle')) {
         const style = document.createElement('style');
         style.id = 'storyFadeInStyle';
@@ -444,7 +555,6 @@ function showFullScreenStory(story) {
         document.head.appendChild(style);
     }
 
-    // Kandungan popup
     const content = document.createElement('div');
     content.style.cssText = `
         background: #fffdf8;
@@ -461,7 +571,6 @@ function showFullScreenStory(story) {
         animation: fadeIn 0.5s ease;
     `;
 
-    // Butang tutup
     const closeBtn = document.createElement('button');
     closeBtn.textContent = '✕ Kembali';
     closeBtn.style.cssText = `
@@ -485,7 +594,6 @@ function showFullScreenStory(story) {
     closeBtn.addEventListener('mouseout', () => closeBtn.style.transform = 'scale(1)');
     closeBtn.addEventListener('click', hideFullScreenStory);
 
-    // Tajuk
     const title = document.createElement('h2');
     title.textContent = `${story.icon} ${story.title}`;
     title.style.cssText = `
@@ -498,7 +606,6 @@ function showFullScreenStory(story) {
         clear: both;
     `;
 
-    // Teks cerita (dengan warna suku kata)
     const textDiv = document.createElement('div');
     textDiv.innerHTML = coloredHtml;
     textDiv.style.cssText = `
@@ -513,7 +620,6 @@ function showFullScreenStory(story) {
         min-height: 150px;
     `;
 
-    // Butang baca
     const readBtn = document.createElement('button');
     readBtn.textContent = '🔊 Baca Cerita';
     readBtn.style.cssText = `
@@ -537,7 +643,6 @@ function showFullScreenStory(story) {
         speak(plainText, 'ms-MY');
     });
 
-    // Susun dalam content
     content.appendChild(closeBtn);
     content.appendChild(title);
     content.appendChild(textDiv);
@@ -549,7 +654,6 @@ function showFullScreenStory(story) {
     overlay.appendChild(content);
     document.body.appendChild(overlay);
 
-    // Tutup jika klik di luar content
     overlay.addEventListener('click', function(e) {
         if (e.target === overlay) hideFullScreenStory();
     });
@@ -564,10 +668,46 @@ function hideFullScreenStory() {
         }, 300);
     }
 }
-        
 
+// ================================================================
+// RENDER MEMBACA – PAPAR IKON CERITA
+// ================================================================
 
+function renderMembaca() {
+    const container = document.getElementById('cvActivities');
+    if (!container) return;
 
+    let html = `<div class="cv-activity-card" id="membacaSection">
+        <h3>📖 Pilih Cerita</h3>
+        <p style="font-size:1.2rem; color:#5a6a5a;">Klik pada ikon untuk membaca cerita dalam paparan penuh.</p>
+        <div id="storyIconsContainer" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(70px, 1fr)); gap:10px; margin:10px 0;">`;
+
+    shortStories.forEach((story, index) => {
+        html += `<div class="story-icon" data-index="${index}" style="font-size:2.8rem; cursor:pointer; text-align:center; padding:8px; background:#f8f0f5; border-radius:20px; border:3px solid #e8d0dc; transition:0.2s;">
+                    ${story.icon}
+                </div>`;
+    });
+
+    html += `</div>
+    </div>`;
+
+    container.insertAdjacentHTML('beforeend', html);
+
+    // Event listener untuk ikon (guna delegation)
+    const iconsContainer = document.getElementById('storyIconsContainer');
+    iconsContainer.addEventListener('click', function(e) {
+        const icon = e.target.closest('.story-icon');
+        if (!icon) return;
+        const index = parseInt(icon.dataset.index);
+        const story = shortStories[index];
+        if (!story) return;
+        showFullScreenStory(story);
+    });
+}
+
+// ================================================================
+// NOTA: Fungsi ini akan dipanggil dari index.html dalam DOMContentLoaded
+// ================================================================
 
 // ================================================================
 // 3. SUKU KATA BERWARNA – DENGAN PETA SUKU KATA DARI fillBlankQuestions
