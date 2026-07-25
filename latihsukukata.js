@@ -311,56 +311,101 @@ function renderFillBlank() {
 // ================================================================
 // 2. RENDER MEMBACA (CERITA DENGAN POPUP PENUH SKRIN & WARNA SUKU KATA)
 // ================================================================
+// ================================================================
+// FUNGSI UNTUK MEWARNAKAN TEKS IKUT SUKU KATA (TANPA ROSAK HTML)
+// ================================================================
 
-// ----- Fungsi untuk mewarnakan teks mengikut suku kata -----
-function colorizeTextBySyllables(text) {
-    // Pisahkan perkataan (abaikan tag HTML)
-    // Kita akan proses teks dengan menggantikan perkataan yang bukan tag
-    // Gunakan regex untuk cari perkataan (huruf dan angka)
-    const words = text.split(/(\s+)/); // pecah ikut ruang
-    const colorPalette = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6', '#f39c12'];
-    let result = '';
-    let sylIndex = 0;
+function colorizeHtmlText(htmlText) {
+    // Palet warna (anda boleh ubah suai)
+    const colorPalette = ['#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6', '#f39c12'];
+    // Jika mahu merah putih selang-seli, guna: ['#e74c3c', '#ffffff'] tapi putih tak nampak. Saya cadangkan merah + biru.
+    // Untuk merah putih, ganti dengan ['#e74c3c', '#f5f5f5'] (merah dan kelabu muda)
 
-    for (const token of words) {
-        if (token.match(/^\s+$/)) {
-            result += token; // kekalkan ruang
-            continue;
-        }
-        // Jika token adalah tag HTML (bermula < dan berakhir >), kekalkan
-        if (token.startsWith('<') && token.endsWith('>')) {
-            result += token;
-            continue;
-        }
-        // Jika token ada tag di dalam? Kita anggap perkataan biasa.
-        // Pecahkan perkataan kepada suku kata
-        const syllables = splitIntoSyllables(token);
-        if (syllables.length === 1) {
-            // Jika satu suku kata, beri warna pertama palet
-            const color = colorPalette[sylIndex % colorPalette.length];
-            result += `<span style="color:${color};">${token}</span>`;
-            sylIndex++;
-        } else {
-            // Setiap suku kata diberi warna bergilir
-            for (const syl of syllables) {
-                const color = colorPalette[sylIndex % colorPalette.length];
-                result += `<span style="color:${color};">${syl}</span>`;
-                sylIndex++;
-            }
-        }
-        // Reset indeks warna selepas setiap perkataan? Biarkan berterusan untuk semua perkataan.
+    // Bina DOM daripada HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlText;
+
+    // Kumpulkan semua text node secara berurutan
+    const textNodes = [];
+    const walker = document.createTreeWalker(
+        tempDiv,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+    );
+    let node;
+    while (node = walker.nextNode()) {
+        textNodes.push(node);
     }
-    return result;
+
+    // Proses setiap text node
+    let colorIndex = 0;
+
+    for (const textNode of textNodes) {
+        const text = textNode.textContent;
+        // Pecah teks kepada perkataan (pisah ruang dan tanda baca)
+        const words = text.split(/(\s+)/); // kekalkan ruang
+        const fragment = document.createDocumentFragment();
+
+        for (const token of words) {
+            if (token.match(/^\s+$/)) {
+                // Ruang kosong
+                fragment.appendChild(document.createTextNode(token));
+                continue;
+            }
+            // Bersihkan tanda baca untuk pemisahan suku kata, tapi kita akan simpan asal
+            const cleanToken = token.replace(/[.,!?;:]/g, '');
+            if (cleanToken.length === 0) {
+                fragment.appendChild(document.createTextNode(token));
+                continue;
+            }
+            // Dapatkan suku kata
+            const syllables = splitIntoSyllables(cleanToken);
+            if (syllables.length === 0) {
+                fragment.appendChild(document.createTextNode(token));
+                continue;
+            }
+            // Bina semula token dengan suku kata berwarna
+            let tokenHtml = '';
+            // Kita perlu letakkan semula tanda baca di akhir jika ada
+            const punctuation = token.match(/[.,!?;:]+$/);
+            const baseWord = punctuation ? token.slice(0, -punctuation[0].length) : token;
+
+            // Jika baseWord sama dengan cleanToken, kita boleh proceed
+            // Kita akan guna syllables dari cleanToken
+            // Bina span untuk setiap suku kata
+            let syllableIndex = 0;
+            for (const syl of syllables) {
+                const color = colorPalette[colorIndex % colorPalette.length];
+                tokenHtml += `<span style="color:${color};">${syl}</span>`;
+                colorIndex++;
+                syllableIndex++;
+            }
+            // Tambah tanda baca jika ada
+            if (punctuation) {
+                tokenHtml += punctuation[0];
+            }
+            // Bungkus dalam span atau div? Kita akan masukkan sebagai HTML
+            const wrapper = document.createElement('span');
+            wrapper.innerHTML = tokenHtml;
+            fragment.appendChild(wrapper);
+        }
+
+        // Gantikan text node dengan fragment
+        textNode.parentNode.replaceChild(fragment, textNode);
+    }
+
+    return tempDiv.innerHTML;
 }
 
-// ----- Fungsi untuk papar cerita dalam popup penuh skrin -----
+// ----- Fungsi untuk papar cerita dalam popup penuh skrin (DIPERBAIKI) -----
 function showFullScreenStory(story) {
-    // Cek jika sudah ada overlay, jika ada buang dulu
+    // Cek jika sudah ada overlay
     const existingOverlay = document.getElementById('fullScreenStoryOverlay');
     if (existingOverlay) existingOverlay.remove();
 
-    // Warna teks
-    const coloredText = colorizeTextBySyllables(story.text);
+    // Warna teks (proses HTML dengan betul)
+    const coloredHtml = colorizeHtmlText(story.text);
 
     // Bina overlay
     const overlay = document.createElement('div');
@@ -455,7 +500,7 @@ function showFullScreenStory(story) {
 
     // Teks cerita (dengan warna suku kata)
     const textDiv = document.createElement('div');
-    textDiv.innerHTML = coloredText;
+    textDiv.innerHTML = coloredHtml;
     textDiv.style.cssText = `
         font-size: 2rem;
         line-height: 2.8rem;
@@ -504,7 +549,7 @@ function showFullScreenStory(story) {
     overlay.appendChild(content);
     document.body.appendChild(overlay);
 
-    // Tutup jika klik di luar content (tapi kita akan biarkan)
+    // Tutup jika klik di luar content
     overlay.addEventListener('click', function(e) {
         if (e.target === overlay) hideFullScreenStory();
     });
@@ -519,40 +564,10 @@ function hideFullScreenStory() {
         }, 300);
     }
 }
+        
 
-// ----- Fungsi renderMembaca (dengan ikon dan popup) -----
-function renderMembaca() {
-    const container = document.getElementById('cvActivities');
-    if (!container) return;
 
-    let html = `<div class="cv-activity-card" id="membacaSection">
-        <h3>📖 Pilih Cerita</h3>
-        <p style="font-size:1.2rem; color:#5a6a5a;">Klik pada ikon untuk membaca cerita dalam paparan penuh.</p>
-        <div id="storyIconsContainer" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(70px, 1fr)); gap:10px; margin:10px 0;">`;
 
-    shortStories.forEach((story, index) => {
-        html += `<div class="story-icon" data-index="${index}" style="font-size:2.8rem; cursor:pointer; text-align:center; padding:8px; background:#f8f0f5; border-radius:20px; border:3px solid #e8d0dc; transition:0.2s;">
-                    ${story.icon}
-                </div>`;
-    });
-
-    html += `</div>
-    </div>`;
-
-    container.insertAdjacentHTML('beforeend', html);
-
-    // Event listener untuk ikon (guna delegation)
-    const iconsContainer = document.getElementById('storyIconsContainer');
-    iconsContainer.addEventListener('click', function(e) {
-        const icon = e.target.closest('.story-icon');
-        if (!icon) return;
-        const index = parseInt(icon.dataset.index);
-        const story = shortStories[index];
-        if (!story) return;
-        // Buka popup penuh skrin
-        showFullScreenStory(story);
-    });
-}
 
 // ================================================================
 // 3. SUKU KATA BERWARNA – DENGAN PETA SUKU KATA DARI fillBlankQuestions
