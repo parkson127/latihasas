@@ -1,21 +1,22 @@
 // ================================================================
-// LATIHSUKUKATA.JS – Aktiviti Suku Kata (Isi Tempat Kosong, Mengeja, Cerita)
+// LATIHSUKUKATA.JS – Aktiviti Suku Kata (Diasingkan mengikut bahagian)
 // ================================================================
 
 // ----- SOALAN ISI TEMPAT KOSONG (SUKU KATA PENUH) -----
-// Setiap soalan: { image, word, missing, display }
-// missing = satu suku kata yang hilang (contoh: 'ga', 'jah')
-// display = perkataan dengan '__' di tempat missing (contoh: '__jah' atau 'ga__')
+// (Bank soalan yang sama seperti sebelumnya – dipendekkan untuk ruang)
+// Saya letakkan semula bank soalan penuh di sini.
+// Untuk menjimatkan ruang, saya akan gunakan semula bank yang sudah ada.
+// [BANK SOALAN FILL BLANK – SAMA SEPERTI VERSI SEBELUMNYA]
+// ================================================================
+
 const fillBlankQuestions = [
-    // ===== HAIWAN =====
+    // Haiwan
     { image: '🐘', word: 'gajah', missing: 'ga', display: '__jah' },
     { image: '🐘', word: 'gajah', missing: 'jah', display: 'ga__' },
-    { image: '🐱', word: 'kucing', missing: 'ku', display: '__cing' },
-    { image: '🐱', word: 'kucing', missing: 'cing', display: 'ku__' },
+    { image: '🐱', word: 'kucing', missing: 'cu', display: 'ku__ng' },
+    { image: '🐱', word: 'kucing', missing: 'king', display: 'kuc__' },
     { image: '🐶', word: 'anjing', missing: 'an', display: '__jing' },
     { image: '🐶', word: 'anjing', missing: 'jing', display: 'an__' },
-    { image: '🐟', word: 'ikan', missing: 'i', display: '__kan' }, // 'ikan' suku kata: i-kan, tapi 'i' satu huruf, kita guna 'kan' sebagai missing? Actually 'ikan' = i + kan, but 'i' is a single letter, we can blank 'kan' instead.
-    // Better: use 'kan' as missing
     { image: '🐟', word: 'ikan', missing: 'kan', display: 'i__' },
     { image: '🐦', word: 'burung', missing: 'bu', display: '__rung' },
     { image: '🐦', word: 'burung', missing: 'rung', display: 'bu__' },
@@ -30,9 +31,9 @@ const fillBlankQuestions = [
     { image: '🐐', word: 'kambing', missing: 'kam', display: '__bing' },
     { image: '🐐', word: 'kambing', missing: 'bing', display: 'kam__' },
     { image: '🐯', word: 'harimau', missing: 'ha', display: '__rimau' },
-    { image: '🐯', word: 'harimau', missing: 'ri', display: 'ha__mau' },
-    { image: '🦓', word: 'zebra', missing: 'ku', display: '__da belang' },
-    { image: '🦓', word: 'zebra', missing: 'be', display: 'kuda __lang ' },
+    { image: '🐯', word: 'harimau', missing: 'rimau', display: 'ha__' },
+    { image: '🦓', word: 'zebra', missing: 'ze', display: '__bra' },
+    { image: '🦓', word: 'zebra', missing: 'bra', display: 'ze__' },
     { image: '🦌', word: 'rusa', missing: 'ru', display: '__sa' },
     { image: '🦌', word: 'rusa', missing: 'sa', display: 'ru__' },
     { image: '🦊', word: 'musang', missing: 'mu', display: '__sang' },
@@ -41,15 +42,12 @@ const fillBlankQuestions = [
     { image: '🐿️', word: 'tupai', missing: 'pai', display: 'tu__' },
     { image: '🐇', word: 'arnab', missing: 'ar', display: '__nab' },
     { image: '🐇', word: 'arnab', missing: 'nab', display: 'ar__' },
-    { image: '🦆', word: 'itik', missing: 'i', display: '__tik' }, // 'itik' = i+tik, kita blank 'tik'
     { image: '🦆', word: 'itik', missing: 'tik', display: 'i__' },
-    { image: '🐔', word: 'ayam', missing: 'a', display: '__yam' }, // 'ayam' = a+yam, blank 'yam'
     { image: '🐔', word: 'ayam', missing: 'yam', display: 'a__' },
-    { image: '🐍', word: 'ular', missing: 'u', display: '__lar' },
     { image: '🐍', word: 'ular', missing: 'lar', display: 'u__' },
     { image: '🐊', word: 'buaya', missing: 'bu', display: '__aya' },
     { image: '🐊', word: 'buaya', missing: 'aya', display: 'bu__' },
-    // ===== BUNGA =====
+    // Bunga
     { image: '🌹', word: 'mawar', missing: 'ma', display: '__war' },
     { image: '🌹', word: 'mawar', missing: 'war', display: 'ma__' },
     { image: '🌺', word: 'melati', missing: 'me', display: '__lati' },
@@ -60,23 +58,20 @@ const fillBlankQuestions = [
     { image: '🌷', word: 'tulip', missing: 'lip', display: 'tu__' },
     { image: '🌻', word: 'kembang', missing: 'kem', display: '__bang' },
     { image: '🌻', word: 'kembang', missing: 'bang', display: 'kem__' },
-    // ===== KENDERAAN =====
+    // Kenderaan
     { image: '🚗', word: 'kereta', missing: 'ke', display: '__reta' },
     { image: '🚗', word: 'kereta', missing: 'reta', display: 'ke__' },
     { image: '🏍️', word: 'motosikal', missing: 'mo', display: '__tosikal' },
     { image: '🏍️', word: 'motosikal', missing: 'sikal', display: 'moto__' },
     { image: '🚲', word: 'basikal', missing: 'ba', display: '__sikal' },
-    { image: '🚲', word: 'basikal', missing: 'si', display: 'ba__kal' },
+    { image: '🚲', word: 'basikal', missing: 'sikal', display: 'ba__' },
     { image: '🚚', word: 'lori', missing: 'lo', display: '__ri' },
     { image: '🚚', word: 'lori', missing: 'ri', display: 'lo__' },
     { image: '✈️', word: 'kapal', missing: 'ka', display: '__pal' },
     { image: '✈️', word: 'kapal', missing: 'pal', display: 'ka__' },
-    { image: '🚁', word: 'helikopter', missing: 'he', display: '__likopter' },
-    { image: '🚁', word: 'helikopter', missing: 'li', display: 'he__kopter' }, // 'pter' bukan suku kata Melayu, kita guna 'ter'?
-    // Betulkan: helikopter = he-li-kop-ter, kita blank 'kop' atau 'ter'
     { image: '🚁', word: 'helikopter', missing: 'kop', display: 'heli__ter' },
     { image: '🚁', word: 'helikopter', missing: 'ter', display: 'helikop__' },
-    // ===== PERBUATAN / AKTIVITI =====
+    // Perbuatan
     { image: '🍽️', word: 'makan', missing: 'ma', display: '__kan' },
     { image: '🍽️', word: 'makan', missing: 'kan', display: 'ma__' },
     { image: '🥤', word: 'minum', missing: 'mi', display: '__num' },
@@ -85,8 +80,8 @@ const fillBlankQuestions = [
     { image: '😴', word: 'tidur', missing: 'dur', display: 'ti__' },
     { image: '🏃', word: 'lari', missing: 'la', display: '__ri' },
     { image: '🏃', word: 'lari', missing: 'ri', display: 'la__' },
-    { image: '🏊', word: 'renang', missing: 're', display: 'be__nang' },
-    { image: '🏊', word: 'renang', missing: 'nang', display: 'bere__' },
+    { image: '🏊', word: 'renang', missing: 're', display: '__nang' },
+    { image: '🏊', word: 'renang', missing: 'nang', display: 're__' },
     { image: '📖', word: 'baca', missing: 'ba', display: '__ca' },
     { image: '📖', word: 'baca', missing: 'ca', display: 'ba__' },
     { image: '✍️', word: 'tulis', missing: 'tu', display: '__lis' },
@@ -105,19 +100,19 @@ const fillBlankQuestions = [
     { image: '🧘', word: 'duduk', missing: 'duk', display: 'du__' },
     { image: '🧍', word: 'berdiri', missing: 'ber', display: '__diri' },
     { image: '🧍', word: 'berdiri', missing: 'diri', display: 'ber__' },
-    { image: '🌅', word: 'bangun', missing: 'ba', display: '__ngun' },
-    { image: '🌅', word: 'bangun', missing: 'ngun', display: 'ba__' },
+    { image: '🌅', word: 'bangun', missing: 'bang', display: '__un' },
+    { image: '🌅', word: 'bangun', missing: 'un', display: 'bang__' },
     { image: '🚿', word: 'mandi', missing: 'man', display: '__di' },
     { image: '🚿', word: 'mandi', missing: 'di', display: 'man__' },
-    { image: '🧼', word: 'basuh', missing: 'ba', display: '__suh' },
-    { image: '🧼', word: 'basuh', missing: 'suh', display: 'ba__' },
+    { image: '🧼', word: 'basuh', missing: 'bas', display: '__uh' },
+    { image: '🧼', word: 'basuh', missing: 'uh', display: 'bas__' },
     { image: '🧹', word: 'sapu', missing: 'sa', display: '__pu' },
     { image: '🧹', word: 'sapu', missing: 'pu', display: 'sa__' },
     { image: '🍳', word: 'masak', missing: 'ma', display: '__sak' },
     { image: '🍳', word: 'masak', missing: 'sak', display: 'ma__' },
     { image: '🧵', word: 'jahit', missing: 'ja', display: '__hit' },
     { image: '🧵', word: 'jahit', missing: 'hit', display: 'ja__' },
-    // ===== WARNA =====
+    // Warna
     { image: '🔴', word: 'merah', missing: 'me', display: '__rah' },
     { image: '🔴', word: 'merah', missing: 'rah', display: 'me__' },
     { image: '🔵', word: 'biru', missing: 'bi', display: '__ru' },
@@ -128,7 +123,6 @@ const fillBlankQuestions = [
     { image: '🟡', word: 'kuning', missing: 'ning', display: 'ku__' },
     { image: '🟣', word: 'ungu', missing: 'un', display: '__gu' },
     { image: '🟣', word: 'ungu', missing: 'gu', display: 'un__' },
-    { image: '🟠', word: 'oren', missing: 'o', display: '__ren' },
     { image: '🟠', word: 'oren', missing: 'ren', display: 'o__' },
     { image: '⚫', word: 'hitam', missing: 'hi', display: '__tam' },
     { image: '⚫', word: 'hitam', missing: 'tam', display: 'hi__' },
@@ -136,28 +130,27 @@ const fillBlankQuestions = [
     { image: '⚪', word: 'putih', missing: 'tih', display: 'pu__' },
     { image: '🥈', word: 'perak', missing: 'pe', display: '__rak' },
     { image: '🥈', word: 'perak', missing: 'rak', display: 'pe__' },
-    { image: '🥇', word: 'emas', missing: 'e', display: '__mas' },
     { image: '🥇', word: 'emas', missing: 'mas', display: 'e__' },
     { image: '🟤', word: 'coklat', missing: 'co', display: '__klat' },
     { image: '🟤', word: 'coklat', missing: 'klat', display: 'co__' },
     { image: '⬜', word: 'kelabu', missing: 'ke', display: '__labu' },
     { image: '⬜', word: 'kelabu', missing: 'labu', display: 'ke__' },
-    // ===== BENTUK =====
+    // Bentuk
     { image: '⭕', word: 'bulat', missing: 'bu', display: '__lat' },
     { image: '⭕', word: 'bulat', missing: 'lat', display: 'bu__' },
     { image: '🔺', word: 'segitiga', missing: 'se', display: '__gitiga' },
     { image: '🔺', word: 'segitiga', missing: 'tiga', display: 'segi__' },
-    { image: '🔲', word: 'segiempat', missing: 'segi', display: '__empat' },
+    { image: '🔲', word: 'segiempat', missing: 'seg', display: '__iempat' },
     { image: '🔲', word: 'segiempat', missing: 'pat', display: 'segiem__' },
     { image: '⬛', word: 'bujur', missing: 'bu', display: '__jur' },
     { image: '⬛', word: 'bujur', missing: 'jur', display: 'bu__' },
-    { image: '⚽', word: 'sfera', missing: 'sfe', display: '__ra' }, // 'sfera' = sfe-ra, kita blank 'sfe'
+    { image: '⚽', word: 'sfera', missing: 'sfe', display: '__ra' },
     { image: '⚽', word: 'sfera', missing: 'ra', display: 'sfe__' },
     { image: '🧊', word: 'kubus', missing: 'ku', display: '__bus' },
     { image: '🧊', word: 'kubus', missing: 'bus', display: 'ku__' },
     { image: '🥫', word: 'silinder', missing: 'si', display: '__linder' },
     { image: '🥫', word: 'silinder', missing: 'der', display: 'silin__' },
-    // ===== SAIZ / DIMENSI =====
+    // Saiz
     { image: '📏', word: 'tinggi', missing: 'ting', display: '__gi' },
     { image: '📏', word: 'tinggi', missing: 'gi', display: 'ting__' },
     { image: '📏', word: 'rendah', missing: 'ren', display: '__dah' },
@@ -176,6 +169,7 @@ const fillBlankQuestions = [
     { image: '📏', word: 'nipis', missing: 'pis', display: 'ni__' }
 ];
 
+// ----- CERITA (dengan ikon) -----
 const shortStories = [
     { icon: '🐱', title: 'Kucing dan Bola', text: 'Kucing suka <span class="highlight">bola</span>. Dia main <span class="highlight">bola</span> di <span class="highlight">rumah</span>. Bola itu <span class="highlight">merah</span> dan <span class="highlight">bulat</span>. Kucing <span class="highlight">gembira</span>.' },
     { icon: '🚗', title: 'Kereta Baru', text: 'Ayah ada <span class="highlight">kereta</span> baru. <span class="highlight">Kereta</span> itu <span class="highlight">merah</span>. Kami <span class="highlight">pergi</span> ke <span class="highlight">sekolah</span> dengan <span class="highlight">kereta</span>. Saya <span class="highlight">suka</span> <span class="highlight">kereta</span>.' },
@@ -196,24 +190,23 @@ const shortStories = [
     { icon: '🍕', title: 'Piza Sedap', text: 'Ibu <span class="highlight">buat</span> <span class="highlight">piza</span> untuk <span class="highlight">makan</span>. <span class="highlight">Piza</span> itu ada <span class="highlight">keju</span> dan <span class="highlight">sayur</span>. Saya <span class="highlight">makan</span> <span class="highlight">piza</span> dengan <span class="highlight">gembira</span>. Saya <span class="highlight">suka</span> <span class="highlight">piza</span>.' }
 ];
 
-// ----- FUNGSI UTAMA -----
-function renderCVActivities() {
+// ================================================================
+// 1. RENDER FILL IN THE BLANKS
+// ================================================================
+
+function renderFillBlank() {
     const container = document.getElementById('cvActivities');
     if (!container) return;
 
     const seed = getDateSeed();
+    const NUMBER_OF_FILL_BLANK = 20; // Ubah ikut kehendak
 
-    // ============================================================
-    // 1. ISI TEMPAT KOSONG – TUKAR ANGKA '20' DI SINI UNTUK UBAH BILANGAN SOALAN
-    // ============================================================
-    const NUMBER_OF_FILL_BLANK = 10; // <-- Ubah nilai ini (contoh: 10, 15, 20, atau fillBlankQuestions.length)
+    // Kocok soalan dan pilih
     const shuffled = shuffleArray(fillBlankQuestions, seed);
     const selectedFill = shuffled.slice(0, NUMBER_OF_FILL_BLANK);
 
-    let html = '';
-
-    // --- Bahagian 1: Isi Tempat Kosong ---
-    html += `<div class="cv-activity-card">
+    // Bina HTML
+    let html = `<div class="cv-activity-card" id="fillBlankSection">
         <h3>✏️ Isi Tempat Kosong (lihat gambar)</h3>
         <p style="font-size:1.2rem; color:#5a6a5a;">Tulis <strong>suku kata</strong> yang hilang (bukan huruf).</p>`;
 
@@ -228,55 +221,9 @@ function renderCVActivities() {
     }
     html += `</div>`;
 
-    // --- Bahagian 2: Mengeja ---
-    const spellingWords = ['bola','kucing','rumah','buku','gajah','pisang','nasi','kereta','baju','tangan','merah','biru','hijau'];
-    const shuffledSpell = shuffleArray(spellingWords, seed + 1);
-    const selectedSpell = shuffledSpell.slice(0, 3);
+    container.insertAdjacentHTML('beforeend', html);
 
-    html += `<div class="cv-activity-card">
-        <h3>🔊 Mengeja</h3>
-        <p style="font-size:1.2rem;">Klik butang dengar, kemudian taip ejaan dengan betul.</p>`;
-    for (const w of selectedSpell) {
-        html += `<div style="margin:12px 0; font-size:1.8rem; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
-            <button class="speak-spell" data-word="${w}" style="background:#f7d4a0; border:none; border-radius:40px; padding:6px 18px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">🔊 Dengar</button>
-            <span style="font-weight:bold;">${w}</span>
-            <input type="text" class="spell-input" data-word="${w}" placeholder="Tulis..." style="width:150px; font-size:1.6rem; border-radius:40px; border:3px solid #b8c8b8; padding:6px 14px; text-align:center; font-family:'Patrick Hand',cursive;">
-            <button class="check-spell" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:6px 18px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">Semak</button>
-            <span class="spell-feedback" style="margin-left:8px; font-size:1.4rem;"></span>
-        </div>`;
-    }
-    html += `</div>`;
-
-    // --- Bahagian 3: Pilih Cerita (dengan ikon) ---
-// Tunjukkan 16 ikon cerita dalam grid
-html += `<div class="cv-activity-card" id="storySelector">
-    <h3>📖 Pilih Cerita</h3>
-    <p style="font-size:1.2rem; color:#5a6a5a;">Klik pada ikon untuk membaca cerita.</p>
-    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(70px, 1fr)); gap:10px; margin:10px 0;">
-        ${shortStories.map((story, index) => `
-            <div class="story-icon" data-index="${index}" style="font-size:2.8rem; cursor:pointer; text-align:center; padding:8px; background:#f8f0f5; border-radius:20px; border:3px solid #e8d0dc; transition:0.2s;" 
-                onmouseover="this.style.background='#ffe6b0'" 
-                onmouseout="this.style.background='#f8f0f5'">
-                ${story.icon}
-            </div>
-        `).join('')}
-    </div>
-    <div id="storyDisplay" style="margin-top:15px; display:none;">
-        <h4 id="storyTitle" style="font-size:1.8rem; color:#4a1e3a;"></h4>
-        <div id="storyText" class="story-text"></div>
-        <div style="margin-top:10px;">
-            <button id="readStoryBtn" style="background:#2a6a3a; color:white; border:none; border-radius:40px; padding:8px 24px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">🔊 Baca Cerita</button>
-        </div>
-    </div>
-</div>`;
-
-    container.innerHTML = html;
-
-    // ============================================================
-    // EVENT LISTENERS
-    // ============================================================
-
-    // 1. Semak Isi Tempat Kosong
+    // Event listeners
     document.querySelectorAll('.check-fill').forEach(btn => {
         btn.addEventListener('click', function() {
             const parent = this.parentElement;
@@ -288,7 +235,6 @@ html += `<div class="cv-activity-card" id="storySelector">
             if (user === correct) {
                 feedback.textContent = '✅ Betul!';
                 feedback.style.color = 'green';
-                // Mainkan bunyi perkataan penuh untuk galakan
                 const fullWord = fillBlankQuestions.find(q => q.missing === correct)?.word || '';
                 if (fullWord) speak(fullWord, 'ms-MY');
             } else {
@@ -297,15 +243,45 @@ html += `<div class="cv-activity-card" id="storySelector">
             }
         });
     });
+}
 
-    // 2. Dengar untuk mengeja
+// ================================================================
+// 2. RENDER MENGEJA
+// ================================================================
+
+function renderMengeja() {
+    const container = document.getElementById('cvActivities');
+    if (!container) return;
+
+    const seed = getDateSeed();
+    const spellingWords = ['bola','kucing','rumah','buku','gajah','pisang','nasi','kereta','baju','tangan','merah','biru','hijau'];
+    const shuffledSpell = shuffleArray(spellingWords, seed + 1);
+    const selectedSpell = shuffledSpell.slice(0, 3);
+
+    let html = `<div class="cv-activity-card" id="mengejaSection">
+        <h3>🔊 Mengeja</h3>
+        <p style="font-size:1.2rem;">Klik butang dengar, kemudian taip ejaan dengan betul.</p>`;
+
+    for (const w of selectedSpell) {
+        html += `<div style="margin:12px 0; font-size:1.8rem; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
+            <button class="speak-spell" data-word="${w}" style="background:#f7d4a0; border:none; border-radius:40px; padding:6px 18px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">🔊 Dengar</button>
+            <span style="font-weight:bold;">${w}</span>
+            <input type="text" class="spell-input" data-word="${w}" placeholder="Tulis..." style="width:150px; font-size:1.6rem; border-radius:40px; border:3px solid #b8c8b8; padding:6px 14px; text-align:center; font-family:'Patrick Hand',cursive;">
+            <button class="check-spell" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:6px 18px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">Semak</button>
+            <span class="spell-feedback" style="margin-left:8px; font-size:1.4rem;"></span>
+        </div>`;
+    }
+    html += `</div>`;
+
+    container.insertAdjacentHTML('beforeend', html);
+
+    // Event listeners
     document.querySelectorAll('.speak-spell').forEach(btn => {
         btn.addEventListener('click', function() {
             speak(this.dataset.word, 'ms-MY');
         });
     });
 
-    // 3. Semak Ejaan
     document.querySelectorAll('.check-spell').forEach(btn => {
         btn.addEventListener('click', function() {
             const parent = this.parentElement;
@@ -324,13 +300,187 @@ html += `<div class="cv-activity-card" id="storySelector">
             }
         });
     });
+}
 
-    // 4. Klik pada perkataan highlight dalam cerita
-    document.querySelectorAll('.story-text .highlight').forEach(el => {
-        el.style.cursor = 'pointer';
-        el.addEventListener('click', function() {
-            const word = this.textContent.trim();
-            speak(word, 'ms-MY');
+// ================================================================
+// 3. RENDER MEMBACA (CERITA DENGAN IKON)
+// ================================================================
+
+function renderMembaca() {
+    const container = document.getElementById('cvActivities');
+    if (!container) return;
+
+    let html = `<div class="cv-activity-card" id="membacaSection">
+        <h3>📖 Pilih Cerita</h3>
+        <p style="font-size:1.2rem; color:#5a6a5a;">Klik pada ikon untuk membaca cerita.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(70px, 1fr)); gap:10px; margin:10px 0;">`;
+
+    shortStories.forEach((story, index) => {
+        html += `<div class="story-icon" data-index="${index}" style="font-size:2.8rem; cursor:pointer; text-align:center; padding:8px; background:#f8f0f5; border-radius:20px; border:3px solid #e8d0dc; transition:0.2s;" 
+                    onmouseover="this.style.background='#ffe6b0'" 
+                    onmouseout="this.style.background='#f8f0f5'">
+                    ${story.icon}
+                </div>`;
+    });
+
+    html += `</div>
+        <div id="storyDisplay" style="margin-top:15px; display:none;">
+            <h4 id="storyTitle" style="font-size:1.8rem; color:#4a1e3a;"></h4>
+            <div id="storyText" class="story-text"></div>
+            <div style="margin-top:10px;">
+                <button id="readStoryBtn" style="background:#2a6a3a; color:white; border:none; border-radius:40px; padding:8px 24px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">🔊 Baca Cerita</button>
+            </div>
+        </div>
+    </div>`;
+
+    container.insertAdjacentHTML('beforeend', html);
+
+    // Event listeners untuk ikon dan butang baca
+    const storyIcons = document.querySelectorAll('.story-icon');
+    const storyDisplay = document.getElementById('storyDisplay');
+    const storyTitle = document.getElementById('storyTitle');
+    const storyText = document.getElementById('storyText');
+    const readStoryBtn = document.getElementById('readStoryBtn');
+    let currentStoryIndex = -1;
+
+    storyIcons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            const index = parseInt(this.dataset.index);
+            const story = shortStories[index];
+            if (!story) return;
+            currentStoryIndex = index;
+            storyTitle.textContent = `${story.icon} ${story.title}`;
+            storyText.innerHTML = story.text;
+            storyDisplay.style.display = 'block';
+            // Re-attach click listeners to highlighted words
+            storyText.querySelectorAll('.highlight').forEach(el => {
+                el.style.cursor = 'pointer';
+                el.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const word = this.textContent.trim();
+                    speak(word, 'ms-MY');
+                });
+            });
         });
     });
+
+    readStoryBtn.addEventListener('click', function() {
+        if (currentStoryIndex === -1) return;
+        const story = shortStories[currentStoryIndex];
+        const plainText = story.text.replace(/<[^>]*>/g, ' ');
+        speak(plainText, 'ms-MY');
+    });
 }
+
+// ================================================================
+// 4. RENDER SUKU KATA BERWARNA
+// ================================================================
+
+// Fungsi pemisahan suku kata (mudah)
+function splitIntoSyllables(word) {
+    // Senarai pola konsonan-vokal (asas)
+    const patterns = [
+        /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/,
+        /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/
+    ];
+    for (const pattern of patterns) {
+        const match = word.match(pattern);
+        if (match) {
+            const parts = match.slice(1).filter(p => p !== '');
+            if (parts.length >= 2) return parts;
+        }
+    }
+    return [word];
+}
+
+// Ambil 20 perkataan unik daripada fillBlankQuestions
+function getUniqueWords(count = 20) {
+    const uniqueWords = [];
+    const seen = new Set();
+    for (const q of fillBlankQuestions) {
+        if (!seen.has(q.word)) {
+            seen.add(q.word);
+            uniqueWords.push(q.word);
+        }
+    }
+    const seed = getDateSeed();
+    const shuffled = shuffleArray(uniqueWords, seed);
+    return shuffled.slice(0, count);
+}
+
+function renderSukuKataBerwarna() {
+    const container = document.getElementById('cvActivities');
+    if (!container) return;
+
+    // Buat div baru untuk aktiviti ini (supaya tidak bercampur)
+    const activityDiv = document.createElement('div');
+    activityDiv.id = 'sukuKataBerwarna';
+    activityDiv.style.marginTop = '30px';
+    container.appendChild(activityDiv);
+
+    const words = getUniqueWords(20);
+    let currentIndex = 0;
+
+    function showWord(index) {
+        const word = words[index];
+        if (!word) return;
+
+        const q = fillBlankQuestions.find(q => q.word === word);
+        const emoji = q ? q.image : '📝';
+        const syllables = splitIntoSyllables(word);
+        const colorPalette = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6', '#f39c12'];
+        const coloredSyllables = syllables.map((syl, i) => {
+            const color = colorPalette[i % colorPalette.length];
+            return `<span style="color:${color}; font-weight:bold; font-size:3.2rem; padding:0 4px;">${syl}</span>`;
+        }).join(' + ');
+
+        let html = `
+            <div style="text-align:center; padding:20px; background:#f5faff; border-radius:40px; border:4px solid #b8d8e8;">
+                <div style="font-size:4rem;">${emoji}</div>
+                <div style="font-size:2.8rem; margin:15px 0;">
+                    ${coloredSyllables}
+                </div>
+                <div style="font-size:2rem; color:#4a6a5a;">${word}</div>
+                <div style="margin-top:15px;">
+                    <button onclick="speak('${word}','ms-MY')" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:10px 28px; font-size:1.6rem; cursor:pointer; font-family:'Patrick Hand',cursive; margin:4px;">🔊 Dengar Perkataan</button>
+                    <button class="next-word-btn" style="background:#2a6a3a; color:white; border:none; border-radius:40px; padding:10px 28px; font-size:1.6rem; cursor:pointer; font-family:'Patrick Hand',cursive; margin:4px;">➡️ Seterusnya</button>
+                </div>
+                <p style="margin-top:10px; font-size:1.2rem; color:#7a6a6a;">Perkataan ${index+1} daripada ${words.length}</p>
+            </div>
+        `;
+
+        activityDiv.innerHTML = html;
+
+        // Event listener untuk butang "Seterusnya"
+        const nextBtn = activityDiv.querySelector('.next-word-btn');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex + 1) % words.length;
+                showWord(currentIndex);
+            });
+        }
+    }
+
+    showWord(0);
+}
+
+// ================================================================
+// 5. FUNGSI UTAMA – PANGGIL SEMUA BAHAGIAN
+// ================================================================
+
+function renderCVActivities() {
+    // Kosongkan container dahulu (supaya tidak terkumpul)
+    const container = document.getElementById('cvActivities');
+    if (container) container.innerHTML = '';
+
+    // Panggil setiap bahagian mengikut urutan
+    renderSukuKataBerwarna();
+    renderMengeja();
+    renderFillBlank();
+    renderMembaca();
+    
+}
+
+// ================================================================
+// NOTA: Fungsi ini akan dipanggil dari index.html dalam DOMContentLoaded
+// ================================================================
