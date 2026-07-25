@@ -309,16 +309,225 @@ function renderFillBlank() {
 }
 
 // ================================================================
-// 2. RENDER MEMBACA (CERITA DENGAN IKON) – DIPERBAIKI
+// 2. RENDER MEMBACA (CERITA DENGAN POPUP PENUH SKRIN & WARNA SUKU KATA)
 // ================================================================
 
+// ----- Fungsi untuk mewarnakan teks mengikut suku kata -----
+function colorizeTextBySyllables(text) {
+    // Pisahkan perkataan (abaikan tag HTML)
+    // Kita akan proses teks dengan menggantikan perkataan yang bukan tag
+    // Gunakan regex untuk cari perkataan (huruf dan angka)
+    const words = text.split(/(\s+)/); // pecah ikut ruang
+    const colorPalette = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6', '#f39c12'];
+    let result = '';
+    let sylIndex = 0;
+
+    for (const token of words) {
+        if (token.match(/^\s+$/)) {
+            result += token; // kekalkan ruang
+            continue;
+        }
+        // Jika token adalah tag HTML (bermula < dan berakhir >), kekalkan
+        if (token.startsWith('<') && token.endsWith('>')) {
+            result += token;
+            continue;
+        }
+        // Jika token ada tag di dalam? Kita anggap perkataan biasa.
+        // Pecahkan perkataan kepada suku kata
+        const syllables = splitIntoSyllables(token);
+        if (syllables.length === 1) {
+            // Jika satu suku kata, beri warna pertama palet
+            const color = colorPalette[sylIndex % colorPalette.length];
+            result += `<span style="color:${color};">${token}</span>`;
+            sylIndex++;
+        } else {
+            // Setiap suku kata diberi warna bergilir
+            for (const syl of syllables) {
+                const color = colorPalette[sylIndex % colorPalette.length];
+                result += `<span style="color:${color};">${syl}</span>`;
+                sylIndex++;
+            }
+        }
+        // Reset indeks warna selepas setiap perkataan? Biarkan berterusan untuk semua perkataan.
+    }
+    return result;
+}
+
+// ----- Fungsi untuk papar cerita dalam popup penuh skrin -----
+function showFullScreenStory(story) {
+    // Cek jika sudah ada overlay, jika ada buang dulu
+    const existingOverlay = document.getElementById('fullScreenStoryOverlay');
+    if (existingOverlay) existingOverlay.remove();
+
+    // Warna teks
+    const coloredText = colorizeTextBySyllables(story.text);
+
+    // Bina overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'fullScreenStoryOverlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.92);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.4s ease;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+    `;
+
+    // Tambah keyframes animation jika belum ada
+    if (!document.getElementById('storyFadeInStyle')) {
+        const style = document.createElement('style');
+        style.id = 'storyFadeInStyle';
+        style.textContent = `
+            @keyframes fadeIn {
+                0% { opacity: 0; transform: scale(0.9); }
+                100% { opacity: 1; transform: scale(1); }
+            }
+            @keyframes fadeOut {
+                0% { opacity: 1; transform: scale(1); }
+                100% { opacity: 0; transform: scale(0.9); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Kandungan popup
+    const content = document.createElement('div');
+    content.style.cssText = `
+        background: #fffdf8;
+        max-width: 800px;
+        width: 100%;
+        max-height: 90vh;
+        border-radius: 60px;
+        padding: 40px 35px;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        border: 6px solid #f7d4e8;
+        position: relative;
+        overflow-y: auto;
+        font-family: 'Patrick Hand', cursive;
+        animation: fadeIn 0.5s ease;
+    `;
+
+    // Butang tutup
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '✕ Kembali';
+    closeBtn.style.cssText = `
+        position: sticky;
+        top: 0;
+        float: right;
+        background: #6a1b4d;
+        color: white;
+        border: none;
+        border-radius: 60px;
+        font-size: 1.6rem;
+        padding: 8px 24px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 4px 0 #3d0f2c;
+        transition: 0.15s;
+        font-family: 'Patrick Hand', cursive;
+        z-index: 10;
+    `;
+    closeBtn.addEventListener('mouseover', () => closeBtn.style.transform = 'scale(1.05)');
+    closeBtn.addEventListener('mouseout', () => closeBtn.style.transform = 'scale(1)');
+    closeBtn.addEventListener('click', hideFullScreenStory);
+
+    // Tajuk
+    const title = document.createElement('h2');
+    title.textContent = `${story.icon} ${story.title}`;
+    title.style.cssText = `
+        font-size: 2.8rem;
+        color: #4a1e3a;
+        text-align: center;
+        margin: 0 0 15px 0;
+        border-bottom: 4px solid #f7d4e8;
+        padding-bottom: 10px;
+        clear: both;
+    `;
+
+    // Teks cerita (dengan warna suku kata)
+    const textDiv = document.createElement('div');
+    textDiv.innerHTML = coloredText;
+    textDiv.style.cssText = `
+        font-size: 2rem;
+        line-height: 2.8rem;
+        text-align: left;
+        background: #fafafa;
+        padding: 20px;
+        border-radius: 30px;
+        border: 2px solid #d0e0d0;
+        margin: 15px 0;
+        min-height: 150px;
+    `;
+
+    // Butang baca
+    const readBtn = document.createElement('button');
+    readBtn.textContent = '🔊 Baca Cerita';
+    readBtn.style.cssText = `
+        background: #2a6a3a;
+        color: white;
+        border: none;
+        border-radius: 60px;
+        padding: 12px 32px;
+        font-size: 1.6rem;
+        cursor: pointer;
+        font-family: 'Patrick Hand', cursive;
+        box-shadow: 0 4px 0 #1a4a2a;
+        transition: 0.15s;
+        display: inline-block;
+        margin: 5px auto;
+    `;
+    readBtn.addEventListener('mouseover', () => readBtn.style.transform = 'scale(1.05)');
+    readBtn.addEventListener('mouseout', () => readBtn.style.transform = 'scale(1)');
+    readBtn.addEventListener('click', function() {
+        const plainText = story.text.replace(/<[^>]*>/g, ' ');
+        speak(plainText, 'ms-MY');
+    });
+
+    // Susun dalam content
+    content.appendChild(closeBtn);
+    content.appendChild(title);
+    content.appendChild(textDiv);
+    const btnWrapper = document.createElement('div');
+    btnWrapper.style.cssText = 'text-align: center; margin-top: 10px;';
+    btnWrapper.appendChild(readBtn);
+    content.appendChild(btnWrapper);
+
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
+
+    // Tutup jika klik di luar content (tapi kita akan biarkan)
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) hideFullScreenStory();
+    });
+}
+
+function hideFullScreenStory() {
+    const overlay = document.getElementById('fullScreenStoryOverlay');
+    if (overlay) {
+        overlay.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+            overlay.remove();
+        }, 300);
+    }
+}
+
+// ----- Fungsi renderMembaca (dengan ikon dan popup) -----
 function renderMembaca() {
     const container = document.getElementById('cvActivities');
     if (!container) return;
 
     let html = `<div class="cv-activity-card" id="membacaSection">
         <h3>📖 Pilih Cerita</h3>
-        <p style="font-size:1.2rem; color:#5a6a5a;">Klik pada ikon untuk membaca cerita.</p>
+        <p style="font-size:1.2rem; color:#5a6a5a;">Klik pada ikon untuk membaca cerita dalam paparan penuh.</p>
         <div id="storyIconsContainer" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(70px, 1fr)); gap:10px; margin:10px 0;">`;
 
     shortStories.forEach((story, index) => {
@@ -328,57 +537,20 @@ function renderMembaca() {
     });
 
     html += `</div>
-        <div id="storyDisplay" style="margin-top:15px; display:none;">
-            <h4 id="storyTitle" style="font-size:1.8rem; color:#4a1e3a;"></h4>
-            <div id="storyText" class="story-text"></div>
-            <div style="margin-top:10px;">
-                <button id="readStoryBtn" style="background:#2a6a3a; color:white; border:none; border-radius:40px; padding:8px 24px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">🔊 Baca Cerita</button>
-            </div>
-        </div>
     </div>`;
 
     container.insertAdjacentHTML('beforeend', html);
 
-    // ===== EVENT LISTENER UNTUK IKON (guna delegation) =====
+    // Event listener untuk ikon (guna delegation)
     const iconsContainer = document.getElementById('storyIconsContainer');
-    const storyDisplay = document.getElementById('storyDisplay');
-    const storyTitle = document.getElementById('storyTitle');
-    const storyText = document.getElementById('storyText');
-    const readStoryBtn = document.getElementById('readStoryBtn');
-    let currentStoryIndex = -1;
-
-    // Delegasi: klik pada mana-mana .story-icon dalam container
     iconsContainer.addEventListener('click', function(e) {
         const icon = e.target.closest('.story-icon');
         if (!icon) return;
         const index = parseInt(icon.dataset.index);
         const story = shortStories[index];
         if (!story) return;
-        currentStoryIndex = index;
-        storyTitle.textContent = `${story.icon} ${story.title}`;
-        storyText.innerHTML = story.text;
-        storyDisplay.style.display = 'block';
-
-        // Tambah event listener pada perkataan highlight
-        storyText.querySelectorAll('.highlight').forEach(el => {
-            el.style.cursor = 'pointer';
-            el.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const word = this.textContent.trim();
-                speak(word, 'ms-MY');
-            });
-        });
-    });
-
-    // Butang baca cerita
-    readStoryBtn.addEventListener('click', function() {
-        if (currentStoryIndex === -1) {
-            alert('Sila pilih cerita dahulu dengan klik ikon.');
-            return;
-        }
-        const story = shortStories[currentStoryIndex];
-        const plainText = story.text.replace(/<[^>]*>/g, ' ');
-        speak(plainText, 'ms-MY');
+        // Buka popup penuh skrin
+        showFullScreenStory(story);
     });
 }
 
