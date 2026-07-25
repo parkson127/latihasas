@@ -5,7 +5,7 @@ function renderSukuKataTable() {
     const vowelOrder = ['a', 'e', 'i', 'o', 'u'];
     const consonantOrder = ['b','c','d','f','g','h','j','k','l','m','n','p','r','s','t','v','w','y','z'];
 
-    // Peta warna untuk vokal
+    // Warna untuk setiap vokal (keseluruhan suku kata akan menggunakan warna ini)
     const vowelColors = {
         'a': '#e74c3c', // merah
         'i': '#3498db', // biru
@@ -31,27 +31,21 @@ function renderSukuKataTable() {
 
     html += `</tr></thead><tbody>`;
 
-    const colors = ['#fff0f0','#f0fff0','#f0f0ff','#fff5e0','#f5f0ff'];
+    const rowColors = ['#fff0f0','#f0fff0','#f0f0ff','#fff5e0','#f5f0ff'];
     for (let i = 0; i < consonantOrder.length; i++) {
         const c = consonantOrder[i];
-        const color = colors[i % colors.length];
-        html += `<tr style="background:${color}; border-bottom:3px solid #e0e0e0;">`;
+        const bg = rowColors[i % rowColors.length];
+        html += `<tr style="background:${bg}; border-bottom:3px solid #e0e0e0;">`;
         html += `<td style="padding:16px 8px; border:2px solid #d0d0d0; font-weight:bold; font-size:2.6rem; color:#4a1e3a; background:#ffffffdd;">${c}</td>`;
 
         for (const v of vowelOrder) {
             const syl = c + v;
-            // Pecah suku kata: konsonan + vokal
-            const consonant = syl.slice(0, -1);
-            const vowel = syl.slice(-1);
-            const vowelColor = vowelColors[vowel] || '#000000';
-            // Bina teks berwarna
-            const coloredSyl = `<span style="color:#000000;">${consonant}</span><span style="color:${vowelColor};">${vowel}</span>`;
-
-            html += `<td style="padding:16px 8px; border:2px solid #d0d0d0; font-size:2.4rem; cursor:pointer; transition:0.15s; background:#ffffffcc;" 
+            const color = vowelColors[v]; // warna untuk vokal ini
+            html += `<td style="padding:16px 8px; border:2px solid #d0d0d0; font-size:2.4rem; cursor:pointer; transition:0.15s; background:#ffffffcc; color:${color}; font-weight:bold;" 
                         class="syllable-cell" data-syl="${syl}"
                         onmouseover="this.style.background='#ffe6b0'" 
                         onmouseout="this.style.background='#ffffffcc'">
-                        ${coloredSyl}
+                        ${syl}
                     </td>`;
         }
         html += `</tr>`;
@@ -63,7 +57,7 @@ function renderSukuKataTable() {
 
     container.innerHTML = html;
 
-    // Event listener untuk setiap sel
+    // Event listener untuk setiap sel (sama seperti sebelumnya)
     document.querySelectorAll('.syllable-cell').forEach(cell => {
         cell.addEventListener('click', function() {
             const syl = this.dataset.syl;
@@ -86,7 +80,8 @@ function renderSukuKataTable() {
         });
     });
 }
-// ===== SUKU KATA DATA =====
+        
+        // ===== SUKU KATA DATA =====
 const consonants = 'bcdfghjklmnpqrstvwxyz'.split('');
 const vowels = ['a','e','i','o','u'];
 const cvExampleMap = {
