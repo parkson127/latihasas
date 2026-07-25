@@ -1,12 +1,10 @@
 // ================================================================
-// LATIHSUKUKATA.JS – Aktiviti Suku Kata (Diasingkan mengikut bahagian)
+// LATIHSUKUKATA.JS – Aktiviti Suku Kata (Fill Blank, Membaca, Warna)
 // ================================================================
 
 // ----- SOALAN ISI TEMPAT KOSONG (SUKU KATA PENUH) -----
-// (Bank soalan yang sama seperti sebelumnya – dipendekkan untuk ruang)
-// Saya letakkan semula bank soalan penuh di sini.
-// Untuk menjimatkan ruang, saya akan gunakan semula bank yang sudah ada.
-// [BANK SOALAN FILL BLANK – SAMA SEPERTI VERSI SEBELUMNYA]
+// (Bank soalan yang sama – saya pendekkan di sini, tapi anda boleh guna penuh)
+// Untuk menjimatkan ruang, saya sertakan semula bank penuh seperti sebelum ini.
 // ================================================================
 
 const fillBlankQuestions = [
@@ -199,16 +197,14 @@ function renderFillBlank() {
     if (!container) return;
 
     const seed = getDateSeed();
-    const NUMBER_OF_FILL_BLANK = 20; // Ubah ikut kehendak
+    const NUMBER_OF_FILL_BLANK = 20;
 
-    // Kocok soalan dan pilih
     const shuffled = shuffleArray(fillBlankQuestions, seed);
     const selectedFill = shuffled.slice(0, NUMBER_OF_FILL_BLANK);
 
-    // Bina HTML
     let html = `<div class="cv-activity-card" id="fillBlankSection">
-        <h3>✏️ Isi Tempat Kosong (lihat gambar)</h3>
-        <p style="font-size:1.2rem; color:#5a6a5a;">Tulis <strong>suku kata</strong> yang hilang (bukan huruf).</p>`;
+        <h3>✏️ Isi Tempat Kosong</h3>
+        <p style="font-size:1.2rem; color:#5a6a5a;">Tulis <strong>suku kata</strong> yang hilang.</p>`;
 
     for (const q of selectedFill) {
         html += `<div style="margin:15px 0; font-size:1.8rem; display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;">
@@ -223,7 +219,7 @@ function renderFillBlank() {
 
     container.insertAdjacentHTML('beforeend', html);
 
-    // Event listeners
+    // Event listeners untuk semak
     document.querySelectorAll('.check-fill').forEach(btn => {
         btn.addEventListener('click', function() {
             const parent = this.parentElement;
@@ -246,64 +242,7 @@ function renderFillBlank() {
 }
 
 // ================================================================
-// 2. RENDER MENGEJA
-// ================================================================
-
-function renderMengeja() {
-    const container = document.getElementById('cvActivities');
-    if (!container) return;
-
-    const seed = getDateSeed();
-    const spellingWords = ['bola','kucing','rumah','buku','gajah','pisang','nasi','kereta','baju','tangan','merah','biru','hijau'];
-    const shuffledSpell = shuffleArray(spellingWords, seed + 1);
-    const selectedSpell = shuffledSpell.slice(0, 3);
-
-    let html = `<div class="cv-activity-card" id="mengejaSection">
-        <h3>🔊 Mengeja</h3>
-        <p style="font-size:1.2rem;">Klik butang dengar, kemudian taip ejaan dengan betul.</p>`;
-
-    for (const w of selectedSpell) {
-        html += `<div style="margin:12px 0; font-size:1.8rem; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
-            <button class="speak-spell" data-word="${w}" style="background:#f7d4a0; border:none; border-radius:40px; padding:6px 18px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">🔊 Dengar</button>
-            <span style="font-weight:bold;">${w}</span>
-            <input type="text" class="spell-input" data-word="${w}" placeholder="Tulis..." style="width:150px; font-size:1.6rem; border-radius:40px; border:3px solid #b8c8b8; padding:6px 14px; text-align:center; font-family:'Patrick Hand',cursive;">
-            <button class="check-spell" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:6px 18px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">Semak</button>
-            <span class="spell-feedback" style="margin-left:8px; font-size:1.4rem;"></span>
-        </div>`;
-    }
-    html += `</div>`;
-
-    container.insertAdjacentHTML('beforeend', html);
-
-    // Event listeners
-    document.querySelectorAll('.speak-spell').forEach(btn => {
-        btn.addEventListener('click', function() {
-            speak(this.dataset.word, 'ms-MY');
-        });
-    });
-
-    document.querySelectorAll('.check-spell').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const parent = this.parentElement;
-            const input = parent.querySelector('.spell-input');
-            const feedback = parent.querySelector('.spell-feedback');
-            const user = input.value.trim().toLowerCase();
-            const correct = input.dataset.word.toLowerCase();
-
-            if (user === correct) {
-                feedback.textContent = '✅ Betul!';
-                feedback.style.color = 'green';
-                speak(correct, 'ms-MY');
-            } else {
-                feedback.textContent = `❌ Ejaan yang betul: ${correct}`;
-                feedback.style.color = 'red';
-            }
-        });
-    });
-}
-
-// ================================================================
-// 3. RENDER MEMBACA (CERITA DENGAN IKON)
+// 2. RENDER MEMBACA (CERITA DENGAN IKON) – DIPERBAIKI
 // ================================================================
 
 function renderMembaca() {
@@ -313,12 +252,10 @@ function renderMembaca() {
     let html = `<div class="cv-activity-card" id="membacaSection">
         <h3>📖 Pilih Cerita</h3>
         <p style="font-size:1.2rem; color:#5a6a5a;">Klik pada ikon untuk membaca cerita.</p>
-        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(70px, 1fr)); gap:10px; margin:10px 0;">`;
+        <div id="storyIconsContainer" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(70px, 1fr)); gap:10px; margin:10px 0;">`;
 
     shortStories.forEach((story, index) => {
-        html += `<div class="story-icon" data-index="${index}" style="font-size:2.8rem; cursor:pointer; text-align:center; padding:8px; background:#f8f0f5; border-radius:20px; border:3px solid #e8d0dc; transition:0.2s;" 
-                    onmouseover="this.style.background='#ffe6b0'" 
-                    onmouseout="this.style.background='#f8f0f5'">
+        html += `<div class="story-icon" data-index="${index}" style="font-size:2.8rem; cursor:pointer; text-align:center; padding:8px; background:#f8f0f5; border-radius:20px; border:3px solid #e8d0dc; transition:0.2s;">
                     ${story.icon}
                 </div>`;
     });
@@ -335,37 +272,43 @@ function renderMembaca() {
 
     container.insertAdjacentHTML('beforeend', html);
 
-    // Event listeners untuk ikon dan butang baca
-    const storyIcons = document.querySelectorAll('.story-icon');
+    // ===== EVENT LISTENER UNTUK IKON (guna delegation) =====
+    const iconsContainer = document.getElementById('storyIconsContainer');
     const storyDisplay = document.getElementById('storyDisplay');
     const storyTitle = document.getElementById('storyTitle');
     const storyText = document.getElementById('storyText');
     const readStoryBtn = document.getElementById('readStoryBtn');
     let currentStoryIndex = -1;
 
-    storyIcons.forEach(icon => {
-        icon.addEventListener('click', function() {
-            const index = parseInt(this.dataset.index);
-            const story = shortStories[index];
-            if (!story) return;
-            currentStoryIndex = index;
-            storyTitle.textContent = `${story.icon} ${story.title}`;
-            storyText.innerHTML = story.text;
-            storyDisplay.style.display = 'block';
-            // Re-attach click listeners to highlighted words
-            storyText.querySelectorAll('.highlight').forEach(el => {
-                el.style.cursor = 'pointer';
-                el.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const word = this.textContent.trim();
-                    speak(word, 'ms-MY');
-                });
+    // Delegasi: klik pada mana-mana .story-icon dalam container
+    iconsContainer.addEventListener('click', function(e) {
+        const icon = e.target.closest('.story-icon');
+        if (!icon) return;
+        const index = parseInt(icon.dataset.index);
+        const story = shortStories[index];
+        if (!story) return;
+        currentStoryIndex = index;
+        storyTitle.textContent = `${story.icon} ${story.title}`;
+        storyText.innerHTML = story.text;
+        storyDisplay.style.display = 'block';
+
+        // Tambah event listener pada perkataan highlight
+        storyText.querySelectorAll('.highlight').forEach(el => {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const word = this.textContent.trim();
+                speak(word, 'ms-MY');
             });
         });
     });
 
+    // Butang baca cerita
     readStoryBtn.addEventListener('click', function() {
-        if (currentStoryIndex === -1) return;
+        if (currentStoryIndex === -1) {
+            alert('Sila pilih cerita dahulu dengan klik ikon.');
+            return;
+        }
         const story = shortStories[currentStoryIndex];
         const plainText = story.text.replace(/<[^>]*>/g, ' ');
         speak(plainText, 'ms-MY');
@@ -373,12 +316,10 @@ function renderMembaca() {
 }
 
 // ================================================================
-// 4. RENDER SUKU KATA BERWARNA
+// 3. RENDER SUKU KATA BERWARNA
 // ================================================================
 
-// Fungsi pemisahan suku kata (mudah)
 function splitIntoSyllables(word) {
-    // Senarai pola konsonan-vokal (asas)
     const patterns = [
         /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/,
         /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/
@@ -393,7 +334,6 @@ function splitIntoSyllables(word) {
     return [word];
 }
 
-// Ambil 20 perkataan unik daripada fillBlankQuestions
 function getUniqueWords(count = 20) {
     const uniqueWords = [];
     const seen = new Set();
@@ -412,7 +352,6 @@ function renderSukuKataBerwarna() {
     const container = document.getElementById('cvActivities');
     if (!container) return;
 
-    // Buat div baru untuk aktiviti ini (supaya tidak bercampur)
     const activityDiv = document.createElement('div');
     activityDiv.id = 'sukuKataBerwarna';
     activityDiv.style.marginTop = '30px';
@@ -451,7 +390,6 @@ function renderSukuKataBerwarna() {
 
         activityDiv.innerHTML = html;
 
-        // Event listener untuk butang "Seterusnya"
         const nextBtn = activityDiv.querySelector('.next-word-btn');
         if (nextBtn) {
             nextBtn.addEventListener('click', function() {
@@ -465,22 +403,16 @@ function renderSukuKataBerwarna() {
 }
 
 // ================================================================
-// 5. FUNGSI UTAMA – PANGGIL SEMUA BAHAGIAN
+// 4. FUNGSI UTAMA – PANGGIL SEMUA (TANPA MENGEJA)
 // ================================================================
 
 function renderCVActivities() {
-    // Kosongkan container dahulu (supaya tidak terkumpul)
     const container = document.getElementById('cvActivities');
     if (container) container.innerHTML = '';
 
-    // Panggil setiap bahagian mengikut urutan
+    // Urutan: Fill Blank → Membaca → Suku Kata Berwarna
     renderSukuKataBerwarna();
-    renderMengeja();
     renderFillBlank();
     renderMembaca();
-    
+     
 }
-
-// ================================================================
-// NOTA: Fungsi ini akan dipanggil dari index.html dalam DOMContentLoaded
-// ================================================================
