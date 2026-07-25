@@ -247,17 +247,28 @@ function renderCVActivities() {
     }
     html += `</div>`;
 
-    // --- Bahagian 3: Membaca Cerita ---
-    const storyIndex = Math.floor(seed % shortStories.length);
-    const story = shortStories[storyIndex];
-    html += `<div class="cv-activity-card">
-        <h3>📖 Membaca Cerita</h3>
-        <div class="story-text">${story.text}</div>
-        <p style="margin-top:8px; font-size:1.2rem; color:#5a5a3a;">👆 Cuba baca dengan sebutan yang betul. Klik perkataan <span style="background:#f7d4a0; padding:0 6px; border-radius:8px;">highlight</span> untuk dengar.</p>
+    // --- Bahagian 3: Pilih Cerita (dengan ikon) ---
+// Tunjukkan 16 ikon cerita dalam grid
+html += `<div class="cv-activity-card" id="storySelector">
+    <h3>📖 Pilih Cerita</h3>
+    <p style="font-size:1.2rem; color:#5a6a5a;">Klik pada ikon untuk membaca cerita.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(70px, 1fr)); gap:10px; margin:10px 0;">
+        ${shortStories.map((story, index) => `
+            <div class="story-icon" data-index="${index}" style="font-size:2.8rem; cursor:pointer; text-align:center; padding:8px; background:#f8f0f5; border-radius:20px; border:3px solid #e8d0dc; transition:0.2s;" 
+                onmouseover="this.style.background='#ffe6b0'" 
+                onmouseout="this.style.background='#f8f0f5'">
+                ${story.icon}
+            </div>
+        `).join('')}
+    </div>
+    <div id="storyDisplay" style="margin-top:15px; display:none;">
+        <h4 id="storyTitle" style="font-size:1.8rem; color:#4a1e3a;"></h4>
+        <div id="storyText" class="story-text"></div>
         <div style="margin-top:10px;">
-            <button onclick="speak('${story.text.replace(/<[^>]*>/g, ' ')}','ms-MY')" style="background:#2a6a3a; color:white; border:none; border-radius:40px; padding:8px 24px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">🔊 Baca Cerita</button>
+            <button id="readStoryBtn" style="background:#2a6a3a; color:white; border:none; border-radius:40px; padding:8px 24px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">🔊 Baca Cerita</button>
         </div>
-    </div>`;
+    </div>
+</div>`;
 
     container.innerHTML = html;
 
