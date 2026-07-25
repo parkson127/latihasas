@@ -1,46 +1,64 @@
 // ================================================================
-// SUKUKATA.JS – Data & Render Suku Kata (dengan warna & bunyi)
+// SUKUKATA.JS – Data & Render Suku Kata (dengan 6 vokal: a, e, i, o, u, é)
 // ================================================================
 
 // ----- DATA SUKU KATA -----
 // Konsonan (termasuk q dan x)
 const consonants = 'bcdfghjklmnpqrstvwxyz'.split('');
-// Susunan vokal: a, e, i, o, u
-const vowels = ['a', 'e', 'i', 'o', 'u'];
 
-// Perkataan contoh untuk setiap konsonan
+// Susunan vokal: a, e (taling), i, o, u, e (pepet)
+// Kita labelkan sebagai 'a', 'e', 'i', 'o', 'u', 'é' (untuk membezakan)
+const vowels = ['a', 'e', 'i', 'o', 'u', 'é']; // 'é' melambangkan e pepet
+// Untuk pemaparan di header, kita gunakan 'e' dan 'é'
+// Warna untuk setiap vokal
+const vowelColors = {
+    'a': '#e74c3c', // merah
+    'e': '#2ecc71', // hijau (taling)
+    'i': '#3498db', // biru
+    'o': '#f39c12', // oren
+    'u': '#9b59b6', // ungu
+    'é': '#f1c40f'  // kuning (pepet)
+};
+
+// Perkataan contoh untuk setiap konsonan (6 perkataan mengikut urutan vokal di atas)
+// Pastikan perkataan pertama bermula dengan konsonan + 'a', kedua + 'e', ketiga + 'i', keempat + 'o', kelima + 'u', keenam + 'é'
 const cvExampleMap = {
-    b: ['bola','bekas','bintang','botol','buku'],
-    c: ['cawan','cek','cili','coklat','cuka'],
-    d: ['durian','dewan','dinding','dompet','duit'],
-    f: ['feri','fesyen','filem','foto','futur'],
-    g: ['gajah','gelas','gigi','goreng','gula'],
-    h: ['hari','hewan','hijau','hotel','hujan'],
-    j: ['jatuh','jeruk','jiran','jodoh','juta'],
-    k: ['kambing','kecil','kiri','kotak','kucing'],
-    l: ['lapan','lebar','limau','lompat','lukis'],
-    m: ['makan','meja','mimpi','motor','mulut'],
-    n: ['nasi','negeri','nipis','nombor','nuri'],
-    p: ['pagi','pecah','piring','potong','pulau'],
-    q: ['qari','qasidah','qiam','quran','qutub'],
-    r: ['rama','rehat','ringan','robot','ruang'],
-    s: ['sarang','sekolah','sikat','sopan','surat'],
-    t: ['tangan','tebal','tiga','tomat','tulang'],
-    v: ['vaksin','van','vila','vokal','voli'],
-    w: ['warna','wedding','wira','wol','wujud'],
-    x: ['xenon','xilem','xilofon','x-ray'],
-    y: ['yakin','yatim','yoga','yoyo','yuran'],
-    z: ['zaman','zebra','ziarah','zombi','zon']
+    b: ['baju', 'berat', 'bintang', 'botol', 'buku', 'bebek'],
+    c: ['cawan', 'cek', 'cili', 'coklat', 'cuka', 'cerek'],
+    d: ['dapur', 'dewan', 'dinding', 'dompet', 'duit', 'dekat'],
+    f: ['fail', 'feri', 'filem', 'foto', 'futur', 'fesyen'],
+    g: ['gajah', 'gelas', 'gigi', 'goreng', 'gula', 'gemuk'],
+    h: ['hari', 'hebat', 'hijau', 'hotel', 'hujan', 'hemah'],
+    j: ['jatuh', 'jeruk', 'jiran', 'jodoh', 'juta', 'jejak'],
+    k: ['kambing', 'kelas', 'kiri', 'kotak', 'kucing', 'kek'],
+    l: ['lapan', 'lebar', 'limau', 'lompat', 'lukis', 'lekat'],
+    m: ['makan', 'meja', 'mimpi', 'motor', 'mulut', 'mekar'],
+    n: ['nasi', 'negeri', 'nipis', 'nombor', 'nuri', 'nekat'],
+    p: ['pagi', 'pecah', 'piring', 'potong', 'pulau', 'pekat'],
+    q: ['qari', 'qasidah', 'qiam', 'quran', 'qutub', 'qedah'],
+    r: ['ramai', 'rehat', 'ringan', 'robot', 'ruang', 'rekod'],
+    s: ['sarang', 'sekolah', 'sikat', 'sopan', 'surat', 'sekat'],
+    t: ['tangan', 'tebal', 'tiga', 'tomat', 'tulang', 'tekap'],
+    v: ['vaksin', 'venus', 'vila', 'vokal', 'voli', 'vest'],
+    w: ['warna', 'wedding', 'wira', 'wol', 'wujud', 'web'],
+    x: ['xenon', 'xilem', 'xilofon', 'x-ray', 'xerox', 'xenia'],
+    y: ['yakin', 'yemen', 'yoga', 'yoyo', 'yuran', 'yeti'],
+    z: ['zaman', 'zebra', 'ziarah', 'zombi', 'zon', 'zeus']
 };
 
 // Hasilkan cvData (semua suku kata)
 function buildCVData() {
     const list = [];
     for (const c of consonants) {
-        const words = cvExampleMap[c] || ['contoh'];
+        const words = cvExampleMap[c] || ['contoh','contoh','contoh','contoh','contoh','contoh'];
         for (let i = 0; i < vowels.length; i++) {
             const v = vowels[i];
-            const syl = c + v;
+            // Untuk suku kata, kita gunakan konsonan + vokal asal (tanpa diakritik)
+            // 'é' akan dianggap sebagai 'e' untuk pembentukan suku kata
+            const vowelChar = (v === 'é') ? 'e' : v;
+            const syl = c + vowelChar;
+            const w = words[i % words.length];
+            // Tiga perkataan contoh: ambil dari array, jika kurang, ulang
             const w1 = words[i % words.length];
             const w2 = words[(i+1) % words.length];
             const w3 = words[(i+2) % words.length];
@@ -78,9 +96,7 @@ function renderCV() {
     // ===== Klik kad -> buka modal =====
     document.querySelectorAll('#cvGrid .cv-card').forEach(card => {
         card.addEventListener('click', function(e) {
-            // Jangan buka modal jika klik pada butang
             if (e.target.classList.contains('sound-btn') || e.target.classList.contains('sound-word')) return;
-
             const idx = parseInt(this.dataset.idx);
             const item = cvData[idx];
             if (!item) return;
@@ -102,15 +118,13 @@ function renderCV() {
         });
     });
 
-    // ===== Butang "Suku Kata" pada kad =====
+    // Butang bunyi
     document.querySelectorAll('#cvGrid .sound-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
             speak(this.dataset.syl, 'ms-MY');
         });
     });
-
-    // ===== Butang "Perkataan" pada kad =====
     document.querySelectorAll('#cvGrid .sound-word').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -120,45 +134,48 @@ function renderCV() {
 }
 
 // ================================================================
-// RENDER: JADUAL SUKU KATA (dengan warna & klik zum)
+// RENDER: JADUAL SUKU KATA (dengan 6 vokal & warna)
 // ================================================================
 
 function renderSukuKataTable() {
     const container = document.getElementById('sukuKataTable');
     if (!container) return;
 
-    // Susunan vokal: a, e, i, o, u (seperti yang diminta)
-    const vowelOrder = ['a', 'e', 'i', 'o', 'u'];
-    // Susunan konsonan (termasuk q dan x)
+    // Susunan vokal: a, e, i, o, u, é (e pepet)
+    const vowelOrder = ['a', 'e', 'i', 'o', 'u', 'é'];
     const consonantOrder = ['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','y','z'];
 
-    // Warna untuk setiap vokal (keseluruhan suku kata)
-    const vowelColors = {
+    // Warna untuk setiap vokal (termasuk é)
+    const colors = {
         'a': '#e74c3c', // merah
         'e': '#2ecc71', // hijau
         'i': '#3498db', // biru
         'o': '#f39c12', // oren
-        'u': '#9b59b6'  // ungu
+        'u': '#9b59b6', // ungu
+        'é': '#f1c40f'  // kuning (pepet)
     };
+
+    // Label untuk paparan header (gunakan 'e' untuk yang pertama, 'é' untuk yang kedua)
+    const displayVowels = ['a', 'e', 'i', 'o', 'u', 'é'];
 
     let html = `
         <div style="background:#f5faff; border-radius:50px; padding:20px 15px; border:5px solid #b8d8e8; box-shadow:0 10px 25px rgba(0,0,0,0.06); margin-bottom:25px;">
             <h2 style="text-align:center; font-size:2.8rem; color:#1a4a5c; margin-bottom:10px; font-family:'Patrick Hand',cursive;">📖 JADUAL SUKU KATA</h2>
             <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
-                <table style="width:100%; border-collapse:collapse; font-family:'Patrick Hand',cursive; font-size:2rem; text-align:center; min-width:500px;">
+                <table style="width:100%; border-collapse:collapse; font-family:'Patrick Hand',cursive; font-size:2rem; text-align:center; min-width:600px;">
                     <thead>
                         <tr style="background:#6a1b4d; color:white; border-radius:20px 20px 0 0;">
                             <th style="padding:14px 8px; border:3px solid #4a1a3a; border-radius:20px 0 0 0; font-size:2rem;">Konsonan</th>`;
 
-    // Header vokal dengan warna (a, e, i, o, u)
+    // Header vokal dengan warna dan label yang sesuai
     for (const v of vowelOrder) {
-        const color = vowelColors[v];
-        html += `<th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem; color:${color};">${v}</th>`;
+        const label = (v === 'é') ? 'é' : v;
+        const color = colors[v];
+        html += `<th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem; color:${color};">${label}</th>`;
     }
 
     html += `</tr></thead><tbody>`;
 
-    // Warna latar belakang baris
     const rowColors = ['#fff0f0','#f0fff0','#f0f0ff','#fff5e0','#f5f0ff'];
     for (let i = 0; i < consonantOrder.length; i++) {
         const c = consonantOrder[i];
@@ -167,8 +184,8 @@ function renderSukuKataTable() {
         html += `<td style="padding:16px 8px; border:2px solid #d0d0d0; font-weight:bold; font-size:2.6rem; color:#4a1e3a; background:#ffffffdd;">${c}</td>`;
 
         for (const v of vowelOrder) {
-            const syl = c + v;
-            const color = vowelColors[v];
+            const syl = c + ((v === 'é') ? 'e' : v); // suku kata sentiasa tanpa diakritik
+            const color = colors[v];
             html += `<td style="padding:16px 8px; border:2px solid #d0d0d0; font-size:2.4rem; cursor:pointer; transition:0.15s; background:#ffffffcc; color:${color}; font-weight:bold;" 
                         class="syllable-cell" data-syl="${syl}"
                         onmouseover="this.style.background='#ffe6b0'" 
@@ -181,11 +198,12 @@ function renderSukuKataTable() {
 
     html += `</tbody></table></div>
         <p style="text-align:center; margin-top:14px; font-size:1.4rem; color:#7a6a6a;">👆 Klik pada mana-mana suku kata untuk lihat contoh perkataan, ayat & dengar sebutan.</p>
+        <p style="text-align:center; font-size:1.2rem; color:#7a6a6a;">🔊 Dua jenis 'e': <span style="color:#2ecc71;">e (taling)</span> dan <span style="color:#f1c40f;">é (pepet)</span></p>
     </div>`;
 
     container.innerHTML = html;
 
-    // ===== Event listener untuk setiap sel dalam jadual =====
+    // ===== Event listener untuk setiap sel =====
     document.querySelectorAll('.syllable-cell').forEach(cell => {
         cell.addEventListener('click', function() {
             const syl = this.dataset.syl;
