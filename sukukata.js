@@ -15,10 +15,10 @@ function renderSukuKataTable() {
                         <tr style="background:#6a1b4d; color:white; border-radius:20px 20px 0 0;">
                             <th style="padding:14px 8px; border:3px solid #4a1a3a; border-radius:20px 0 0 0; font-size:2rem;">Konsonan</th>
                             <th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem;">a</th>
-                            <th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem;">i</th>
-                            <th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem;">u</th>
                             <th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem;">e</th>
-                            <th style="padding:14px 8px; border:3px solid #4a1a3a; border-radius:0 20px 0 0; font-size:2rem;">o</th>
+                            <th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem;">i</th>
+                            <th style="padding:14px 8px; border:3px solid #4a1a3a; font-size:2rem;">o</th>
+                            <th style="padding:14px 8px; border:3px solid #4a1a3a; border-radius:0 20px 0 0; font-size:2rem;">u</th>
                         </tr>
                     </thead>
                     <tbody>`;
