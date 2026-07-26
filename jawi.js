@@ -1,5 +1,6 @@
 // ================================================================
-// jawi.js - Data + Logik Penuh Huruf Jawi & Arab
+// jawi.js - Data + Logik Penuh Jawi (Warna, Bunyi, Animasi, Popup)
+// Edit fail ini sahaja untuk sebarang perubahan.
 // ================================================================
 
 // ===== DATA HURUF (32 huruf) =====
@@ -40,20 +41,48 @@ const jawiData = [
     { char: 'ڠ', name: { ar: 'ڠَا', rumi: 'Nga' }, examples: [{ ar: 'نْجِيلُو', emoji: '🦷', iqra: 'nji-lu' }, { ar: 'نْجَارَڠ', emoji: '🍽️', iqra: 'nja-rang' }, { ar: 'نْجَاڠ', emoji: '👄', iqra: 'njang' }] }
 ];
 
-// ===== FUNGSI BUNYI (Text-to-Speech) =====
-function speakText(text, lang = 'ar-SA') {
+// ================================================================
+// FUNGSI BUNYI (Text-to-Speech) + Visualizer
+// ================================================================
+function speakText(text, lang = 'ar-SA', btnElement = null) {
     if (!window.speechSynthesis) {
         alert('Pelayar anda tidak sokong bunyi. Guna Chrome/Edge.');
         return;
     }
     window.speechSynthesis.cancel();
+
+    let waveBox = null;
+    if (btnElement) {
+        const wrapper = btnElement.closest('.audio-wrapper') || btnElement.parentElement;
+        if (wrapper) {
+            waveBox = wrapper.querySelector('.wave-box');
+        }
+        btnElement.classList.add('playing');
+        if (waveBox) waveBox.classList.add('active');
+    }
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
     utterance.rate = 0.85;
     utterance.pitch = 1.1;
+
     const voices = window.speechSynthesis.getVoices();
     const arabicVoice = voices.find(v => v.lang.startsWith('ar'));
     if (arabicVoice) utterance.voice = arabicVoice;
+
+    utterance.onend = function() {
+        if (btnElement) {
+            btnElement.classList.remove('playing');
+            if (waveBox) waveBox.classList.remove('active');
+        }
+    };
+    utterance.onerror = function() {
+        if (btnElement) {
+            btnElement.classList.remove('playing');
+            if (waveBox) waveBox.classList.remove('active');
+        }
+    };
+
     window.speechSynthesis.speak(utterance);
 }
 
@@ -65,13 +94,18 @@ if (window.speechSynthesis) {
     };
 }
 
-// ===== FUNGSI TUTUP POPUP =====
+// ================================================================
+// FUNGSI TUTUP POPUP
+// ================================================================
 function closeModal(event) {
     const overlay = event.currentTarget.closest('.modal-overlay') || document.querySelector('.modal-overlay');
     if (overlay) overlay.remove();
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
 }
 
-// ===== FUNGSI RENDER GRID =====
+// ================================================================
+// RENDER GRID JAWI
+// ================================================================
 function renderJawi() {
     const grid = document.getElementById('jawiGrid');
     if (!grid) {
@@ -92,36 +126,42 @@ function renderJawi() {
     jawiData.forEach((item, index) => {
         const bgColor = colors[index % colors.length];
         const firstExample = item.examples[0] || { ar: '', emoji: '🔤', iqra: '' };
+        const delay = (index % 10) * 0.12;
         html += `
-            <div class="jawi-card" data-char="${item.char}" style="background:${bgColor};">
+            <div class="jawi-card" data-char="${item.char}" style="background:${bgColor}; animation-delay: ${delay}s;">
                 <div class="jawi-char">${item.char}</div>
                 <div class="letter-name">${item.name.rumi}</div>
                 <div class="sample-word">${firstExample.ar || ''}</div>
-                <button class="audio-btn" data-letter="${item.char}" data-name="${item.name.rumi}" data-ar-name="${item.name.ar}" title="Dengar sebutan ${item.name.rumi}">🔊</button>
+                <div class="audio-wrapper">
+                    <button class="audio-btn" data-letter="${item.char}" data-name="${item.name.rumi}" data-ar-name="${item.name.ar}" title="Dengar sebutan ${item.name.rumi}">🔊</button>
+                    <div class="wave-box">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
                 <div class="click-hint">👆 klik kad</div>
             </div>
         `;
     });
     grid.innerHTML = html;
 
-    // Butang audio
+    // ----- Event: Butang audio -----
     document.querySelectorAll('.audio-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
             const rumiName = this.dataset.name;
-            speakText(rumiName, 'en-US');
+            speakText(rumiName, 'en-US', this);
             setTimeout(() => {
                 const arName = this.dataset.arName;
-                if (arName) speakText(arName, 'ar-SA');
-            }, 800);
+                if (arName) speakText(arName, 'ar-SA', this);
+            }, 700);
         });
     });
 
-    // Klik kad -> popup
+    // ----- Event: Klik kad -> Popup -----
     grid.addEventListener('click', function(e) {
         const card = e.target.closest('.jawi-card');
         if (!card) return;
-        if (e.target.closest('.audio-btn')) return;
+        if (e.target.closest('.audio-btn') || e.target.closest('.wave-box')) return;
 
         const char = card.dataset.char;
         const item = jawiData.find(d => d.char === char);
@@ -130,6 +170,8 @@ function renderJawi() {
             return;
         }
 
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+
         let modalHtml = `
             <div class="modal-overlay" onclick="closeModal(event)">
                 <div class="modal-content" onclick="event.stopPropagation();">
@@ -137,7 +179,7 @@ function renderJawi() {
                     <div class="modal-title">
                         <span class="big-char">${item.char}</span>
                         <span class="letter-name-big">${item.name.rumi}</span>
-                        <button class="audio-btn-sm" style="background:#f5c542;width:50px;height:50px;font-size:2rem;border:none;border-radius:50%;cursor:pointer;box-shadow:0 4px 0 #c77d1a;" onclick="speakText('${item.name.rumi}','en-US'); setTimeout(()=>speakText('${item.name.ar}','ar-SA'),700);">🔊</button>
+                        <button class="audio-btn-sm" onclick="speakText('${item.name.rumi}','en-US'); setTimeout(()=>speakText('${item.name.ar}','ar-SA'),700);">🔊</button>
                     </div>
                     <div class="example-grid">
         `;
@@ -163,5 +205,7 @@ function renderJawi() {
     });
 }
 
-// ===== JALANKAN RENDER SELEPAS MUAT =====
+// ================================================================
+// JALANKAN RENDER
+// ================================================================
 document.addEventListener('DOMContentLoaded', renderJawi);
