@@ -168,25 +168,6 @@ const fillBlankQuestions = [
 ];
 
 // ----- CERITA (dengan ikon) -----
-const shortStories = [
-    { icon: '🐱', title: 'Kucing dan Bola', text: 'Kucing suka <span class="highlight">bola</span>. Dia main <span class="highlight">bola</span> di <span class="highlight">rumah</span>. Bola itu <span class="highlight">merah</span> dan <span class="highlight">bulat</span>. Kucing <span class="highlight">gembira</span>.' },
-    { icon: '🚗', title: 'Kereta Baru', text: 'Ayah ada <span class="highlight">kereta</span> baru. <span class="highlight">Kereta</span> itu <span class="highlight">merah</span>. Kami <span class="highlight">pergi</span> ke <span class="highlight">sekolah</span> dengan <span class="highlight">kereta</span>. Saya <span class="highlight">suka</span> <span class="highlight">kereta</span>.' },
-    { icon: '🐶', title: 'Anjing Comel', text: 'Saya ada <span class="highlight">anjing</span> comel. <span class="highlight">Anjing</span> itu <span class="highlight">bermain</span> di <span class="highlight">taman</span>. Dia <span class="highlight">lari</span> dan <span class="highlight">lompat</span>. Saya <span class="highlight">sayang</span> <span class="highlight">anjing</span> saya.' },
-    { icon: '🍎', title: 'Buah-buahan', text: 'Saya suka <span class="highlight">epal</span> dan <span class="highlight">pisang</span>. <span class="highlight">Epal</span> merah dan <span class="highlight">pisang</span> kuning. Saya <span class="highlight">makan</span> buah setiap <span class="highlight">hari</span>. Buah <span class="highlight">sedap</span> dan <span class="highlight">sihat</span>.' },
-    { icon: '🐄', title: 'Haiwan di Ladang', text: 'Di ladang ada <span class="highlight">lembu</span> dan <span class="highlight">kambing</span>. <span class="highlight">Lembu</span> makan <span class="highlight">rumput</span>. <span class="highlight">Kambing</span> suka <span class="highlight">melompat</span>. Budak <span class="highlight">gembira</span> melihat <span class="highlight">haiwan</span>.' },
-    { icon: '🛝', title: 'Main di Taman', text: 'Saya <span class="highlight">main</span> di <span class="highlight">taman</span>. Saya <span class="highlight">bawa</span> <span class="highlight">bola</span>. Saya <span class="highlight">tendang</span> bola. Bola <span class="highlight">masuk</span> ke <span class="highlight">gawang</span>. Saya <span class="highlight">berlari</span> dan <span class="highlight">ketawa</span>.' },
-    { icon: '🏫', title: 'Pagi di Sekolah', text: 'Pagi ini <span class="highlight">cerah</span>. Saya <span class="highlight">bangun</span> awal. Saya <span class="highlight">makan</span> nasi. Saya <span class="highlight">pergi</span> ke sekolah. Saya <span class="highlight">belajar</span> dan <span class="highlight">bermain</span>.' },
-    { icon: '🐘', title: 'Gajah Besar', text: 'Saya lihat <span class="highlight">gajah</span> di zoo. <span class="highlight">Gajah</span> itu <span class="highlight">besar</span> dan <span class="highlight">kelabu</span>. Dia <span class="highlight">minum</span> air dengan <span class="highlight">belalai</span>. Saya <span class="highlight">kagum</span> dengan <span class="highlight">gajah</span>.' },
-    { icon: '🌺', title: 'Bunga di Taman', text: 'Di taman ada <span class="highlight">bunga</span> yang cantik. <span class="highlight">Bunga</span> itu <span class="highlight">merah</span> dan <span class="highlight">kuning</span>. Saya <span class="highlight">cium</span> <span class="highlight">bunga</span>. Harum <span class="highlight">sekali</span>. Saya <span class="highlight">gembira</span> melihat <span class="highlight">bunga</span>.' },
-    { icon: '🚲', title: 'Basikal Kecil', text: 'Kakak ada <span class="highlight">basikal</span> baru. <span class="highlight">Basikal</span> itu <span class="highlight">biru</span>. Kami <span class="highlight">kayuh</span> <span class="highlight">basikal</span> di <span class="highlight">taman</span>. Saya <span class="highlight">suka</span> <span class="highlight">basikal</span>.' },
-    { icon: '🏊', title: 'Renang di Kolam', text: 'Hari ini <span class="highlight">panas</span>. Saya <span class="highlight">pergi</span> ke kolam <span class="highlight">renang</span>. Saya <span class="highlight">berenang</span> dengan <span class="highlight">gembira</span>. Saya <span class="highlight">main</span> air dan <span class="highlight">ketawa</span>. Saya <span class="highlight">suka</span> <span class="highlight">renang</span>.' },
-    { icon: '🎨', title: 'Lukisan Saya', text: 'Saya <span class="highlight">lukis</span> gambar di <span class="highlight">sekolah</span>. Saya <span class="highlight">lukis</span> <span class="highlight">rumah</span> dan <span class="highlight">pokok</span>. <span class="highlight">Rumah</span> saya <span class="highlight">merah</span>. <span class="highlight">Pokok</span> saya <span class="highlight">hijau</span>. Guru <span class="highlight">puji</span> lukisan saya.' },
-    { icon: '🐒', title: 'Monyet Nakal', text: 'Di zoo ada <span class="highlight">monyet</span> nakal. <span class="highlight">Monyet</span> itu <span class="highlight">lompat</span> dari <span class="highlight">pokok</span>. Dia <span class="highlight">makan</span> <span class="highlight">pisang</span>. Saya <span class="highlight">ketawa</span> melihat <span class="highlight">monyet</span>.' },
-    { icon: '🚁', title: 'Helikopter', text: 'Ayah <span class="highlight">bawa</span> saya ke <span class="highlight">helikopter</span>. <span class="highlight">Helikopter</span> itu <span class="highlight">besar</span>. Kami <span class="highlight">terbang</span> tinggi di <span class="highlight">langit</span>. Saya <span class="highlight">takut</span> tetapi <span class="highlight">seronok</span>.' },
-    { icon: '🌙', title: 'Malam Bulan', text: 'Malam ini <span class="highlight">bulan</span> terang. Saya <span class="highlight">lihat</span> <span class="highlight">bintang</span> di <span class="highlight">langit</span>. <span class="highlight">Bulan</span> seperti <span class="highlight">pisang</span>. Saya <span class="highlight">tidur</span> sambil <span class="highlight">mimpi</span>.' },
-    { icon: '🧸', title: 'Mainan Saya', text: 'Saya ada banyak <span class="highlight">mainan</span>. Saya suka <span class="highlight">main</span> dengan <span class="highlight">bola</span> dan <span class="highlight">beruang</span>. Saya <span class="highlight">simpan</span> mainan di <span class="highlight">kotak</span>. Saya <span class="highlight">rapi</span> dan <span class="highlight">gembira</span>.' },
-    { icon: '🍕', title: 'Piza Sedap', text: 'Ibu <span class="highlight">buat</span> <span class="highlight">piza</span> untuk <span class="highlight">makan</span>. <span class="highlight">Piza</span> itu ada <span class="highlight">keju</span> dan <span class="highlight">sayur</span>. Saya <span class="highlight">makan</span> <span class="highlight">piza</span> dengan <span class="highlight">gembira</span>. Saya <span class="highlight">suka</span> <span class="highlight">piza</span>.' }
-];
 
 // ================================================================
 // 1. RENDER FILL IN THE BLANKS
@@ -336,51 +317,7 @@ const shortStories = [
     { icon: '🍕', title: 'Piza Sedap', text: 'Ibu <span class="highlight">buat</span> <span class="highlight">piza</span> untuk <span class="highlight">makan</span>. <span class="highlight">Piza</span> itu ada <span class="highlight">keju</span> dan <span class="highlight">sayur</span>. Saya <span class="highlight">makan</span> <span class="highlight">piza</span> dengan <span class="highlight">gembira</span>. Saya <span class="highlight">suka</span> <span class="highlight">piza</span>.' }
 ];
 
-// ----- Peta suku kata (untuk pewarnaan) -----
-const syllableMap = {
-    'gajah': ['ga','jah'], 'kucing': ['ku','cing'], 'anjing': ['an','jing'],
-    'ikan': ['i','kan'], 'burung': ['bu','rung'], 'kura': ['ku','ra'],
-    'singa': ['si','nga'], 'monyet': ['mo','nyet'], 'lembu': ['lem','bu'],
-    'kambing': ['kam','bing'], 'harimau': ['ha','ri','mau'], 'zebra': ['ze','bra'],
-    'rusa': ['ru','sa'], 'musang': ['mu','sang'], 'tupai': ['tu','pai'],
-    'arnab': ['ar','nab'], 'itik': ['i','tik'], 'ayam': ['a','yam'],
-    'ular': ['u','lar'], 'buaya': ['bu','a','ya'], 'mawar': ['ma','war'],
-    'melati': ['me','la','ti'], 'anggrek': ['ang','grek'], 'tulip': ['tu','lip'],
-    'kembang': ['kem','bang'], 'kereta': ['ke','re','ta'], 'motosikal': ['mo','to','si','kal'],
-    'basikal': ['ba','si','kal'], 'lori': ['lo','ri'], 'kapal': ['ka','pal'],
-    'helikopter': ['he','li','kop','ter'], 'makan': ['ma','kan'], 'minum': ['mi','num'],
-    'tidur': ['ti','dur'], 'lari': ['la','ri'], 'renang': ['re','nang'],
-    'baca': ['ba','ca'], 'tulis': ['tu','lis'], 'lukis': ['lu','kis'],
-    'nyanyi': ['nya','nyi'], 'tari': ['ta','ri'], 'main': ['ma','in'],
-    'lompat': ['lom','pat'], 'duduk': ['du','duk'], 'berdiri': ['ber','di','ri'],
-    'bangun': ['ba','ngun'], 'mandi': ['man','di'], 'basuh': ['ba','suh'],
-    'sapu': ['sa','pu'], 'masak': ['ma','sak'], 'jahit': ['ja','hit'],
-    'merah': ['me','rah'], 'biru': ['bi','ru'], 'hijau': ['hi','jau'],
-    'kuning': ['ku','ning'], 'ungu': ['un','gu'], 'oren': ['o','ren'],
-    'hitam': ['hi','tam'], 'putih': ['pu','tih'], 'perak': ['pe','rak'],
-    'emas': ['e','mas'], 'coklat': ['co','klat'], 'kelabu': ['ke','la','bu'],
-    'bulat': ['bu','lat'], 'segitiga': ['se','gi','ti','ga'], 'segiempat': ['se','gi','em','pat'],
-    'bujur': ['bu','jur'], 'sfera': ['sfe','ra'], 'kubus': ['ku','bus'],
-    'silinder': ['si','lin','der'], 'tinggi': ['ting','gi'], 'rendah': ['ren','dah'],
-    'panjang': ['pan','jang'], 'pendek': ['pen','dek'], 'lebar': ['le','bar'],
-    'sempit': ['sem','pit'], 'tebal': ['te','bal'], 'nipis': ['ni','pis']
-};
 
-function splitIntoSyllables(word) {
-    if (syllableMap[word]) return syllableMap[word];
-    const patterns = [
-        /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/,
-        /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/
-    ];
-    for (const pattern of patterns) {
-        const match = word.match(pattern);
-        if (match) {
-            const parts = match.slice(1).filter(p => p !== '');
-            if (parts.length >= 2) return parts;
-        }
-    }
-    return [word];
-}
 
 function colorizeHtmlText(htmlText) {
     const colorPalette = ['#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6', '#f39c12'];
