@@ -1,8 +1,8 @@
 // ================================================================
-// HURUF.JS – Data dan Render Alphabet (dengan contoh yang betul)
+// HURUF.JS – Data dan Render Alphabet (dengan bunyi setiap contoh)
 // ================================================================
 
-// ----- DATA ALPHABET (setiap huruf ada 4 EN + 4 MS, semua bermula dengan huruf tersebut) -----
+// ----- DATA ALPHABET -----
 const alphabetData = {
     A: { 
         en: ['Apple', 'Ant', 'Airplane', 'Alligator'], 
@@ -16,7 +16,7 @@ const alphabetData = {
     },
     C: { 
         en: ['Cat', 'Car', 'Cake', 'Cow'], 
-        ms: ['Cawan', 'Cili', 'Coklat', 'Cuka'],   // <-- dibetulkan!
+        ms: ['Cawan', 'Cili', 'Coklat', 'Cuka'],
         emoji: ['🐱', '🚗', '🎂', '🐄'] 
     },
     D: { 
@@ -31,7 +31,6 @@ const alphabetData = {
     },
     F: { 
         en: ['Fish', 'Flower', 'Fire', 'Fox'], 
-        ms: ['Ikan', 'Bunga', 'Api', 'Musang'], // (F) tiada banyak perkataan Melayu, kita guna 'Feri', 'Fesyen', 'Filem', 'Foto'
         ms: ['Feri', 'Fesyen', 'Filem', 'Foto'], 
         emoji: ['🐟', '🌸', '🔥', '🦊'] 
     },
@@ -167,18 +166,32 @@ function renderAlphabet() {
                 <div class="modal-examples">
                 <div style="background:#e8f0fe; border-radius:30px; padding:15px;">
                     <h3 style="font-size:1.6rem; color:#1a4a6a;">🇬🇧 English</h3>`;
+
+            // Setiap perkataan Inggeris dengan onclick
             for (const w of data.en) {
-                modalHtml += `<div class="example-item"><span class="en">${w}</span></div>`;
+                modalHtml += `<div class="example-item" onclick="speak('${w}','en-US')" style="cursor:pointer; transition:0.15s; background:#dce8f5;" 
+                                    onmouseover="this.style.background='#b0c8e8'" onmouseout="this.style.background='#dce8f5'">
+                                <span class="en">${w}</span> 
+                                <span style="font-size:1.2rem; color:#6a8aaa;">🔊</span>
+                            </div>`;
             }
+
             modalHtml += `</div>
                 <div style="background:#e8f5e8; border-radius:30px; padding:15px;">
                     <h3 style="font-size:1.6rem; color:#2a6a3a;">🇲🇾 Melayu</h3>`;
+
+            // Setiap perkataan Melayu dengan onclick
             for (const w of data.ms) {
-                modalHtml += `<div class="example-item"><span class="ms">${w}</span></div>`;
+                modalHtml += `<div class="example-item" onclick="speak('${w}','ms-MY')" style="cursor:pointer; transition:0.15s; background:#d4ecd4;" 
+                                    onmouseover="this.style.background='#a8d8a8'" onmouseout="this.style.background='#d4ecd4'">
+                                <span class="ms">${w}</span> 
+                                <span style="font-size:1.2rem; color:#3a7a3a;">🔊</span>
+                            </div>`;
             }
+
             modalHtml += `</div></div>`;
 
-            // Butang dengar
+            // Butang dengar (untuk keseluruhan bahasa) – tambahan
             modalHtml += `<div style="text-align:center; margin-top:15px;">
                 <button onclick="speak('${data.en[0]}','en-US')" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:8px 20px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive; margin:4px;">🔊 English</button>
                 <button onclick="speak('${data.ms[0]}','ms-MY')" style="background:#2a6a3a; color:white; border:none; border-radius:40px; padding:8px 20px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive; margin:4px;">🔊 Melayu</button>
@@ -188,5 +201,3 @@ function renderAlphabet() {
         });
     });
 }
-
-// NOTA: Fungsi ini akan dipanggil dari index.html dalam DOMContentLoaded
