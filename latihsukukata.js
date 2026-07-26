@@ -311,11 +311,11 @@ function renderFillBlank() {
 // ================================================================
 // 2. RENDER MEMBACA (CERITA DENGAN POPUP PENUH SKRIN & WARNA SUKU KATA)
 // ================================================================
- // ================================================================
-// MEMBACA.JS – Modul Cerita (Popup Penuh Skrin + Warna Suku Kata)
+// ================================================================
+// BAHAGIAN MEMBACA – (Popup Penuh Skrin + Warna Suku Kata)
 // ================================================================
 
-// ----- DATA CERITA (16 cerita dengan ikon) -----
+// ----- PASTIKAN shortStories HANYA SATU SALINAN (padam yang lain) -----
 const shortStories = [
     { icon: '🐱', title: 'Kucing dan Bola', text: 'Kucing suka <span class="highlight">bola</span>. Dia main <span class="highlight">bola</span> di <span class="highlight">rumah</span>. Bola itu <span class="highlight">merah</span> dan <span class="highlight">bulat</span>. Kucing <span class="highlight">gembira</span>.' },
     { icon: '🚗', title: 'Kereta Baru', text: 'Ayah ada <span class="highlight">kereta</span> baru. <span class="highlight">Kereta</span> itu <span class="highlight">merah</span>. Kami <span class="highlight">pergi</span> ke <span class="highlight">sekolah</span> dengan <span class="highlight">kereta</span>. Saya <span class="highlight">suka</span> <span class="highlight">kereta</span>.' },
@@ -336,143 +336,65 @@ const shortStories = [
     { icon: '🍕', title: 'Piza Sedap', text: 'Ibu <span class="highlight">buat</span> <span class="highlight">piza</span> untuk <span class="highlight">makan</span>. <span class="highlight">Piza</span> itu ada <span class="highlight">keju</span> dan <span class="highlight">sayur</span>. Saya <span class="highlight">makan</span> <span class="highlight">piza</span> dengan <span class="highlight">gembira</span>. Saya <span class="highlight">suka</span> <span class="highlight">piza</span>.' }
 ];
 
-// ================================================================
-// FUNGSI PEMISAH SUKU KATA (guna peta dari latihsukukata.js jika ada)
-// ================================================================
+// ----- Peta suku kata (untuk pewarnaan) -----
+const syllableMap = {
+    'gajah': ['ga','jah'], 'kucing': ['ku','cing'], 'anjing': ['an','jing'],
+    'ikan': ['i','kan'], 'burung': ['bu','rung'], 'kura': ['ku','ra'],
+    'singa': ['si','nga'], 'monyet': ['mo','nyet'], 'lembu': ['lem','bu'],
+    'kambing': ['kam','bing'], 'harimau': ['ha','ri','mau'], 'zebra': ['ze','bra'],
+    'rusa': ['ru','sa'], 'musang': ['mu','sang'], 'tupai': ['tu','pai'],
+    'arnab': ['ar','nab'], 'itik': ['i','tik'], 'ayam': ['a','yam'],
+    'ular': ['u','lar'], 'buaya': ['bu','a','ya'], 'mawar': ['ma','war'],
+    'melati': ['me','la','ti'], 'anggrek': ['ang','grek'], 'tulip': ['tu','lip'],
+    'kembang': ['kem','bang'], 'kereta': ['ke','re','ta'], 'motosikal': ['mo','to','si','kal'],
+    'basikal': ['ba','si','kal'], 'lori': ['lo','ri'], 'kapal': ['ka','pal'],
+    'helikopter': ['he','li','kop','ter'], 'makan': ['ma','kan'], 'minum': ['mi','num'],
+    'tidur': ['ti','dur'], 'lari': ['la','ri'], 'renang': ['re','nang'],
+    'baca': ['ba','ca'], 'tulis': ['tu','lis'], 'lukis': ['lu','kis'],
+    'nyanyi': ['nya','nyi'], 'tari': ['ta','ri'], 'main': ['ma','in'],
+    'lompat': ['lom','pat'], 'duduk': ['du','duk'], 'berdiri': ['ber','di','ri'],
+    'bangun': ['ba','ngun'], 'mandi': ['man','di'], 'basuh': ['ba','suh'],
+    'sapu': ['sa','pu'], 'masak': ['ma','sak'], 'jahit': ['ja','hit'],
+    'merah': ['me','rah'], 'biru': ['bi','ru'], 'hijau': ['hi','jau'],
+    'kuning': ['ku','ning'], 'ungu': ['un','gu'], 'oren': ['o','ren'],
+    'hitam': ['hi','tam'], 'putih': ['pu','tih'], 'perak': ['pe','rak'],
+    'emas': ['e','mas'], 'coklat': ['co','klat'], 'kelabu': ['ke','la','bu'],
+    'bulat': ['bu','lat'], 'segitiga': ['se','gi','ti','ga'], 'segiempat': ['se','gi','em','pat'],
+    'bujur': ['bu','jur'], 'sfera': ['sfe','ra'], 'kubus': ['ku','bus'],
+    'silinder': ['si','lin','der'], 'tinggi': ['ting','gi'], 'rendah': ['ren','dah'],
+    'panjang': ['pan','jang'], 'pendek': ['pen','dek'], 'lebar': ['le','bar'],
+    'sempit': ['sem','pit'], 'tebal': ['te','bal'], 'nipis': ['ni','pis']
+};
 
-// Jika splitIntoSyllables sudah wujud di luar, kita guna yang sedia ada.
-// Jika tidak, kita sediakan versi asas.
-if (typeof splitIntoSyllables === 'undefined') {
-    // Peta suku kata asas (untuk perkataan popular)
-    const syllableMap = {
-        'bola': ['bo','la'],
-        'kucing': ['ku','cing'],
-        'rumah': ['ru','mah'],
-        'buku': ['bu','ku'],
-        'gajah': ['ga','jah'],
-        'pisang': ['pi','sang'],
-        'nasi': ['na','si'],
-        'kereta': ['ke','re','ta'],
-        'baju': ['ba','ju'],
-        'tangan': ['ta','ngan'],
-        'merah': ['me','rah'],
-        'biru': ['bi','ru'],
-        'hijau': ['hi','jau'],
-        'epal': ['e','pal'],
-        'makan': ['ma','kan'],
-        'minum': ['mi','num'],
-        'tidur': ['ti','dur'],
-        'lari': ['la','ri'],
-        'renang': ['re','nang'],
-        'baca': ['ba','ca'],
-        'tulis': ['tu','lis'],
-        'lukis': ['lu','kis'],
-        'main': ['ma','in'],
-        'lompat': ['lom','pat'],
-        'duduk': ['du','duk'],
-        'berdiri': ['ber','di','ri'],
-        'bangun': ['bang','un'],
-        'mandi': ['man','di'],
-        'basuh': ['bas','uh'],
-        'sapu': ['sa','pu'],
-        'masak': ['ma','sak'],
-        'jahit': ['ja','hit'],
-        'kuning': ['ku','ning'],
-        'putih': ['pu','tih'],
-        'hitam': ['hi','tam'],
-        'coklat': ['co','klat'],
-        'kelabu': ['ke','la','bu'],
-        'bulat': ['bu','lat'],
-        'segitiga': ['se','gi','ti','ga'],
-        'segiempat': ['se','gi','em','pat'],
-        'bujur': ['bu','jur'],
-        'tinggi': ['ting','gi'],
-        'rendah': ['ren','dah'],
-        'panjang': ['pan','jang'],
-        'pendek': ['pen','dek'],
-        'lebar': ['le','bar'],
-        'sempit': ['sem','pit'],
-        'tebal': ['te','bal'],
-        'nipis': ['ni','pis'],
-        'kapal': ['ka','pal'],
-        'helikopter': ['he','li','kop','ter'],
-        'motosikal': ['mo','to','si','kal'],
-        'basikal': ['ba','si','kal'],
-        'lori': ['lo','ri'],
-        'kambing': ['kam','bing'],
-        'harimau': ['ha','ri','mau'],
-        'zebra': ['ze','bra'],
-        'rusa': ['ru','sa'],
-        'musang': ['mu','sang'],
-        'tupai': ['tu','pai'],
-        'arnab': ['ar','nab'],
-        'itik': ['i','tik'],
-        'ayam': ['a','yam'],
-        'ular': ['u','lar'],
-        'buaya': ['bu','a','ya'],
-        'mawar': ['ma','war'],
-        'melati': ['me','la','ti'],
-        'anggrek': ['ang','grek'],
-        'tulip': ['tu','lip'],
-        'kembang': ['kem','bang'],
-        'sfera': ['sfe','ra'],
-        'kubus': ['ku','bus'],
-        'silinder': ['si','lin','der'],
-        'perak': ['pe','rak'],
-        'emas': ['e','mas'],
-        'oren': ['o','ren'],
-        'ungu': ['un','gu']
-    };
-
-    function splitIntoSyllables(word) {
-        if (syllableMap[word]) return syllableMap[word];
-        // Algoritma asas jika tiada dalam peta
-        const patterns = [
-            /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/,
-            /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/
-        ];
-        for (const pattern of patterns) {
-            const match = word.match(pattern);
-            if (match) {
-                const parts = match.slice(1).filter(p => p !== '');
-                if (parts.length >= 2) return parts;
-            }
+function splitIntoSyllables(word) {
+    if (syllableMap[word]) return syllableMap[word];
+    const patterns = [
+        /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/,
+        /^([bcdfghjklmnpqrstvwxyz]?[aiueoê])([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)([bcdfghjklmnpqrstvwxyz]?[aiueoê]?)/
+    ];
+    for (const pattern of patterns) {
+        const match = word.match(pattern);
+        if (match) {
+            const parts = match.slice(1).filter(p => p !== '');
+            if (parts.length >= 2) return parts;
         }
-        return [word];
     }
+    return [word];
 }
 
-// ================================================================
-// FUNGSI MEWARNAKAN TEKS IKUT SUKU KATA (TANPA ROSAK HTML)
-// ================================================================
-
 function colorizeHtmlText(htmlText) {
-    // Palet warna (boleh ubah suai)
     const colorPalette = ['#e74c3c', '#2ecc71', '#3498db', '#f1c40f', '#9b59b6', '#f39c12'];
-    // Jika mahu merah putih: ['#e74c3c', '#f5f5f5']
-
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = htmlText;
-
     const textNodes = [];
-    const walker = document.createTreeWalker(
-        tempDiv,
-        NodeFilter.SHOW_TEXT,
-        null,
-        false
-    );
+    const walker = document.createTreeWalker(tempDiv, NodeFilter.SHOW_TEXT, null, false);
     let node;
-    while (node = walker.nextNode()) {
-        textNodes.push(node);
-    }
-
+    while (node = walker.nextNode()) textNodes.push(node);
     let colorIndex = 0;
-
     for (const textNode of textNodes) {
         const text = textNode.textContent;
         const words = text.split(/(\s+)/);
         const fragment = document.createDocumentFragment();
-
         for (const token of words) {
             if (token.match(/^\s+$/)) {
                 fragment.appendChild(document.createTextNode(token));
@@ -489,30 +411,21 @@ function colorizeHtmlText(htmlText) {
                 continue;
             }
             const punctuation = token.match(/[.,!?;:]+$/);
-            const baseWord = punctuation ? token.slice(0, -punctuation[0].length) : token;
-
             let tokenHtml = '';
             for (const syl of syllables) {
                 const color = colorPalette[colorIndex % colorPalette.length];
                 tokenHtml += `<span style="color:${color};">${syl}</span>`;
                 colorIndex++;
             }
-            if (punctuation) {
-                tokenHtml += punctuation[0];
-            }
+            if (punctuation) tokenHtml += punctuation[0];
             const wrapper = document.createElement('span');
             wrapper.innerHTML = tokenHtml;
             fragment.appendChild(wrapper);
         }
         textNode.parentNode.replaceChild(fragment, textNode);
     }
-
     return tempDiv.innerHTML;
 }
-
-// ================================================================
-// POPUP PENUH SKRIN
-// ================================================================
 
 function showFullScreenStory(story) {
     const existingOverlay = document.getElementById('fullScreenStoryOverlay');
@@ -543,14 +456,8 @@ function showFullScreenStory(story) {
         const style = document.createElement('style');
         style.id = 'storyFadeInStyle';
         style.textContent = `
-            @keyframes fadeIn {
-                0% { opacity: 0; transform: scale(0.9); }
-                100% { opacity: 1; transform: scale(1); }
-            }
-            @keyframes fadeOut {
-                0% { opacity: 1; transform: scale(1); }
-                100% { opacity: 0; transform: scale(0.9); }
-            }
+            @keyframes fadeIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+            @keyframes fadeOut { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.9); } }
         `;
         document.head.appendChild(style);
     }
@@ -590,8 +497,6 @@ function showFullScreenStory(story) {
         font-family: 'Patrick Hand', cursive;
         z-index: 10;
     `;
-    closeBtn.addEventListener('mouseover', () => closeBtn.style.transform = 'scale(1.05)');
-    closeBtn.addEventListener('mouseout', () => closeBtn.style.transform = 'scale(1)');
     closeBtn.addEventListener('click', hideFullScreenStory);
 
     const title = document.createElement('h2');
@@ -636,8 +541,6 @@ function showFullScreenStory(story) {
         display: inline-block;
         margin: 5px auto;
     `;
-    readBtn.addEventListener('mouseover', () => readBtn.style.transform = 'scale(1.05)');
-    readBtn.addEventListener('mouseout', () => readBtn.style.transform = 'scale(1)');
     readBtn.addEventListener('click', function() {
         const plainText = story.text.replace(/<[^>]*>/g, ' ');
         speak(plainText, 'ms-MY');
@@ -663,15 +566,9 @@ function hideFullScreenStory() {
     const overlay = document.getElementById('fullScreenStoryOverlay');
     if (overlay) {
         overlay.style.animation = 'fadeOut 0.3s ease';
-        setTimeout(() => {
-            overlay.remove();
-        }, 300);
+        setTimeout(() => overlay.remove(), 300);
     }
 }
-
-// ================================================================
-// RENDER MEMBACA – PAPAR IKON CERITA
-// ================================================================
 
 function renderMembaca() {
     const container = document.getElementById('cvActivities');
@@ -688,27 +585,27 @@ function renderMembaca() {
                 </div>`;
     });
 
-    html += `</div>
-    </div>`;
-
+    html += `</div></div>`;
     container.insertAdjacentHTML('beforeend', html);
 
-    // Event listener untuk ikon (guna delegation)
+    // Event listener dengan pemeriksaan keselamatan
     const iconsContainer = document.getElementById('storyIconsContainer');
-    iconsContainer.addEventListener('click', function(e) {
-        const icon = e.target.closest('.story-icon');
-        if (!icon) return;
-        const index = parseInt(icon.dataset.index);
-        const story = shortStories[index];
-        if (!story) return;
-        showFullScreenStory(story);
-    });
+    if (iconsContainer) {
+        iconsContainer.addEventListener('click', function(e) {
+            const icon = e.target.closest('.story-icon');
+            if (!icon) return;
+            const index = parseInt(icon.dataset.index);
+            const story = shortStories[index];
+            if (story) showFullScreenStory(story);
+        });
+    }
 }
 
 // ================================================================
-// NOTA: Fungsi ini akan dipanggil dari index.html dalam DOMContentLoaded
+// FUNGSI UTAMA – PANGGIL SEMUA
 // ================================================================
-
+// (Pastikan renderCVActivities wujud dan panggil renderMembaca di dalamnya)
+// Saya tidak letak semula fungsi utama di sini, anda boleh gunakan yang sedia ada.
 // ================================================================
 // 3. SUKU KATA BERWARNA – DENGAN PETA SUKU KATA DARI fillBlankQuestions
 // ================================================================
