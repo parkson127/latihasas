@@ -170,10 +170,7 @@ const fillBlankQuestions = [
 // ----- CERITA (dengan ikon) -----
 
 // ================================================================
-// 1. RENDER FILL IN THE BLANKS
-// ================================================================
-// ================================================================
-// 1. RENDER FILL IN THE BLANKS – DENGAN PAGINATION (4 SOALAN SEHALAMAN)
+// 1. RENDER FILL IN THE BLANKS (VERSI BAHARU – 4 PILIHAN, SATU SOALAN PADA SATU MASA)
 // ================================================================
 
 function renderFillBlank() {
@@ -181,113 +178,208 @@ function renderFillBlank() {
     if (!container) return;
 
     const seed = getDateSeed();
-    const TOTAL_QUESTIONS = 20;       // Jumlah soalan sehari
-    const PER_PAGE = 4;              // Soalan setiap halaman
+    const TOTAL_QUESTIONS = 20;
 
     // Pilih 20 soalan rawak
     const shuffled = shuffleArray(fillBlankQuestions, seed);
     const selectedFill = shuffled.slice(0, TOTAL_QUESTIONS);
 
-    // Bahagikan kepada halaman (setiap halaman 4 soalan)
-    const pages = [];
-    for (let i = 0; i < selectedFill.length; i += PER_PAGE) {
-        pages.push(selectedFill.slice(i, i + PER_PAGE));
+    let currentIndex = 0;
+    let attempts = 0;        // 0 = belum cuba, 1 = salah sekali, 2 = salah dua kali (game over)
+    let isAnswered = false;  // true jika betul
+    let selectedQuestions = selectedFill; // simpan
+
+    // Fungsi untuk menghasilkan pilihan jawapan (satu betul + 3 distractor)
+    function generateOptions(correctAnswer) {
+        // Kumpulkan semua missing yang mungkin dari bank soalan (unik)
+        const allMissing = [...new Set(fillBlankQuestions.map(q => q.missing))];
+        // Tapis supaya tidak sama dengan correctAnswer
+        let distractors = allMissing.filter(m => m !== correctAnswer);
+        // Kocok dan ambil 3
+        const shuffledDist = shuffleArray(distractors, getDateSeed() + 1);
+        const selectedDist = shuffledDist.slice(0, 3);
+        // Gabungkan dengan correct dan kocok
+        let options = [correctAnswer, ...selectedDist];
+        // Jika ada kurang daripada 4, tambah dengan '?' (tapi sepatutnya cukup)
+        while (options.length < 4) {
+            options.push('?');
+        }
+        return shuffleArray(options, getDateSeed() + 2);
     }
 
-    let currentPage = 0;
-    const totalPages = pages.length;
-
-    // Fungsi untuk memaparkan halaman tertentu
-    function renderPage(pageIndex) {
-        const pageQuestions = pages[pageIndex];
-        if (!pageQuestions) return;
-
-        // Cari atau cipta container untuk halaman
-        let pageContainer = document.getElementById('fillBlankPageContainer');
-        if (!pageContainer) {
-            pageContainer = document.createElement('div');
-            pageContainer.id = 'fillBlankPageContainer';
-            // Letakkan di dalam bahagian fill blank (kita akan bina semula)
-            // Kita akan gantikan keseluruhan bahagian fill blank
+    // Fungsi untuk memaparkan soalan semasa
+    function renderQuestion(index) {
+        const q = selectedQuestions[index];
+        if (!q) {
+            // Tamat semua soalan
+            container.innerHTML = `<div class="cv-activity-card"><h3>🎉 Tahniah! Anda telah selesai semua soalan!</h3></div>`;
+            return;
         }
 
-        // Bina HTML untuk halaman ini
+        // Reset state untuk soalan baru
+        attempts = 0;
+        isAnswered = false;
+
+        // Hasilkan pilihan
+        const options = generateOptions(q.missing);
+
+        // Bina HTML
         let html = `<div class="cv-activity-card" id="fillBlankSection">
-            <h3>✏️ Isi Tempat Kosong (Halaman ${pageIndex+1} daripada ${totalPages})</h3>
-            <p style="font-size:1.2rem; color:#5a6a5a;">Tulis <strong>suku kata</strong> yang hilang.</p>`;
+            <h3>✏️ Isi Tempat Kosong (${index+1}/${selectedQuestions.length})</h3>
+            <div style="text-align:center; margin:20px 0;">
+                <div style="font-size:4rem;">${q.image}</div>
+                <div style="font-size:2.8rem; font-weight:bold; margin:15px 0;">${q.display}</div>
+                <p style="font-size:1.2rem; color:#5a6a5a;">Pilih suku kata yang betul untuk melengkapkan perkataan.</p>
+            </div>
+            <div id="optionsContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; max-width:400px; margin:0 auto;">`;
 
-        for (const q of pageQuestions) {
-            html += `<div style="margin:15px 0; font-size:1.8rem; display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;">
-                <span style="font-size:3.2rem;">${q.image}</span>
-                <span style="font-weight:bold;">${q.display}</span>
-                <input type="text" class="answer-input" data-answer="${q.missing}" placeholder="?" style="width:140px; font-size:1.8rem; border-radius:40px; border:3px solid #b8c8b8; padding:6px 14px; text-align:center; font-family:'Patrick Hand',cursive;">
-                <button class="check-fill" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:6px 20px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">Semak</button>
-                <span class="fill-feedback" style="margin-left:8px; font-size:1.4rem;"></span>
-            </div>`;
-        }
+        // Butang pilihan
+        options.forEach((opt, idx) => {
+            html += `<button class="option-btn" data-value="${opt}" data-idx="${idx}" style="
+                background:#f0f4f8; 
+                border:4px solid #b8c8d8; 
+                border-radius:40px; 
+                padding:18px 10px; 
+                font-size:2.4rem; 
+                cursor:pointer; 
+                font-family:'Patrick Hand',cursive; 
+                transition:0.15s;
+                box-shadow: 0 6px 0 #b0c0d0;
+                color:#1a3a5a;
+            ">${opt}</button>`;
+        });
 
-        // Butang navigasi
-        html += `<div style="display:flex; justify-content:center; gap:15px; margin-top:20px;">`;
-        if (pageIndex > 0) {
-            html += `<button class="page-nav-btn" data-direction="prev" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:8px 24px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">⬅️ Sebelum</button>`;
-        }
-        if (pageIndex < totalPages - 1) {
-            html += `<button class="page-nav-btn" data-direction="next" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:8px 24px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive;">Seterusnya ➡️</button>`;
-        }
         html += `</div>`;
-        html += `<p style="margin-top:10px; font-size:1rem; color:#7a6a6a;">Soalan ${pageIndex*PER_PAGE+1} – ${Math.min((pageIndex+1)*PER_PAGE, TOTAL_QUESTIONS)} daripada ${TOTAL_QUESTIONS}</p>`;
+
+        // Feedback area
+        html += `<div id="feedbackArea" style="margin:20px 0; min-height:80px; text-align:center; font-size:2rem;"></div>`;
+
+        // Butang Seterusnya (disembunyi dahulu)
+        html += `<div id="nextButtonContainer" style="text-align:center; display:none;">
+            <button id="nextQuestionBtn" style="background:#2a6a3a; color:white; border:none; border-radius:60px; padding:12px 40px; font-size:1.8rem; cursor:pointer; font-family:'Patrick Hand',cursive; box-shadow:0 4px 0 #1a4a2a;">➡️ Seterusnya</button>
+        </div>`;
+
         html += `</div>`;
 
-        // Gantikan kandungan container fill blank (jika ada, atau tambah baru)
-        // Kita akan letakkan dalam container utama, tetapi kita akan gantikan bahagian fill blank sahaja.
-        // Cara mudah: cari div dengan id 'fillBlankSection', jika ada, gantikan innerHTML.
+        // Gantikan kandungan container (atau tambah)
         let existingSection = document.getElementById('fillBlankSection');
         if (existingSection) {
             existingSection.outerHTML = html;
         } else {
-            // Jika tiada, tambah di hujung container
             container.insertAdjacentHTML('beforeend', html);
         }
 
-        // Pasang semula event listener untuk butang "Semak" pada halaman ini
-        document.querySelectorAll('#fillBlankSection .check-fill').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const parent = this.parentElement;
-                const input = parent.querySelector('.answer-input');
-                const feedback = parent.querySelector('.fill-feedback');
-                const user = input.value.trim().toLowerCase();
-                const correct = input.dataset.answer.toLowerCase();
+        // ---- Event listeners untuk pilihan ----
+        const optionButtons = document.querySelectorAll('#fillBlankSection .option-btn');
+        const feedbackArea = document.getElementById('feedbackArea');
+        const nextContainer = document.getElementById('nextButtonContainer');
 
-                if (user === correct) {
-                    feedback.textContent = '✅ Betul!';
-                    feedback.style.color = 'green';
-                    const fullWord = fillBlankQuestions.find(q => q.missing === correct)?.word || '';
-                    if (fullWord) speak(fullWord, 'ms-MY');
+        // Simpan status untuk soalan ini
+        let attemptCount = 0;
+        let answered = false;
+
+        // Fungsi untuk melumpuhkan semua pilihan
+        function disableOptions() {
+            optionButtons.forEach(btn => btn.disabled = true);
+        }
+
+        // Fungsi untuk menandakan pilihan yang betul (hijau)
+        function highlightCorrect() {
+            optionButtons.forEach(btn => {
+                if (btn.dataset.value === q.missing) {
+                    btn.style.background = '#a8e6cf';
+                    btn.style.borderColor = '#2ecc71';
+                    btn.style.boxShadow = '0 0 0 4px #2ecc71';
+                }
+            });
+        }
+
+        // Fungsi untuk menandakan pilihan yang salah (merah)
+        function markWrong(btn) {
+            btn.style.background = '#f8d7da';
+            btn.style.borderColor = '#e74c3c';
+            btn.style.boxShadow = '0 0 0 4px #e74c3c';
+        }
+
+        // Event listener untuk setiap pilihan
+        optionButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (answered) return; // sudah selesai
+                if (this.disabled) return;
+
+                const selectedValue = this.dataset.value;
+                const isCorrect = (selectedValue === q.missing);
+
+                if (isCorrect) {
+                    // BETUL
+                    answered = true;
+                    disableOptions();
+                    // Tandakan hijau pada pilihan yang betul (termasuk butang yang diklik)
+                    highlightCorrect();
+                    // Feedback
+                    feedbackArea.innerHTML = `<span style="color:#2ecc71;">✅ Betul! 🎉</span>`;
+                    // Animasi bintang (tambahan)
+                    feedbackArea.innerHTML += `<div style="font-size:3rem; animation: spin 1s infinite;">🌟⭐🌟</div>`;
+                    // Tambah keyframes jika belum ada
+                    if (!document.getElementById('starSpinStyle')) {
+                        const style = document.createElement('style');
+                        style.id = 'starSpinStyle';
+                        style.textContent = `
+                            @keyframes spin {
+                                0% { transform: rotate(0deg) scale(1); }
+                                50% { transform: rotate(180deg) scale(1.5); }
+                                100% { transform: rotate(360deg) scale(1); }
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    }
+                    // Tunjukkan butang Seterusnya
+                    nextContainer.style.display = 'block';
+                    // Baca perkataan penuh
+                    speak(q.word, 'ms-MY');
                 } else {
-                    feedback.textContent = `❌ Cuba lagi. (Petunjuk: ${correct})`;
-                    feedback.style.color = 'red';
+                    // SALAH
+                    attemptCount++;
+                    // Tandakan pilihan yang salah
+                    markWrong(this);
+                    // Kurangkan skor atau beri maklum balas
+                    if (attemptCount === 1) {
+                        // Percubaan pertama salah
+                        feedbackArea.innerHTML = `<span style="color:#e74c3c;">❌ Salah! Cuba lagi.</span>`;
+                        // Butang masih aktif, kecuali yang sudah diklik (kita disable yang salah)
+                        this.disabled = true;
+                    } else if (attemptCount === 2) {
+                        // Percubaan kedua salah -> tunjukkan jawapan betul
+                        answered = true;
+                        disableOptions();
+                        highlightCorrect();
+                        feedbackArea.innerHTML = `<span style="color:#e74c3c;">❌ Jawapan yang betul: <strong>${q.missing}</strong></span>`;
+                        nextContainer.style.display = 'block';
+                    }
                 }
             });
         });
 
-        // Pasang event listener untuk butang navigasi
-        document.querySelectorAll('#fillBlankSection .page-nav-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const direction = this.dataset.direction;
-                if (direction === 'next' && currentPage < totalPages - 1) {
-                    currentPage++;
-                    renderPage(currentPage);
-                } else if (direction === 'prev' && currentPage > 0) {
-                    currentPage--;
-                    renderPage(currentPage);
+        // Event listener untuk butang Seterusnya
+        const nextBtn = document.getElementById('nextQuestionBtn');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                // Pergi ke soalan seterusnya
+                if (currentIndex < selectedQuestions.length - 1) {
+                    currentIndex++;
+                    renderQuestion(currentIndex);
+                } else {
+                    // Tamat
+                    container.innerHTML = `<div class="cv-activity-card"><h3>🎉 Tahniah! Anda telah selesai semua 20 soalan!</h3></div>`;
                 }
             });
-        });
+        }
     }
 
-    // Mula dengan halaman pertama
-    renderPage(0);
+    // Mula dengan soalan pertama
+    renderQuestion(0);
 }
+        
 
 // ================================================================
 // 2. RENDER MEMBACA (CERITA DENGAN POPUP PENUH SKRIN & WARNA SUKU KATA)
