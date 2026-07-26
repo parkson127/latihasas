@@ -168,9 +168,8 @@ const fillBlankQuestions = [
 ];
 
 // ----- CERITA (dengan ikon) -----
-
 // ================================================================
-// 1. RENDER FILL IN THE BLANKS (VERSI BAHARU – 4 PILIHAN, SATU SOALAN PADA SATU MASA)
+// 1. RENDER FILL IN THE BLANKS (TANPA LABEL A/B/C/D, PILIHAN RAWAK)
 // ================================================================
 
 function renderFillBlank() {
@@ -180,88 +179,66 @@ function renderFillBlank() {
     const seed = getDateSeed();
     const TOTAL_QUESTIONS = 20;
 
-    // Pilih 20 soalan rawak
     const shuffled = shuffleArray(fillBlankQuestions, seed);
-    const selectedFill = shuffled.slice(0, TOTAL_QUESTIONS);
+    const selectedQuestions = shuffled.slice(0, TOTAL_QUESTIONS);
 
     let currentIndex = 0;
-    let attempts = 0;        // 0 = belum cuba, 1 = salah sekali, 2 = salah dua kali (game over)
-    let isAnswered = false;  // true jika betul
-    let selectedQuestions = selectedFill; // simpan
 
-    // Fungsi untuk menghasilkan pilihan jawapan (satu betul + 3 distractor)
     function generateOptions(correctAnswer) {
-        // Kumpulkan semua missing yang mungkin dari bank soalan (unik)
         const allMissing = [...new Set(fillBlankQuestions.map(q => q.missing))];
-        // Tapis supaya tidak sama dengan correctAnswer
         let distractors = allMissing.filter(m => m !== correctAnswer);
-        // Kocok dan ambil 3
         const shuffledDist = shuffleArray(distractors, getDateSeed() + 1);
         const selectedDist = shuffledDist.slice(0, 3);
-        // Gabungkan dengan correct dan kocok
         let options = [correctAnswer, ...selectedDist];
-        // Jika ada kurang daripada 4, tambah dengan '?' (tapi sepatutnya cukup)
-        while (options.length < 4) {
-            options.push('?');
-        }
+        while (options.length < 4) options.push('?');
         return shuffleArray(options, getDateSeed() + 2);
     }
 
-    // Fungsi untuk memaparkan soalan semasa
     function renderQuestion(index) {
-        const q = selectedQuestions[index];
-        if (!q) {
-            // Tamat semua soalan
-            container.innerHTML = `<div class="cv-activity-card"><h3>🎉 Tahniah! Anda telah selesai semua soalan!</h3></div>`;
+        if (index >= selectedQuestions.length) {
+            showCompletionPopup();
             return;
         }
 
-        // Reset state untuk soalan baru
-        attempts = 0;
-        isAnswered = false;
-
-        // Hasilkan pilihan
+        const q = selectedQuestions[index];
+        let attempts = 0;
+        let answered = false;
         const options = generateOptions(q.missing);
 
-        // Bina HTML
         let html = `<div class="cv-activity-card" id="fillBlankSection">
             <h3>✏️ Isi Tempat Kosong (${index+1}/${selectedQuestions.length})</h3>
             <div style="text-align:center; margin:20px 0;">
                 <div style="font-size:4rem;">${q.image}</div>
                 <div style="font-size:2.8rem; font-weight:bold; margin:15px 0;">${q.display}</div>
-                <p style="font-size:1.2rem; color:#5a6a5a;">Pilih suku kata yang betul untuk melengkapkan perkataan.</p>
+                <p style="font-size:1.2rem; color:#5a6a5a;">Pilih jawapan yang betul.</p>
             </div>
-            <div id="optionsContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; max-width:400px; margin:0 auto;">`;
+            <div id="optionsContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; max-width:500px; margin:0 auto;">`;
 
-        // Butang pilihan
-        options.forEach((opt, idx) => {
-            html += `<button class="option-btn" data-value="${opt}" data-idx="${idx}" style="
+        // Tiada label A/B/C/D
+        options.forEach((opt) => {
+            html += `<button class="option-btn" data-value="${opt}" style="
                 background:#f0f4f8; 
                 border:4px solid #b8c8d8; 
                 border-radius:40px; 
                 padding:18px 10px; 
-                font-size:2.4rem; 
+                font-size:2rem; 
                 cursor:pointer; 
                 font-family:'Patrick Hand',cursive; 
                 transition:0.15s;
                 box-shadow: 0 6px 0 #b0c0d0;
                 color:#1a3a5a;
+                text-align:center;
+                width:100%;
             ">${opt}</button>`;
         });
 
-        html += `</div>`;
-
-        // Feedback area
-        html += `<div id="feedbackArea" style="margin:20px 0; min-height:80px; text-align:center; font-size:2rem;"></div>`;
-
-        // Butang Seterusnya (disembunyi dahulu)
-        html += `<div id="nextButtonContainer" style="text-align:center; display:none;">
-            <button id="nextQuestionBtn" style="background:#2a6a3a; color:white; border:none; border-radius:60px; padding:12px 40px; font-size:1.8rem; cursor:pointer; font-family:'Patrick Hand',cursive; box-shadow:0 4px 0 #1a4a2a;">➡️ Seterusnya</button>
+        html += `</div>
+            <div id="feedbackArea" style="margin:20px 0; min-height:80px; text-align:center; font-size:2rem;"></div>
+            <div id="nextButtonContainer" style="text-align:center; display:none;">
+                <button id="nextQuestionBtn" style="background:#2a6a3a; color:white; border:none; border-radius:60px; padding:12px 40px; font-size:1.8rem; cursor:pointer; font-family:'Patrick Hand',cursive; box-shadow:0 4px 0 #1a4a2a;">➡️ Seterusnya</button>
+            </div>
         </div>`;
 
-        html += `</div>`;
-
-        // Gantikan kandungan container (atau tambah)
         let existingSection = document.getElementById('fillBlankSection');
         if (existingSection) {
             existingSection.outerHTML = html;
@@ -269,21 +246,11 @@ function renderFillBlank() {
             container.insertAdjacentHTML('beforeend', html);
         }
 
-        // ---- Event listeners untuk pilihan ----
         const optionButtons = document.querySelectorAll('#fillBlankSection .option-btn');
         const feedbackArea = document.getElementById('feedbackArea');
         const nextContainer = document.getElementById('nextButtonContainer');
 
-        // Simpan status untuk soalan ini
-        let attemptCount = 0;
-        let answered = false;
-
-        // Fungsi untuk melumpuhkan semua pilihan
-        function disableOptions() {
-            optionButtons.forEach(btn => btn.disabled = true);
-        }
-
-        // Fungsi untuk menandakan pilihan yang betul (hijau)
+        function disableOptions() { optionButtons.forEach(btn => btn.disabled = true); }
         function highlightCorrect() {
             optionButtons.forEach(btn => {
                 if (btn.dataset.value === q.missing) {
@@ -293,63 +260,36 @@ function renderFillBlank() {
                 }
             });
         }
-
-        // Fungsi untuk menandakan pilihan yang salah (merah)
         function markWrong(btn) {
             btn.style.background = '#f8d7da';
             btn.style.borderColor = '#e74c3c';
             btn.style.boxShadow = '0 0 0 4px #e74c3c';
         }
 
-        // Event listener untuk setiap pilihan
         optionButtons.forEach(btn => {
             btn.addEventListener('click', function() {
-                if (answered) return; // sudah selesai
-                if (this.disabled) return;
-
-                const selectedValue = this.dataset.value;
-                const isCorrect = (selectedValue === q.missing);
-
+                if (answered || this.disabled) return;
+                const isCorrect = (this.dataset.value === q.missing);
                 if (isCorrect) {
-                    // BETUL
                     answered = true;
                     disableOptions();
-                    // Tandakan hijau pada pilihan yang betul (termasuk butang yang diklik)
                     highlightCorrect();
-                    // Feedback
-                    feedbackArea.innerHTML = `<span style="color:#2ecc71;">✅ Betul! 🎉</span>`;
-                    // Animasi bintang (tambahan)
-                    feedbackArea.innerHTML += `<div style="font-size:3rem; animation: spin 1s infinite;">🌟⭐🌟</div>`;
-                    // Tambah keyframes jika belum ada
+                    feedbackArea.innerHTML = `<span style="color:#2ecc71;">✅ Betul! 🎉</span><div style="font-size:3rem; animation: spin 1s infinite;">🌟⭐🌟</div>`;
                     if (!document.getElementById('starSpinStyle')) {
                         const style = document.createElement('style');
                         style.id = 'starSpinStyle';
-                        style.textContent = `
-                            @keyframes spin {
-                                0% { transform: rotate(0deg) scale(1); }
-                                50% { transform: rotate(180deg) scale(1.5); }
-                                100% { transform: rotate(360deg) scale(1); }
-                            }
-                        `;
+                        style.textContent = `@keyframes spin { 0%{transform:rotate(0deg) scale(1);} 50%{transform:rotate(180deg) scale(1.5);} 100%{transform:rotate(360deg) scale(1);} }`;
                         document.head.appendChild(style);
                     }
-                    // Tunjukkan butang Seterusnya
                     nextContainer.style.display = 'block';
-                    // Baca perkataan penuh
                     speak(q.word, 'ms-MY');
                 } else {
-                    // SALAH
-                    attemptCount++;
-                    // Tandakan pilihan yang salah
+                    attempts++;
                     markWrong(this);
-                    // Kurangkan skor atau beri maklum balas
-                    if (attemptCount === 1) {
-                        // Percubaan pertama salah
+                    if (attempts === 1) {
                         feedbackArea.innerHTML = `<span style="color:#e74c3c;">❌ Salah! Cuba lagi.</span>`;
-                        // Butang masih aktif, kecuali yang sudah diklik (kita disable yang salah)
                         this.disabled = true;
-                    } else if (attemptCount === 2) {
-                        // Percubaan kedua salah -> tunjukkan jawapan betul
+                    } else if (attempts === 2) {
                         answered = true;
                         disableOptions();
                         highlightCorrect();
@@ -360,26 +300,43 @@ function renderFillBlank() {
             });
         });
 
-        // Event listener untuk butang Seterusnya
         const nextBtn = document.getElementById('nextQuestionBtn');
         if (nextBtn) {
             nextBtn.addEventListener('click', function() {
-                // Pergi ke soalan seterusnya
-                if (currentIndex < selectedQuestions.length - 1) {
-                    currentIndex++;
-                    renderQuestion(currentIndex);
-                } else {
-                    // Tamat
-                    container.innerHTML = `<div class="cv-activity-card"><h3>🎉 Tahniah! Anda telah selesai semua 20 soalan!</h3></div>`;
-                }
+                currentIndex++;
+                renderQuestion(currentIndex);
             });
         }
     }
 
-    // Mula dengan soalan pertama
+    function showCompletionPopup() {
+        container.innerHTML = '';
+        const popup = document.createElement('div');
+        popup.style.cssText = `position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(4px); animation:fadeIn 0.5s ease;`;
+        const popupContent = document.createElement('div');
+        popupContent.style.cssText = `background:#fffdf8; max-width:500px; width:90%; border-radius:60px; padding:40px 30px; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,0.3); border:6px solid #f7d4e8; animation:fadeIn 0.5s ease; font-family:'Patrick Hand', cursive;`;
+        popupContent.innerHTML = `
+            <div style="font-size:4rem;">🎉</div>
+            <h2 style="font-size:2.8rem; color:#4a1e3a; margin:10px 0;">Anda telah selesai!</h2>
+            <p style="font-size:1.6rem; color:#5a4a5a;">Anda telah menjawab <strong>20 soalan</strong>.</p>
+            <p style="font-size:1.4rem; color:#7a6a6a;">Sedia untuk aktiviti seterusnya?</p>
+            <div style="margin-top:25px;">
+                <button id="goToMembacaBtn" style="background:#2a6a3a; color:white; border:none; border-radius:60px; padding:14px 40px; font-size:1.8rem; cursor:pointer; font-family:'Patrick Hand',cursive; box-shadow:0 4px 0 #1a4a2a;">📖 Teruskan ke Membaca</button>
+            </div>
+        `;
+        popup.appendChild(popupContent);
+        document.body.appendChild(popup);
+        document.getElementById('goToMembacaBtn').addEventListener('click', function() {
+            popup.remove();
+            const container = document.getElementById('cvActivities');
+            if (container) container.innerHTML = '';
+            renderMembaca();
+        });
+    }
+
     renderQuestion(0);
 }
-        
+
 
 // ================================================================
 // 2. RENDER MEMBACA (CERITA DENGAN POPUP PENUH SKRIN & WARNA SUKU KATA)
