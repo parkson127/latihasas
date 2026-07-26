@@ -1,37 +1,150 @@
-// ===== ALPHABET DATA =====
-// Setiap huruf ada 4 Inggeris, 4 Melayu, dan 4 emoji unik
+// ================================================================
+// HURUF.JS – Data dan Render Alphabet (dengan contoh yang betul)
+// ================================================================
+
+// ----- DATA ALPHABET (setiap huruf ada 4 EN + 4 MS, semua bermula dengan huruf tersebut) -----
 const alphabetData = {
-    A: { en: ['Apple','Ant','Airplane','Alligator'], ms: ['Api','Angsa','Awan','Alpukat'], emoji: ['🍎','🐜','✈️','🐊'] },
-    B: { en: ['Ball','Banana','Bird','Boat'], ms: ['Bola','Pisang','Burung','Bot'], emoji: ['⚽','🍌','🐦','🚤'] },
-    C: { en: ['Cat','Car','Cake','Cow'], ms: ['Kucing','Kereta','Kek','Lembu'], emoji: ['🐱','🚗','🎂','🐄'] },
-    D: { en: ['Dog','Dolphin','Door','Duck'], ms: ['Anjing','Lumba-lumba','Pintu','Itik'], emoji: ['🐶','🐬','🚪','🦆'] },
-    E: { en: ['Elephant','Egg','Eye','Eagle'], ms: ['Gajah','Telur','Mata','Helang'], emoji: ['🐘','🥚','👁️','🦅'] },
-    F: { en: ['Fish','Flower','Fire','Fox'], ms: ['Ikan','Bunga','Api','Musang'], emoji: ['🐟','🌸','🔥','🦊'] },
-    G: { en: ['Guitar','Giraffe','Grape','Goat'], ms: ['Gitar','Zirafah','Anggur','Kambing'], emoji: ['🎸','🦒','🍇','🐐'] },
-    H: { en: ['House','Horse','Honey','Hippo'], ms: ['Rumah','Kuda','Madu','Badak'], emoji: ['🏠','🐴','🍯','🦛'] },
-    I: { en: ['Ice cream','Island','Iguana','Ice'], ms: ['Ais krim','Pulau','Biawak','Ais'], emoji: ['🍦','🏝️','🦎','🧊'] },
-    J: { en: ['Juice','Jellyfish','Jacket','Jam'], ms: ['Jus','Ubur-ubur','Jaket','Jem'], emoji: ['🧃','🪼','🧥','🍓'] },
-    K: { en: ['Kite','Koala','Key','King'], ms: ['Layang-layang','Koala','Kunci','Raja'], emoji: ['🪁','🐨','🔑','👑'] },
-    L: { en: ['Lion','Lemon','Ladybug','Moon'], ms: ['Singa','Lemon','Kumbang','Bulan'], emoji: ['🦁','🍋','🐞','🌙'] },
-    M: { en: ['Monkey','Mushroom','Car','Mouse'], ms: ['Monyet','Cendawan','Kereta','Tikus'], emoji: ['🐒','🍄','🚗','🐭'] },
-    N: { en: ['Nest','Nut','Owl','Needle'], ms: ['Sarang','Kacang','Burung hantu','Jarum'], emoji: ['🪹','🥜','🦉','🧵'] },
-    O: { en: ['Octopus','Orange','Owl','Ball'], ms: ['Sotong','Oren','Burung hantu','Bola'], emoji: ['🐙','🍊','🦉','⚽'] },
-    P: { en: ['Penguin','Pizza','Parrot','Pencil'], ms: ['Penguin','Pizza','Bebek','Pensil'], emoji: ['🐧','🍕','🦜','✏️'] },
-    Q: { en: ['Queen','Quail','Question','Quilt'], ms: ['Ratu','Burung puyuh','Soalan','Selimut'], emoji: ['👑','🐦','❓','🧵'] },
-    R: { en: ['Rabbit','Rainbow','Rocket','Rat'], ms: ['Arnab','Pelangi','Roket','Tikus'], emoji: ['🐇','🌈','🚀','🐀'] },
-    S: { en: ['Snake','Star','Sea','Sun'], ms: ['Ular','Bintang','Laut','Matahari'], emoji: ['🐍','⭐','🌊','☀️'] },
-    T: { en: ['Tiger','Tomato','Train','Tree'], ms: ['Harimau','Tomato','Kereta api','Pokok'], emoji: ['🐯','🍅','🚂','🌳'] },
-    U: { en: ['Umbrella','Unicorn','Up','Utensil'], ms: ['Payung','Unikorn','Naik','Alat makan'], emoji: ['☂️','🦄','⬆️','🍴'] },
-    V: { en: ['Volleyball','Violin','Volcano','Van'], ms: ['Bola tampar','Biola','Gunung berapi','Van'], emoji: ['🏐','🎻','🌋','🚐'] },
-    W: { en: ['Whale','Water','Wagon','Watermelon'], ms: ['Paus','Air','Kereta kuda','Tembikai'], emoji: ['🐳','💧','🛒','🍉'] },
-    X: { en: ['X-ray','Xylophone','Xenops','Xerus'], ms: ['X-ray','Gambang','Burung xenops','Tupai'], emoji: ['🩻','🎷','🐦','🐿️'] },
-    Y: { en: ['Yarn','Yellow','Yogurt','Yak'], ms: ['Benang','Kuning','Yogurt','Yak'], emoji: ['🧶','🟡','🥛','🐂'] },
-    Z: { en: ['Zebra','Zigzag','Zipper','Zoo'], ms: ['Zebra','Zig-zag','Zip','Zoo'], emoji: ['🦓','〰️','🤐','🏞️'] }
+    A: { 
+        en: ['Apple', 'Ant', 'Airplane', 'Alligator'], 
+        ms: ['Api', 'Angsa', 'Awan', 'Arnab'], 
+        emoji: ['🍎', '🐜', '✈️', '🐊'] 
+    },
+    B: { 
+        en: ['Ball', 'Banana', 'Bird', 'Boat'], 
+        ms: ['Bola', 'Betik', 'Burung', 'Bot'], 
+        emoji: ['⚽', '🍌', '🐦', '🚤'] 
+    },
+    C: { 
+        en: ['Cat', 'Car', 'Cake', 'Cow'], 
+        ms: ['Cawan', 'Cili', 'Coklat', 'Cuka'],   // <-- dibetulkan!
+        emoji: ['🐱', '🚗', '🎂', '🐄'] 
+    },
+    D: { 
+        en: ['Dog', 'Dolphin', 'Door', 'Duck'], 
+        ms: ['Dapur', 'Dewan', 'Dinding', 'Dompet'], 
+        emoji: ['🐶', '🐬', '🚪', '🦆'] 
+    },
+    E: { 
+        en: ['Elephant', 'Egg', 'Eye', 'Eagle'], 
+        ms: ['Epal', 'Emas', 'Ekor', 'Enjin'], 
+        emoji: ['🐘', '🥚', '👁️', '🦅'] 
+    },
+    F: { 
+        en: ['Fish', 'Flower', 'Fire', 'Fox'], 
+        ms: ['Ikan', 'Bunga', 'Api', 'Musang'], // (F) tiada banyak perkataan Melayu, kita guna 'Feri', 'Fesyen', 'Filem', 'Foto'
+        ms: ['Feri', 'Fesyen', 'Filem', 'Foto'], 
+        emoji: ['🐟', '🌸', '🔥', '🦊'] 
+    },
+    G: { 
+        en: ['Guitar', 'Giraffe', 'Grape', 'Goat'], 
+        ms: ['Gajah', 'Gelas', 'Gigi', 'Gula'], 
+        emoji: ['🎸', '🦒', '🍇', '🐐'] 
+    },
+    H: { 
+        en: ['House', 'Horse', 'Honey', 'Hippo'], 
+        ms: ['Hari', 'Hujan', 'Hati', 'Helang'], 
+        emoji: ['🏠', '🐴', '🍯', '🦛'] 
+    },
+    I: { 
+        en: ['Ice cream', 'Island', 'Iguana', 'Ice'], 
+        ms: ['Ikan', 'Itik', 'Ikat', 'Ibu'], 
+        emoji: ['🍦', '🏝️', '🦎', '🧊'] 
+    },
+    J: { 
+        en: ['Juice', 'Jellyfish', 'Jacket', 'Jam'], 
+        ms: ['Jus', 'Jala', 'Jaket', 'Jem'], 
+        emoji: ['🧃', '🪼', '🧥', '🍓'] 
+    },
+    K: { 
+        en: ['Kite', 'Koala', 'Key', 'King'], 
+        ms: ['Kucing', 'Kereta', 'Kek', 'Kambing'], 
+        emoji: ['🪁', '🐨', '🔑', '👑'] 
+    },
+    L: { 
+        en: ['Lion', 'Lemon', 'Ladybug', 'Lamp'], 
+        ms: ['Lembu', 'Lilin', 'Lampu', 'Lapan'], 
+        emoji: ['🦁', '🍋', '🐞', '💡'] 
+    },
+    M: { 
+        en: ['Monkey', 'Mushroom', 'Moon', 'Mouse'], 
+        ms: ['Monyet', 'Mata', 'Makan', 'Minum'], 
+        emoji: ['🐒', '🍄', '🌙', '🐭'] 
+    },
+    N: { 
+        en: ['Nest', 'Nut', 'Needle', 'Nose'], 
+        ms: ['Nasi', 'Nombor', 'Nenek', 'Naga'], 
+        emoji: ['🪹', '🥜', '🧵', '👃'] 
+    },
+    O: { 
+        en: ['Octopus', 'Orange', 'Owl', 'Oven'], 
+        ms: ['Oren', 'Otot', 'Ombak', 'Orang'], 
+        emoji: ['🐙', '🍊', '🦉', '🔥'] 
+    },
+    P: { 
+        en: ['Penguin', 'Pizza', 'Parrot', 'Pencil'], 
+        ms: ['Pisang', 'Pensil', 'Pagi', 'Pintu'], 
+        emoji: ['🐧', '🍕', '🦜', '✏️'] 
+    },
+    Q: { 
+        en: ['Queen', 'Quail', 'Question', 'Quilt'], 
+        ms: ['Qari', 'Qasidah', 'Qiam', 'Quran'], 
+        emoji: ['👑', '🐦', '❓', '🧵'] 
+    },
+    R: { 
+        en: ['Rabbit', 'Rainbow', 'Rocket', 'Rat'], 
+        ms: ['Rumah', 'Renang', 'Roti', 'Rusa'], 
+        emoji: ['🐇', '🌈', '🚀', '🐀'] 
+    },
+    S: { 
+        en: ['Snake', 'Star', 'Sun', 'Ship'], 
+        ms: ['Sukan', 'Sekolah', 'Sikat', 'Sapu'], 
+        emoji: ['🐍', '⭐', '☀️', '⛵'] 
+    },
+    T: { 
+        en: ['Tiger', 'Tomato', 'Train', 'Tree'], 
+        ms: ['Tangan', 'Telur', 'Tikus', 'Tulang'], 
+        emoji: ['🐯', '🍅', '🚂', '🌳'] 
+    },
+    U: { 
+        en: ['Umbrella', 'Unicorn', 'Up', 'Utensil'], 
+        ms: ['Ular', 'Ubi', 'Udang', 'Ujung'], 
+        emoji: ['☂️', '🦄', '⬆️', '🍴'] 
+    },
+    V: { 
+        en: ['Volleyball', 'Violin', 'Volcano', 'Van'], 
+        ms: ['Vaksin', 'Van', 'Vila', 'Vokal'], 
+        emoji: ['🏐', '🎻', '🌋', '🚐'] 
+    },
+    W: { 
+        en: ['Whale', 'Watermelon', 'Wagon', 'Worm'], 
+        ms: ['Warna', 'Wang', 'Wajah', 'Wira'], 
+        emoji: ['🐳', '🍉', '🛒', '🐛'] 
+    },
+    X: { 
+        en: ['X-ray', 'Xylophone', 'Xenops', 'Xerus'], 
+        ms: ['X-ray', 'Xilem', 'Xilofon', 'Xenia'], 
+        emoji: ['🩻', '🎷', '🐦', '🐿️'] 
+    },
+    Y: { 
+        en: ['Yarn', 'Yellow', 'Yogurt', 'Yak'], 
+        ms: ['Yakin', 'Yatim', 'Yoyo', 'Yuran'], 
+        emoji: ['🧶', '🟡', '🥛', '🐂'] 
+    },
+    Z: { 
+        en: ['Zebra', 'Zigzag', 'Zipper', 'Zoo'], 
+        ms: ['Zaman', 'Zip', 'Ziarah', 'Zon'], 
+        emoji: ['🦓', '〰️', '🤐', '🏞️'] 
+    }
 };
 
-// ===== RENDER =====
+// ================================================================
+// RENDER ALPHABET
+// ================================================================
+
 function renderAlphabet() {
     const grid = document.getElementById('alphabetGrid');
+    if (!grid) return;
+
     let html = '';
     for (const [letter, data] of Object.entries(alphabetData)) {
         const emojis = data.emoji.join('');
@@ -43,24 +156,37 @@ function renderAlphabet() {
     }
     grid.innerHTML = html;
 
+    // Event listener untuk setiap kad
     document.querySelectorAll('#alphabetGrid .card').forEach(card => {
         card.addEventListener('click', function() {
             const letter = this.dataset.letter;
             const data = alphabetData[letter];
             if (!data) return;
-            let html = `<div class="modal-title">🔤 Huruf ${letter}</div>
+
+            let modalHtml = `<div class="modal-title">🔤 Huruf ${letter}</div>
                 <div class="modal-examples">
-                <div style="background:#e8f0fe;border-radius:30px;padding:15px;"><h3 style="font-size:1.6rem;color:#1a4a6a;">🇬🇧 English</h3>`;
-            for (const w of data.en) html += `<div class="example-item"><span class="en">${w}</span></div>`;
-            html += `</div><div style="background:#e8f5e8;border-radius:30px;padding:15px;"><h3 style="font-size:1.6rem;color:#2a6a3a;">🇲🇾 Melayu</h3>`;
-            for (const w of data.ms) html += `<div class="example-item"><span class="ms">${w}</span></div>`;
-            html += `</div></div>`;
-            // Tambah butang dengar
-            html += `<div style="text-align:center;margin-top:15px;">
-                <button onclick="speak('${data.en[0]}','en-US')" style="background:#6a1b4d;color:white;border:none;border-radius:40px;padding:8px 20px;font-size:1.2rem;cursor:pointer;font-family:'Patrick Hand',cursive;margin:4px;">🔊 English</button>
-                <button onclick="speak('${data.ms[0]}','ms-MY')" style="background:#2a6a3a;color:white;border:none;border-radius:40px;padding:8px 20px;font-size:1.2rem;cursor:pointer;font-family:'Patrick Hand',cursive;margin:4px;">🔊 Melayu</button>
+                <div style="background:#e8f0fe; border-radius:30px; padding:15px;">
+                    <h3 style="font-size:1.6rem; color:#1a4a6a;">🇬🇧 English</h3>`;
+            for (const w of data.en) {
+                modalHtml += `<div class="example-item"><span class="en">${w}</span></div>`;
+            }
+            modalHtml += `</div>
+                <div style="background:#e8f5e8; border-radius:30px; padding:15px;">
+                    <h3 style="font-size:1.6rem; color:#2a6a3a;">🇲🇾 Melayu</h3>`;
+            for (const w of data.ms) {
+                modalHtml += `<div class="example-item"><span class="ms">${w}</span></div>`;
+            }
+            modalHtml += `</div></div>`;
+
+            // Butang dengar
+            modalHtml += `<div style="text-align:center; margin-top:15px;">
+                <button onclick="speak('${data.en[0]}','en-US')" style="background:#6a1b4d; color:white; border:none; border-radius:40px; padding:8px 20px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive; margin:4px;">🔊 English</button>
+                <button onclick="speak('${data.ms[0]}','ms-MY')" style="background:#2a6a3a; color:white; border:none; border-radius:40px; padding:8px 20px; font-size:1.2rem; cursor:pointer; font-family:'Patrick Hand',cursive; margin:4px;">🔊 Melayu</button>
             </div>`;
-            openModal(html);
+
+            openModal(modalHtml);
         });
     });
 }
+
+// NOTA: Fungsi ini akan dipanggil dari index.html dalam DOMContentLoaded
