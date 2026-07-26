@@ -169,7 +169,7 @@ const fillBlankQuestions = [
 
 // ----- CERITA (dengan ikon) -----
 // ================================================================
-// 1. RENDER FILL IN THE BLANKS (TANPA LABEL A/B/C/D, PILIHAN RAWAK)
+// 1. RENDER FILL IN THE BLANKS (VERSI BAHARU – DENGAN RINGKASAN JAWAPAN)
 // ================================================================
 
 function renderFillBlank() {
@@ -179,31 +179,46 @@ function renderFillBlank() {
     const seed = getDateSeed();
     const TOTAL_QUESTIONS = 20;
 
+    // Pilih 20 soalan rawak
     const shuffled = shuffleArray(fillBlankQuestions, seed);
     const selectedQuestions = shuffled.slice(0, TOTAL_QUESTIONS);
 
+    // Simpan rekod jawapan pengguna
+    let userRecords = []; // setiap elemen: { question, selected, correct, attempts, answered }
+
     let currentIndex = 0;
 
-    function generateOptions(correctAnswer) {
+    // Fungsi untuk menghasilkan pilihan jawapan (rawak)
+    function generateOptions(correctAnswer, questionIndex) {
         const allMissing = [...new Set(fillBlankQuestions.map(q => q.missing))];
         let distractors = allMissing.filter(m => m !== correctAnswer);
-        const shuffledDist = shuffleArray(distractors, getDateSeed() + 1);
+        // Kocok distraktor dengan benih berbeza untuk setiap soalan
+        const shuffledDist = shuffleArray(distractors, seed + 100 + questionIndex);
         const selectedDist = shuffledDist.slice(0, 3);
         let options = [correctAnswer, ...selectedDist];
+        // Jika kurang daripada 4, tambah '?' (tapi sepatutnya cukup)
         while (options.length < 4) options.push('?');
-        return shuffleArray(options, getDateSeed() + 2);
+        // Kocok pilihan dengan benih berbeza lagi
+        return shuffleArray(options, seed + 200 + questionIndex);
     }
 
+    // Fungsi untuk memaparkan soalan semasa
     function renderQuestion(index) {
+        // Jika sudah melepasi soalan terakhir, paparkan ringkasan
         if (index >= selectedQuestions.length) {
-            showCompletionPopup();
+            showSummary();
             return;
         }
 
         const q = selectedQuestions[index];
+        // Init rekod jika belum ada
+        if (!userRecords[index]) {
+            userRecords[index] = { question: q, selected: null, correct: null, attempts: 0, answered: false };
+        }
+
         let attempts = 0;
         let answered = false;
-        const options = generateOptions(q.missing);
+        const options = generateOptions(q.missing, index);
 
         let html = `<div class="cv-activity-card" id="fillBlankSection">
             <h3>✏️ Isi Tempat Kosong (${index+1}/${selectedQuestions.length})</h3>
@@ -214,7 +229,6 @@ function renderFillBlank() {
             </div>
             <div id="optionsContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; max-width:500px; margin:0 auto;">`;
 
-        // Tiada label A/B/C/D
         options.forEach((opt) => {
             html += `<button class="option-btn" data-value="${opt}" style="
                 background:#f0f4f8; 
@@ -266,10 +280,17 @@ function renderFillBlank() {
             btn.style.boxShadow = '0 0 0 4px #e74c3c';
         }
 
+        // Event listener untuk setiap pilihan
         optionButtons.forEach(btn => {
             btn.addEventListener('click', function() {
                 if (answered || this.disabled) return;
                 const isCorrect = (this.dataset.value === q.missing);
+                // Simpan rekod
+                const record = userRecords[index];
+                record.selected = this.dataset.value;
+                record.correct = isCorrect;
+                record.attempts++;
+
                 if (isCorrect) {
                     answered = true;
                     disableOptions();
@@ -284,60 +305,91 @@ function renderFillBlank() {
                     nextContainer.style.display = 'block';
                     speak(q.word, 'ms-MY');
                 } else {
-                    attempts++;
                     markWrong(this);
-                    if (attempts === 1) {
+                    if (record.attempts === 1) {
                         feedbackArea.innerHTML = `<span style="color:#e74c3c;">❌ Salah! Cuba lagi.</span>`;
                         this.disabled = true;
-                    } else if (attempts === 2) {
+                    } else if (record.attempts === 2) {
                         answered = true;
                         disableOptions();
                         highlightCorrect();
                         feedbackArea.innerHTML = `<span style="color:#e74c3c;">❌ Jawapan yang betul: <strong>${q.missing}</strong></span>`;
                         nextContainer.style.display = 'block';
+                        // Rekodkan bahawa pengguna telah nampak jawapan
+                        record.correct = false; // tetap salah
                     }
                 }
             });
         });
 
+        // Event listener untuk butang Seterusnya
         const nextBtn = document.getElementById('nextQuestionBtn');
         if (nextBtn) {
             nextBtn.addEventListener('click', function() {
+                // Simpan rekod bahawa soalan ini telah selesai (answered)
+                userRecords[index].answered = true;
+                // Seterusnya
                 currentIndex++;
                 renderQuestion(currentIndex);
             });
         }
     }
 
-    function showCompletionPopup() {
+    // ===== FUNGSI UNTUK PAPAR RINGKASAN =====
+    function showSummary() {
+        // Kosongkan container
         container.innerHTML = '';
-        const popup = document.createElement('div');
-        popup.style.cssText = `position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(4px); animation:fadeIn 0.5s ease;`;
-        const popupContent = document.createElement('div');
-        popupContent.style.cssText = `background:#fffdf8; max-width:500px; width:90%; border-radius:60px; padding:40px 30px; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,0.3); border:6px solid #f7d4e8; animation:fadeIn 0.5s ease; font-family:'Patrick Hand', cursive;`;
-        popupContent.innerHTML = `
-            <div style="font-size:4rem;">🎉</div>
-            <h2 style="font-size:2.8rem; color:#4a1e3a; margin:10px 0;">Anda telah selesai!</h2>
-            <p style="font-size:1.6rem; color:#5a4a5a;">Anda telah menjawab <strong>20 soalan</strong>.</p>
-            <p style="font-size:1.4rem; color:#7a6a6a;">Sedia untuk aktiviti seterusnya?</p>
-            <div style="margin-top:25px;">
-                <button id="goToMembacaBtn" style="background:#2a6a3a; color:white; border:none; border-radius:60px; padding:14px 40px; font-size:1.8rem; cursor:pointer; font-family:'Patrick Hand',cursive; box-shadow:0 4px 0 #1a4a2a;">📖 Teruskan ke Membaca</button>
+
+        let correctCount = userRecords.filter(r => r.correct === true).length;
+        let wrongCount = userRecords.filter(r => r.correct === false).length;
+
+        let html = `<div class="cv-activity-card" style="background:#f5faff; border:4px solid #b8d8e8;">
+            <h3>📊 Ringkasan Jawapan Anda</h3>
+            <p style="font-size:1.4rem; margin:5px 0;">
+                ✅ Betul: <strong style="color:#2ecc71;">${correctCount}</strong> &nbsp;|&nbsp; 
+                ❌ Salah: <strong style="color:#e74c3c;">${wrongCount}</strong>
+            </p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px;">`;
+
+        userRecords.forEach((record, idx) => {
+            const q = record.question;
+            const status = record.correct === true ? '✅' : (record.correct === false ? '❌' : '⏳');
+            const color = record.correct === true ? '#2ecc71' : (record.correct === false ? '#e74c3c' : '#f39c12');
+            const userAns = record.selected || 'Tidak dijawab';
+            const correctAns = q.missing;
+            html += `<div style="background:#fff; border-radius:30px; padding:15px; border:2px solid ${color};">
+                <div style="display:flex; align-items:center; gap:8px; font-size:1.6rem;">
+                    <span>${q.image}</span>
+                    <span>${q.display}</span>
+                </div>
+                <div style="font-size:1.2rem; margin-top:5px;">
+                    <span>Jawapan anda: <strong>${userAns}</strong></span><br>
+                    <span>Jawapan betul: <strong>${correctAns}</strong></span><br>
+                    <span style="color:${color}; font-weight:bold;">${status} ${record.correct === true ? 'Betul' : (record.correct === false ? 'Salah' : '')}</span>
+                </div>
+            </div>`;
+        });
+
+        html += `</div>
+            <div style="text-align:center; margin-top:25px;">
+                <button id="goToMembacaFromSummary" style="background:#2a6a3a; color:white; border:none; border-radius:60px; padding:14px 40px; font-size:1.8rem; cursor:pointer; font-family:'Patrick Hand',cursive; box-shadow:0 4px 0 #1a4a2a;">📖 Teruskan ke Membaca</button>
             </div>
-        `;
-        popup.appendChild(popupContent);
-        document.body.appendChild(popup);
-        document.getElementById('goToMembacaBtn').addEventListener('click', function() {
-            popup.remove();
-            const container = document.getElementById('cvActivities');
-            if (container) container.innerHTML = '';
+        </div>`;
+
+        container.innerHTML = html;
+
+        // Event listener untuk butang ke Membaca
+        document.getElementById('goToMembacaFromSummary').addEventListener('click', function() {
+            // Kosongkan container dan panggil renderMembaca()
+            container.innerHTML = '';
             renderMembaca();
         });
     }
 
+    // Mula dengan soalan pertama
     renderQuestion(0);
 }
-
-
+                
 // ================================================================
 // 2. RENDER MEMBACA (CERITA DENGAN POPUP PENUH SKRIN & WARNA SUKU KATA)
 // ================================================================
