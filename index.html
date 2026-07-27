@@ -137,7 +137,7 @@
             100%{opacity:1;transform:translateY(0);}
         }
 
-        /* ---------- KAD (dengan animasi terapung) ---------- */
+        /* ---------- KAD ---------- */
         .card, .jawi-card, .cv-card, .math-item, .activity-card, .tajwid-card {
             border-radius:40px;
             padding:25px 15px;
@@ -195,7 +195,7 @@
             100% { box-shadow: 0 0 20px 8px #ff6b6b44; }
         }
 
-        /* ---------- MODAL (POPUP) - DIPASTIKAN BERFUNGSI ---------- */
+        /* ---------- MODAL ---------- */
         .modal-overlay {
             display:none;
             position:fixed;
@@ -273,7 +273,7 @@
             100% { opacity:1; transform:scale(1) translateY(0); }
         }
 
-        /* ---------- GAYA LAIN (kekal) ---------- */
+        /* ---------- GAYA LAIN ---------- */
         .math-box { background:#e3f0fa; border-radius:50px; padding:25px 25px 30px; margin:20px 0; border:5px solid #b8d4e8; }
         .math-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:20px; margin:15px 0; }
         .math-item { background:white; border-radius:40px; padding:18px 10px; text-align:center; font-size:2rem; font-weight:bold; color:#1a3a5c; box-shadow:0 6px 0 #b0c8d8; border:3px solid #c5ddee; }
@@ -416,7 +416,7 @@
     <div class="footer-note">🌟 Belajar sambil bermain • Setiap hari soalan baru • Klik untuk zum • Sesuai 4–6 tahun</div>
 </div>
 
-<!-- ===== MODAL (Popup) ===== -->
+<!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal-box" id="modalBox">
         <button class="modal-close" id="modalClose">✕</button>
@@ -424,7 +424,7 @@
     </div>
 </div>
 
-<!-- ===== PAUTAN KE SCRIPT ASAL (KEKALKAN SEMUA) ===== -->
+<!-- ===== PAUTAN KE SCRIPT ASAL ===== -->
 <script src="utils.js"></script>
 <script src="huruf.js"></script>
 <script src="sukukata.js"></script>
@@ -437,23 +437,76 @@
 <script src="latihtajwid.js"></script>
 <script src="matematik.js"></script>
 
-<!-- ===== SKRIP UTAMA (dengan FALLBACK POPUP yang PASTI BERFUNGSI) ===== -->
+<!-- ===== SKRIP UTAMA TEGUH ===== -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        // --- 1. Panggil semua render dengan selamat (cek fungsi wujud) ---
-        if (typeof renderAlphabet === 'function') renderAlphabet();
-        if (typeof renderSukuKataTable === 'function') renderSukuKataTable();
-        if (typeof renderCVActivities === 'function') renderCVActivities();
-        if (typeof renderJawi === 'function') renderJawi();
-        if (typeof renderJawiExercise === 'function') renderJawiExercise();
-        if (typeof renderArabic === 'function') renderArabic();
-        if (typeof renderArabicExercise === 'function') renderArabicExercise();
-        if (typeof renderTajwid === 'function') renderTajwid();
-        if (typeof renderTajwidExercise === 'function') renderTajwidExercise();
-        if (typeof initMath === 'function') initMath();
+        // --- 1. FUNGSI BUNYI FALLBACK ---
+        function safeSpeak(text, lang = 'ms-MY') {
+            try {
+                if (!window.speechSynthesis) return;
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                utterance.rate = 0.9;
+                utterance.pitch = 1.2;
+                const voices = window.speechSynthesis.getVoices();
+                const voice = voices.find(v => v.lang.startsWith(lang.split('-')[0])) || voices[0];
+                if (voice) utterance.voice = voice;
+                window.speechSynthesis.speak(utterance);
+            } catch (e) { console.warn('speak error:', e); }
+        }
 
-        // --- 2. NAV TABS (dijamin berfungsi) ---
+        // --- 2. FUNGSI POPUP FALLBACK ---
+        function safeOpenModal(title, contentHtml) {
+            try {
+                const overlay = document.getElementById('modalOverlay');
+                const contentBox = document.getElementById('modalContent');
+                if (!overlay || !contentBox) return;
+                let html = `<div class="modal-title">${title}</div>`;
+                if (contentHtml) {
+                    html += `<div class="modal-examples"><div class="example-item">${contentHtml}</div></div>`;
+                } else {
+                    html += `<div class="modal-examples"><div class="example-item">📚 Selamat belajar!</div></div>`;
+                }
+                contentBox.innerHTML = html;
+                overlay.classList.add('active');
+            } catch (e) { console.warn('modal error:', e); }
+        }
+
+        // --- 3. TUTUP MODAL ---
+        document.getElementById('modalClose')?.addEventListener('click', function() {
+            document.getElementById('modalOverlay')?.classList.remove('active');
+        });
+        document.getElementById('modalOverlay')?.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+
+        // --- 4. RENDER SELAMAT (dengan try-catch) ---
+        function safeCall(fn, ...args) {
+            try { if (typeof fn === 'function') fn(...args); }
+            catch (e) { console.warn('Render error:', e); }
+        }
+
+        safeCall(renderAlphabet);
+        safeCall(renderSukuKataTable);
+        safeCall(renderCVActivities);
+        // RENDER JAWI – kita cuba panggil, tapi jika gagal, kita akan render sendiri nanti
+        try {
+            if (typeof renderJawi === 'function') renderJawi();
+            else console.warn('renderJawi tidak dijumpai');
+        } catch(e) {
+            console.warn('renderJawi error, menggunakan fallback:', e);
+            // Kita akan render secara manual di bawah
+        }
+        safeCall(renderJawiExercise);
+        safeCall(renderArabic);
+        safeCall(renderArabicExercise);
+        safeCall(renderTajwid);
+        safeCall(renderTajwidExercise);
+        safeCall(initMath);
+
+        // --- 5. NAV TABS (selamat) ---
         const tabs = document.querySelectorAll('.nav-tabs button');
         tabs.forEach(btn => {
             btn.addEventListener('click', function() {
@@ -466,166 +519,150 @@
             });
         });
 
-        // --- 3. FUNGSI BUNYI (text-to-speech) ---
-        function speakText(text, lang = 'ms-MY') {
-            if (!window.speechSynthesis) return;
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = lang;
-            utterance.rate = 0.9;
-            utterance.pitch = 1.2;
-            const voices = window.speechSynthesis.getVoices();
-            const voice = voices.find(v => v.lang.startsWith(lang.split('-')[0])) || voices[0];
-            if (voice) utterance.voice = voice;
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // --- 4. FALLBACK POPUP (PASTI BERFUNGSI WALAUPUN SCRIPT ASAL GAGAL) ---
-        function openModal(title, contentHtml) {
-            const overlay = document.getElementById('modalOverlay');
-            const contentBox = document.getElementById('modalContent');
-            if (!overlay || !contentBox) return;
-
-            // Bina kandungan modal
-            let html = `<div class="modal-title">${title}</div>`;
-            if (contentHtml) {
-                html += `<div class="modal-examples"><div class="example-item">${contentHtml}</div></div>`;
-            } else {
-                html += `<div class="modal-examples"><div class="example-item">📚 Selamat belajar!</div></div>`;
-            }
-            contentBox.innerHTML = html;
-            overlay.classList.add('active');
-        }
-
-        // Tutup modal
-        document.getElementById('modalClose')?.addEventListener('click', function() {
-            document.getElementById('modalOverlay')?.classList.remove('active');
-        });
-        document.getElementById('modalOverlay')?.addEventListener('click', function(e) {
-            if (e.target === this) this.classList.remove('active');
-        });
-
-        // --- 5. LEKATKAN EVENT KLIK UNTUK SEMUA KAD (GUNA EVENT DELEGATION) ---
-        // Ini akan berjalan SELEPAS render, dan akan TAMBAH fungsi popup pada setiap kad.
-        // Jika script asal sudah ada popup, ini akan jadi popup kedua (tapi tidak mengganggu).
-        // Jika script asal gagal, ini akan jadi penyelamat!
-
-        function setupCardPopup(containerId, cardSelector, getTitle, getContent) {
+        // --- 6. EVENT DELEGATION UNTUK SEMUA KAD (dengan try-catch) ---
+        function setupCards(containerId, cardSelector, titleFn, contentFn) {
             const container = document.getElementById(containerId);
             if (!container) return;
-
             container.addEventListener('click', function(e) {
-                const card = e.target.closest(cardSelector);
-                if (!card) return;
-                // Jangan buka popup jika klik pada butang bunyi
-                if (e.target.closest('.sound-btn')) return;
-                // Jangan buka popup jika klik pada input atau butang matematik
-                if (e.target.closest('input') || e.target.closest('button')) return;
-
-                const title = getTitle(card);
-                const content = getContent(card);
-                openModal(title, content);
+                try {
+                    const card = e.target.closest(cardSelector);
+                    if (!card) return;
+                    if (e.target.closest('.sound-btn') || e.target.closest('input') || e.target.closest('button')) return;
+                    const title = titleFn(card);
+                    const content = contentFn(card);
+                    safeOpenModal(title, content);
+                } catch(err) { console.warn('Card click error:', err); }
             });
         }
 
-        // Tunggu sekejap untuk pastikan semua kad sudah di-render oleh script asal
-        setTimeout(function() {
+        // Alphabet
+        setupCards('alphabetGrid', '.card',
+            (c) => c.querySelector('.big')?.textContent?.trim() || 'Alphabet',
+            (c) => (c.querySelector('.emoji-row')?.innerHTML || '') + '<br>' + (c.querySelector('.label')?.textContent || '')
+        );
 
-            // Alphabet
-            setupCardPopup('alphabetGrid', '.card',
-                (card) => {
-                    const big = card.querySelector('.big');
-                    return big ? big.textContent.trim() : 'Alphabet';
-                },
-                (card) => {
-                    const emoji = card.querySelector('.emoji-row');
-                    const label = card.querySelector('.label');
-                    let html = (emoji ? emoji.innerHTML : '') + '<br>';
-                    html += (label ? '<span style="font-size:1.4rem;">' + label.textContent + '</span>' : '');
-                    return html;
-                }
-            );
+        // Suku Kata
+        setupCards('cvGrid', '.cv-card',
+            (c) => c.querySelector('.cv-syllable')?.textContent?.trim() || 'Suku Kata',
+            (c) => c.querySelector('.cv-examples')?.innerHTML || 'Contoh perkataan'
+        );
 
-            // Suku Kata (CV)
-            setupCardPopup('cvGrid', '.cv-card',
-                (card) => {
-                    const syl = card.querySelector('.cv-syllable');
-                    return syl ? syl.textContent.trim() : 'Suku Kata';
-                },
-                (card) => {
-                    const ex = card.querySelector('.cv-examples');
-                    return ex ? ex.innerHTML : 'Contoh perkataan';
-                }
-            );
+        // Jawi – guna fallback sendiri jika renderJawi asal gagal
+        // Kita juga akan render sendiri jika grid kosong
+        function renderJawiFallback() {
+            const grid = document.getElementById('jawiGrid');
+            if (!grid) return;
+            // Jika grid sudah ada isi, jangan timpa
+            if (grid.children.length > 0) return;
 
-            // Jawi
-            setupCardPopup('jawiGrid', '.jawi-card',
-                (card) => {
-                    const char = card.querySelector('.jawi-char');
-                    return char ? char.textContent.trim() : 'حرف';
-                },
-                (card) => {
-                    const ex = card.querySelector('.jawi-example');
-                    const meaning = card.querySelector('.jawi-meaning');
-                    let html = (ex ? ex.innerHTML : '') + '<br>';
-                    html += (meaning ? '<span style="font-size:1.2rem;">' + meaning.textContent + '</span>' : '');
-                    return html;
-                }
-            );
+            // Data Jawi fallback (ringkas)
+            const data = [
+                { char: 'ا', name: 'Alif', ex: 'أَرْنَب', meaning: 'Arnab' },
+                { char: 'ب', name: 'Ba', ex: 'بُولَة', meaning: 'Bola' },
+                { char: 'ت', name: 'Ta', ex: 'تِلْمِيذ', meaning: 'Murid' },
+                { char: 'ث', name: 'Tsa', ex: 'ثَعْلَب', meaning: 'Musang' },
+                { char: 'ج', name: 'Jim', ex: 'جَمَل', meaning: 'Unta' },
+                { char: 'ح', name: 'Ha', ex: 'حَلِيب', meaning: 'Susu' },
+                { char: 'خ', name: 'Kho', ex: 'خُبْز', meaning: 'Roti' },
+                { char: 'د', name: 'Dal', ex: 'دِيك', meaning: 'Ayam jantan' },
+                { char: 'ذ', name: 'Dzal', ex: 'ذَنَب', meaning: 'Ekor' },
+                { char: 'ر', name: 'Ra', ex: 'رَجُل', meaning: 'Lelaki' },
+                { char: 'ز', name: 'Zay', ex: 'زَهْرَة', meaning: 'Bunga' },
+                { char: 'س', name: 'Sin', ex: 'سَمَك', meaning: 'Ikan' },
+                { char: 'ش', name: 'Syin', ex: 'شَمْس', meaning: 'Matahari' },
+                { char: 'ص', name: 'Shod', ex: 'صَبْر', meaning: 'Sabar' },
+                { char: 'ض', name: 'Dhod', ex: 'ضِفْدَع', meaning: 'Katak' },
+                { char: 'ط', name: 'Tho', ex: 'طَائِر', meaning: 'Burung' },
+                { char: 'ظ', name: 'Zho', ex: 'ظِلّ', meaning: 'Bayang' },
+                { char: 'ع', name: 'Ain', ex: 'عَيْن', meaning: 'Mata' },
+                { char: 'غ', name: 'Ghayn', ex: 'غَيْمَة', meaning: 'Awan' },
+                { char: 'ف', name: 'Fa', ex: 'فِيل', meaning: 'Gajah' },
+                { char: 'ق', name: 'Qaf', ex: 'قَمَر', meaning: 'Bulan' },
+                { char: 'ك', name: 'Kaf', ex: 'كَلْب', meaning: 'Anjing' },
+                { char: 'ل', name: 'Lam', ex: 'لَيْل', meaning: 'Malam' },
+                { char: 'م', name: 'Mim', ex: 'مَاء', meaning: 'Air' },
+                { char: 'ن', name: 'Nun', ex: 'نُور', meaning: 'Cahaya' },
+                { char: 'و', name: 'Waw', ex: 'وَرْدَة', meaning: 'Bunga ros' },
+                { char: 'ه', name: 'Ha', ex: 'هَدِيَّة', meaning: 'Hadiah' },
+                { char: 'ي', name: 'Ya', ex: 'يَد', meaning: 'Tangan' },
+                { char: 'چ', name: 'Ca', ex: 'جَاوَنْ', meaning: 'Cawan' },
+                { char: 'ڤ', name: 'Pa', ex: 'بَايَڠ', meaning: 'Payung' },
+                { char: 'ݢ', name: 'Ga', ex: 'جَاجَه', meaning: 'Gajah' },
+                { char: 'ڠ', name: 'Nga', ex: 'نْجِيلُو', meaning: 'Ngilu' }
+            ];
 
-            // Arab (Activity)
-            setupCardPopup('activityGrid', '.activity-card',
-                (card) => {
-                    const ar = card.querySelector('.act-ar');
-                    return ar ? ar.textContent.trim() : 'عربي';
-                },
-                (card) => {
-                    const ms = card.querySelector('.act-ms');
-                    const emoji = card.querySelector('.act-emoji');
-                    let html = (emoji ? emoji.outerHTML : '') + '<br>';
-                    html += (ms ? '<span style="font-size:1.4rem;">' + ms.textContent + '</span>' : '');
-                    return html;
-                }
-            );
+            let html = '';
+            data.forEach(item => {
+                html += `
+                    <div class="jawi-card" style="background:#faf6e8;border-color:#c8b898;">
+                        <div class="jawi-char">${item.char}</div>
+                        <div class="jawi-example">${item.ex}</div>
+                        <div class="jawi-meaning">${item.name} - ${item.meaning}</div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
 
-            // Tajwid
-            setupCardPopup('tajwidGrid', '.tajwid-card',
-                (card) => {
-                    const ar = card.querySelector('.tajwid-ar');
-                    return ar ? ar.textContent.trim() : 'تجويد';
-                },
-                (card) => {
-                    const rule = card.querySelector('.tajwid-rule');
-                    const ex = card.querySelector('.tajwid-ex');
-                    let html = (rule ? '<strong>' + rule.textContent + '</strong><br>' : '');
-                    html += (ex ? ex.textContent : '');
-                    return html;
-                }
-            );
-
-            // --- 6. Bunyi pada kad (klik untuk dengar) ---
-            function addSound(selector, lang) {
-                document.querySelectorAll(selector).forEach(el => {
-                    const text = el.getAttribute('data-text');
-                    if (text && !el.dataset.soundAttached) {
-                        el.dataset.soundAttached = 'true';
-                        el.addEventListener('click', function(e) {
-                            if (e.target.closest('.sound-btn')) return;
-                            // Jangan bunyi jika dalam matematik
-                            if (this.closest('#mathBox')) return;
-                            speakText(text, lang);
-                        });
-                    }
-                });
+        // Render Jawi fallback jika grid kosong
+        setTimeout(() => {
+            const grid = document.getElementById('jawiGrid');
+            if (grid && grid.children.length === 0) {
+                console.log('🔄 Menggunakan fallback Jawi');
+                renderJawiFallback();
             }
+        }, 500);
+
+        // Setup popup Jawi (guna selector .jawi-card)
+        setupCards('jawiGrid', '.jawi-card',
+            (c) => c.querySelector('.jawi-char')?.textContent?.trim() || 'حرف',
+            (c) => {
+                const ex = c.querySelector('.jawi-example')?.innerHTML || '';
+                const meaning = c.querySelector('.jawi-meaning')?.textContent || '';
+                return ex + '<br><span style="font-size:1.2rem;">' + meaning + '</span>';
+            }
+        );
+
+        // Arab
+        setupCards('activityGrid', '.activity-card',
+            (c) => c.querySelector('.act-ar')?.textContent?.trim() || 'عربي',
+            (c) => (c.querySelector('.act-emoji')?.outerHTML || '') + '<br>' + (c.querySelector('.act-ms')?.textContent || '')
+        );
+
+        // Tajwid
+        setupCards('tajwidGrid', '.tajwid-card',
+            (c) => c.querySelector('.tajwid-ar')?.textContent?.trim() || 'تجويد',
+            (c) => {
+                const rule = c.querySelector('.tajwid-rule')?.textContent || '';
+                const ex = c.querySelector('.tajwid-ex')?.textContent || '';
+                return '<strong>' + rule + '</strong><br>' + ex;
+            }
+        );
+
+        // --- 7. BUNYI PADA KAD (safe) ---
+        function addSound(selector, lang) {
+            document.querySelectorAll(selector).forEach(el => {
+                if (el.dataset.soundAttached) return;
+                const text = el.getAttribute('data-text') || el.textContent.trim().substring(0,20);
+                if (text) {
+                    el.dataset.soundAttached = 'true';
+                    el.addEventListener('click', function(e) {
+                        if (e.target.closest('.sound-btn') || e.target.closest('input')) return;
+                        if (this.closest('#mathBox')) return;
+                        safeSpeak(text, lang);
+                    });
+                }
+            });
+        }
+
+        setTimeout(() => {
             addSound('#alphabetGrid .card', 'ms-MY');
             addSound('#cvGrid .cv-card', 'ms-MY');
             addSound('#jawiGrid .jawi-card', 'ar-SA');
             addSound('#activityGrid .activity-card', 'ar-SA');
             addSound('#tajwidGrid .tajwid-card', 'ar-SA');
-
-            console.log('🌟 Fallback popup & bunyi siap dipasang!');
-        }, 1200); // Delay 1.2 saat untuk pastikan semua render selesai
+            console.log('🌟 Semua kad siap dengan popup & bunyi yang selamat.');
+        }, 1500);
     });
 </script>
 </body>
