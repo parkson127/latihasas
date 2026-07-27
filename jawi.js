@@ -316,7 +316,80 @@ function renderJawi() {
                 </div>
             `;
         }
+// ================================================================
+// TAMBAHAN UNTUK TAB ARAB (Guna data jawiData, grid kecil, popup contoh)
+// ================================================================
+(function() {
+    // Tunggu sebentar untuk pastikan semua render selesai
+    setTimeout(function() {
+        const grid = document.getElementById('activityGrid');
+        if (!grid) return;
 
+        // Ambil 28 huruf Arab pertama dari jawiData
+        const arabicLetters = jawiData.slice(0, 28);
+
+        // Bina grid baru dengan hanya huruf dan nama
+        let html = '';
+        arabicLetters.forEach((item) => {
+            const char = item.char;
+            const name = item.name.rumi;
+            const examplesData = encodeURIComponent(JSON.stringify(item.examples));
+            html += `
+                <div class="activity-card" data-char="${char}" data-examples="${examplesData}" style="background:#fff9f0;border-radius:30px;padding:10px 6px;border:3px solid #f7d4b8;text-align:center;cursor:pointer;transition:0.2s;animation:floatCard 4s ease-in-out infinite;">
+                    <div style="font-size:3.5rem;font-family:'Traditional Arabic','Amiri',serif;color:#1d3d2a;">${char}</div>
+                    <div style="font-size:1rem;font-weight:bold;color:#5a3a2a;margin-top:4px;">${name}</div>
+                </div>
+            `;
+        });
+        grid.innerHTML = html;
+
+        // Kecilkan grid
+        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(80px, 1fr))';
+        grid.style.gap = '12px';
+
+        // Event klik: buka popup contoh
+        grid.addEventListener('click', function(e) {
+            const card = e.target.closest('.activity-card');
+            if (!card) return;
+            const examplesData = card.dataset.examples;
+            if (!examplesData) return;
+
+            let examples;
+            try {
+                examples = JSON.parse(decodeURIComponent(examplesData));
+            } catch (err) {
+                return;
+            }
+
+            let contentHtml = '';
+            examples.forEach(ex => {
+                contentHtml += `
+                    <div class="example-item" style="background:#fcf7f0;border-radius:35px;padding:16px;text-align:center;border:2px solid #efe4d6;">
+                        <div style="font-size:2.8rem;font-family:'Traditional Arabic','Amiri',serif;">${ex.ar}</div>
+                        <div style="font-size:3.2rem;margin:6px 0;">${ex.emoji}</div>
+                        <div style="font-size:1.4rem;font-weight:bold;color:#4a6a3a;background:#e6f0e6;border-radius:30px;padding:2px 14px;display:inline-block;margin-top:6px;">
+                            📖 Makna: ${ex.makna || '—'}
+                        </div>
+                        <button class="audio-btn-sm" onclick="speakText('${ex.ar}','ar-SA');" style="background:#ffb347;border:none;border-radius:50%;width:44px;height:44px;font-size:1.8rem;cursor:pointer;box-shadow:0 4px 0 #c77d1a;display:inline-flex;align-items:center;justify-content:center;margin-top:8px;">🔊</button>
+                    </div>
+                `;
+            });
+
+            const title = `${card.querySelector('div:first-child').textContent} - ${card.querySelector('div:last-child').textContent}`;
+            // Guna modal global jika ada
+            const overlay = document.getElementById('modalOverlay');
+            const contentBox = document.getElementById('modalContent');
+            if (overlay && contentBox) {
+                contentBox.innerHTML = `<div class="modal-title">${title}</div><div class="modal-examples">${contentHtml}</div>`;
+                overlay.classList.add('active');
+            } else {
+                alert('Modal tidak dijumpai.');
+            }
+        });
+
+        console.log('✅ Tab Arab (dari jawi.js) dikemas kini.');
+    }, 1500);
+})();
         // Tajuk modal
         const title = `${item.char} - ${item.name.rumi}`;
         showGlobalModal(title, contentHtml);
