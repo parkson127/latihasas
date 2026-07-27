@@ -6,7 +6,7 @@
     <title>Belajar Suku Kata & Seronok (4-6 Tahun)</title>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <style>
-        /* ---------- GAYA ASAL (dikekalkan) ---------- */
+        /* ---------- GAYA ASAL + ANIMASI ---------- */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Patrick Hand','Comic Sans MS',cursive,sans-serif;
@@ -74,7 +74,7 @@
             100% { transform: translateY(0px); }
         }
 
-        /* ---------- NAV TABS (lebih menarik) ---------- */
+        /* ---------- NAV TABS ---------- */
         .nav-tabs {
             display:flex;
             flex-wrap:wrap;
@@ -126,6 +126,17 @@
             width: 60%;
         }
 
+        /* ---------- TAB CONTENTS ---------- */
+        .tab-content {
+            display:none;
+            animation:fadeUp 0.5s ease;
+        }
+        .tab-content.active { display:block; }
+        @keyframes fadeUp {
+            0%{opacity:0;transform:translateY(30px);}
+            100%{opacity:1;transform:translateY(0);}
+        }
+
         /* ---------- KAD (dengan animasi terapung) ---------- */
         .card, .jawi-card, .cv-card, .math-item, .activity-card, .tajwid-card {
             border-radius:40px;
@@ -148,13 +159,12 @@
             50% { transform: translateY(-6px); }
             100% { transform: translateY(0px); }
         }
-        /* Delay unik untuk setiap kad (akan ditetapkan oleh JS) */
 
         .card .big { font-size:4.2rem; font-weight:bold; color:#4a1e3a; line-height:1.2; }
         .card .emoji-row { font-size:3rem; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin:8px 0; }
         .card .label { font-size:1.1rem; color:#7a5a6a; background:#fdeef6; padding:4px 20px; border-radius:40px; display:inline-block; margin-top:6px; }
 
-        /* ---------- BUTANG BUNYI (speaker) ---------- */
+        /* ---------- BUTANG BUNYI ---------- */
         .sound-btn {
             background:#6a1b4d;
             color:white;
@@ -185,7 +195,7 @@
             100% { box-shadow: 0 0 20px 8px #ff6b6b44; }
         }
 
-        /* ---------- MODAL (popup) lebih meriah ---------- */
+        /* ---------- MODAL ---------- */
         .modal-overlay {
             display:none;
             position:fixed;
@@ -325,6 +335,9 @@
         .math-result { display:inline-block; background:#d4edda; padding:0 20px; border-radius:60px; color:#1d6b3a; font-size:1.8rem; margin-top:4px; }
         .math-result.wrong { background:#f8d7da; color:#a13a3a; }
 
+        .grid-large { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:25px; margin:20px 0; }
+        .grid-medium { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:25px; margin:20px 0; }
+
         @media (max-width:700px) {
             .container { padding:15px; border-radius:35px; }
             h1{font-size:2.2rem;}
@@ -351,30 +364,59 @@
 <body>
 <div class="container">
     <h1>🌈 Belajar Suku Kata & Seronok!</h1>
-    <div style="text-align:center;"><span class="subtitle">📚 4 – 6 Tahun • Jawi • Matematik • Alohabet • Arab</span></div>
+    <div style="text-align:center;"><span class="subtitle">📚 4 – 6 Tahun • Jawi • Matematik • Alphabet • Arab</span></div>
     <div class="nav-tabs">
-        <button class="active" data-tab="tab-alphabet">🔤 Alohabet</button>
+        <button class="active" data-tab="tab-alphabet">🔤 Alphabet</button>
         <button data-tab="tab-cv">🔡 Suku Kata</button>
         <button data-tab="tab-jawi">🕌 Jawi & Tajwid</button>
         <button data-tab="tab-arabic">🌙 Arab</button>
         <button data-tab="tab-math">🧮 Matematik</button>
     </div>
 
-    <!-- Tab contents (sama seperti asal) -->
-    <div id="tab-alphabet" class="tab-content active"><div class="section-title" style="font-size:2.4rem;color:#6a1b4d;border-left:15px solid #d4a0c0;padding-left:25px;margin:15px 0 25px;">🔤 Alohabet & Gambar <small style="font-size:1.2rem;">(klik untuk zum)</small></div><div class="grid-large" id="alphabetGrid"></div></div>
+    <!-- Tab contents -->
+    <div id="tab-alphabet" class="tab-content active">
+        <div class="section-title" style="font-size:2.4rem;color:#6a1b4d;border-left:15px solid #d4a0c0;padding-left:25px;margin:15px 0 25px;">🔤 Alohabet & Gambar <small style="font-size:1.2rem;">(klik untuk zum)</small></div>
+        <div class="grid-large" id="alphabetGrid"></div>
+    </div>
 
-    <div id="tab-cv" class="tab-content"><div class="section-title" style="font-size:2.4rem;color:#6a1b4d;border-left:15px solid #d4a0c0;padding-left:25px;margin:15px 0 25px;">🔡 Suku Kata <small style="font-size:1.2rem;">klik untuk zum & dengar</small></div><div id="sukuKataTable"></div><div class="grid-medium" id="cvGrid"></div><div class="cv-activity-section"><h3>🎯 Aktiviti Suku Kata</h3><div class="cv-activity-grid" id="cvActivities"></div></div></div>
+    <div id="tab-cv" class="tab-content">
+        <div class="section-title" style="font-size:2.4rem;color:#6a1b4d;border-left:15px solid #d4a0c0;padding-left:25px;margin:15px 0 25px;">🔡 Suku Kata <small style="font-size:1.2rem;">klik untuk zum & dengar</small></div>
+        <div id="sukuKataTable"></div>
+        <div class="grid-medium" id="cvGrid"></div>
+        <div class="cv-activity-section"><h3>🎯 Aktiviti Suku Kata</h3><div class="cv-activity-grid" id="cvActivities"></div></div>
+    </div>
 
-    <div id="tab-jawi" class="tab-content"><div class="section-title" style="font-size:2.4rem;color:#6a1b4d;border-left:15px solid #d4a0c0;padding-left:25px;margin:15px 0 25px;">🕌 Huruf Jawi & Contoh <small style="font-size:1.2rem;">(klik untuk zum)</small></div><div class="jawi-grid" id="jawiGrid"></div><div class="tajwid-section"><h3>📖 Tajwid Asas (Nun Sakinah & Tanwin)</h3><div class="tajwid-grid" id="tajwidGrid"></div></div><div style="margin-top:20px;"><h3 style="font-size:2rem;color:#2a5a3a;text-align:center;">📝 Latihan Jawi</h3><div id="jawiExercise"></div></div></div>
+    <div id="tab-jawi" class="tab-content">
+        <div class="section-title" style="font-size:2.4rem;color:#6a1b4d;border-left:15px solid #d4a0c0;padding-left:25px;margin:15px 0 25px;">🕌 Huruf Jawi & Contoh <small style="font-size:1.2rem;">(klik untuk zum)</small></div>
+        <div class="jawi-grid" id="jawiGrid"></div>
+        <div class="tajwid-section"><h3>📖 Tajwid Asas (Nun Sakinah & Tanwin)</h3><div class="tajwid-grid" id="tajwidGrid"></div></div>
+        <div style="margin-top:20px;"><h3 style="font-size:2rem;color:#2a5a3a;text-align:center;">📝 Latihan Jawi</h3><div id="jawiExercise"></div></div>
+    </div>
 
-    <div id="tab-arabic" class="tab-content"><div class="section-title" style="font-size:2.4rem;color:#6a1b4d;border-left:15px solid #d4a0c0;padding-left:25px;margin:15px 0 25px;">🌙 Perbuatan Harian dalam Arab <small style="font-size:1.2rem;">(klik untuk zum)</small></div><div class="activity-grid" id="activityGrid"></div><div style="margin-top:20px;"><h3 style="font-size:2rem;color:#2a5a3a;text-align:center;">📝 Latihan Arab</h3><div id="arabExercise"></div></div></div>
+    <div id="tab-arabic" class="tab-content">
+        <div class="section-title" style="font-size:2.4rem;color:#6a1b4d;border-left:15px solid #d4a0c0;padding-left:25px;margin:15px 0 25px;">🌙 Perbuatan Harian dalam Arab <small style="font-size:1.2rem;">(klik untuk zum)</small></div>
+        <div class="activity-grid" id="activityGrid"></div>
+        <div style="margin-top:20px;"><h3 style="font-size:2rem;color:#2a5a3a;text-align:center;">📝 Latihan Arab</h3><div id="arabExercise"></div></div>
+    </div>
 
-    <div id="tab-math" class="tab-content"><div class="section-title" style="font-size:2.4rem;color:#6a1b4d;border-left:15px solid #d4a0c0;padding-left:25px;margin:15px 0 25px;">🧮 Matematik Seronok <small style="font-size:1.2rem;">+ – ×</small></div><div class="math-oper-tabs"><button class="active" data-mathop="add">➕ Tambah</button><button data-mathop="sub">➖ Tolak</button><button data-mathop="mul">✖️ Darab</button></div><div class="math-box" id="mathBox"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;gap:10px;"><div class="math-score" id="mathScore">⭐ Skor: 0 / 20</div><div><button class="btn-reset-math" id="resetMathBtn">🔄 Soalan Baru</button><span style="font-size:1rem;color:#7a6a5a;margin-left:8px;">(tukar setiap hari)</span></div></div><div class="math-grid" id="mathGrid"></div><div style="text-align:center;margin-top:22px;"><button class="math-check-btn" id="checkAllMath">✅ Semak Semua</button></div></div><p style="font-size:1.2rem;text-align:center;color:#5a4a5a;">💡 Klik pada soalan untuk zum.</p></div>
+    <div id="tab-math" class="tab-content">
+        <div class="section-title" style="font-size:2.4rem;color:#6a1b4d;border-left:15px solid #d4a0c0;padding-left:25px;margin:15px 0 25px;">🧮 Matematik Seronok <small style="font-size:1.2rem;">+ – ×</small></div>
+        <div class="math-oper-tabs"><button class="active" data-mathop="add">➕ Tambah</button><button data-mathop="sub">➖ Tolak</button><button data-mathop="mul">✖️ Darab</button></div>
+        <div class="math-box" id="mathBox">
+            <div style="display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;gap:10px;">
+                <div class="math-score" id="mathScore">⭐ Skor: 0 / 20</div>
+                <div><button class="btn-reset-math" id="resetMathBtn">🔄 Soalan Baru</button><span style="font-size:1rem;color:#7a6a5a;margin-left:8px;">(tukar setiap hari)</span></div>
+            </div>
+            <div class="math-grid" id="mathGrid"></div>
+            <div style="text-align:center;margin-top:22px;"><button class="math-check-btn" id="checkAllMath">✅ Semak Semua</button></div>
+        </div>
+        <p style="font-size:1.2rem;text-align:center;color:#5a4a5a;">💡 Klik pada soalan untuk zum.</p>
+    </div>
 
     <div class="footer-note">🌟 Belajar sambil bermain • Setiap hari soalan baru • Klik untuk zum • Sesuai 4–6 tahun</div>
 </div>
 
-<!-- Modal (sama seperti asal) -->
+<!-- Modal -->
 <div class="modal-overlay" id="modalOverlay"><div class="modal-box" id="modalBox"><button class="modal-close" id="modalClose">✕</button><div id="modalContent"></div></div></div>
 
 <!-- ===== PAUTAN KE SCRIPT ASAL (KEKALKAN SEMUA) ===== -->
@@ -390,16 +432,43 @@
 <script src="latihtajwid.js"></script>
 <script src="matematik.js"></script>
 
-<!-- ===== SKRIP TAMBAHAN UNTUK BUNYI & INTERAKSI (TANPA MENGGANTI YANG SEDIA ADA) ===== -->
+<!-- ===== SKRIP UTAMA (dengan tab yang dijamin berfungsi) ===== -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        // --- Fungsi bunyi (text-to-speech) ---
+        // --- 1. Panggil semua render dengan selamat (cek fungsi wujud) ---
+        if (typeof renderAlphabet === 'function') renderAlphabet();
+        if (typeof renderSukuKataTable === 'function') renderSukuKataTable();
+        if (typeof renderCVActivities === 'function') renderCVActivities();
+        if (typeof renderJawi === 'function') renderJawi();
+        if (typeof renderJawiExercise === 'function') renderJawiExercise();
+        if (typeof renderArabic === 'function') renderArabic();
+        if (typeof renderArabicExercise === 'function') renderArabicExercise();
+        if (typeof renderTajwid === 'function') renderTajwid();
+        if (typeof renderTajwidExercise === 'function') renderTajwidExercise();
+        if (typeof initMath === 'function') initMath();
+
+        // --- 2. NAV TABS (dijamin berfungsi, bebas daripada ralat render) ---
+        const tabs = document.querySelectorAll('.nav-tabs button');
+        tabs.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Tukar kelas aktif pada butang
+                tabs.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Tukar paparan tab content
+                const targetId = this.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(el => {
+                    el.classList.remove('active');
+                });
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) targetEl.classList.add('active');
+            });
+        });
+
+        // --- 3. FUNGSI BUNYI (text-to-speech) UNTUK KAD ---
         function speakText(text, lang = 'ms-MY') {
-            if (!window.speechSynthesis) {
-                console.warn('Text-to-speech not supported.');
-                return;
-            }
+            if (!window.speechSynthesis) return;
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = lang;
@@ -411,23 +480,15 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // --- Tambah butang bunyi pada kad yang mempunyai data-sound atau text ---
-        // Untuk kad Alphabet, Suku Kata, Jawi, Arab, Tajwid – kita akan tambah event listener pada klik kad
-        // Sekiranya kad mempunyai data-text atau data-sound, kita mainkan bunyi.
-
-        function addSoundToCards(containerSelector, textAttr = 'data-text', lang = 'ms-MY') {
-            document.querySelectorAll(containerSelector).forEach(card => {
-                const text = card.getAttribute(textAttr);
-                if (text) {
-                    // Cegah jika sudah ada event
-                    if (card.dataset.soundAttached) return;
-                    card.dataset.soundAttached = 'true';
-                    card.addEventListener('click', function(e) {
-                        // Jangan bunyi jika klik pada butang atau elemen dalaman yang lain (elakkan konflik)
+        // Tambah bunyi pada kad yang ada atribut data-text
+        function addSoundToCards(selector, lang = 'ms-MY') {
+            document.querySelectorAll(selector).forEach(el => {
+                const text = el.getAttribute('data-text');
+                if (text && !el.dataset.soundAttached) {
+                    el.dataset.soundAttached = 'true';
+                    el.addEventListener('click', function(e) {
                         if (e.target.closest('.sound-btn') || e.target.closest('.modal-close')) return;
-                        // Mainkan bunyi jika tidak dalam mod popup
                         speakText(text, lang);
-                        // Tambah efek visual
                         this.classList.add('playing-sound');
                         setTimeout(() => this.classList.remove('playing-sound'), 600);
                     });
@@ -435,9 +496,15 @@
             });
         }
 
-        // --- Tambah butang bunyi khusus (sound-btn) ---
-        function addSoundButtons(containerSelector) {
-            document.querySelectorAll(containerSelector + ' .sound-btn').forEach(btn => {
+        // Tunggu sebentar untuk semua render selesai, kemudian pasang bunyi
+        setTimeout(function() {
+            addSoundToCards('#alphabetGrid .card', 'ms-MY');
+            addSoundToCards('#cvGrid .cv-card', 'ms-MY');
+            addSoundToCards('#jawiGrid .jawi-card', 'ar-SA');
+            addSoundToCards('#activityGrid .activity-card', 'ar-SA');
+            addSoundToCards('#tajwidGrid .tajwid-card', 'ar-SA');
+            // Tambah pada butang bunyi khas
+            document.querySelectorAll('.sound-btn').forEach(btn => {
                 const text = btn.getAttribute('data-text') || btn.textContent.trim();
                 if (text) {
                     btn.addEventListener('click', function(e) {
@@ -448,32 +515,9 @@
                     });
                 }
             });
-        }
-
-        // --- Jalankan selepas render (gunakan MutationObserver atau setTimeOut) ---
-        // Kita tunggu sebentar untuk semua render selesai
-        setTimeout(function() {
-            // Kad Alphabet (huruf.js akan letak data-text)
-            addSoundToCards('#alphabetGrid .card', 'data-text', 'ms-MY');
-            // Kad Suku Kata (cvGrid)
-            addSoundToCards('#cvGrid .cv-card', 'data-text', 'ms-MY');
-            // Kad Jawi (jawiGrid)
-            addSoundToCards('#jawiGrid .jawi-card', 'data-text', 'ar-SA');
-            // Kad Arab (activityGrid)
-            addSoundToCards('#activityGrid .activity-card', 'data-text', 'ar-SA');
-            // Kad Tajwid (tajwidGrid)
-            addSoundToCards('#tajwidGrid .tajwid-card', 'data-text', 'ar-SA');
-            // Butang bunyi dalam kad (jika ada)
-            addSoundButtons('#alphabetGrid');
-            addSoundButtons('#cvGrid');
-            addSoundButtons('#jawiGrid');
-            addSoundButtons('#activityGrid');
-            addSoundButtons('#tajwidGrid');
         }, 1000);
 
-        // --- Override fungsi render jika perlu (tapi biarkan asal) ---
-        // Kita hanya tambah gaya tambahan
-        console.log('🌟 Upgrade mesra kanak-kanak siap!');
+        console.log('🌟 Upgrade siap! Tab dan bunyi berfungsi.');
     });
 </script>
 </body>
