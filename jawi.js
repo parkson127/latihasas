@@ -1,48 +1,176 @@
 // ================================================================
-// jawi.js - Data + Logik Penuh Jawi (Warna, Bunyi, Animasi, Popup)
-// Edit fail ini sahaja untuk sebarang perubahan.
+// jawi.js - Data Jawi + Popup Guna Modal Global + Makna
 // ================================================================
 
 // ===== DATA HURUF (32 huruf) =====
+// Setiap contoh kini ada medan 'makna' (terjemahan Melayu)
 const jawiData = [
     // 28 Huruf Arab
-    { char: 'ا', name: { ar: 'أَلِف', rumi: 'Alif' }, examples: [{ ar: 'أَرْنَب', emoji: '🐇', iqra: 'ar-nab' }, { ar: 'أُمّ', emoji: '👩', iqra: 'umm' }, { ar: 'أَسَد', emoji: '🦁', iqra: 'a-sad' }] },
-    { char: 'ب', name: { ar: 'بَاء', rumi: 'Ba' }, examples: [{ ar: 'بُولَة', emoji: '⚽', iqra: 'bu-lah' }, { ar: 'بِنْت', emoji: '👧', iqra: 'bint' }, { ar: 'بَاب', emoji: '🚪', iqra: 'baab' }] },
-    { char: 'ت', name: { ar: 'تَاء', rumi: 'Ta' }, examples: [{ ar: 'تِلْمِيذ', emoji: '🧑‍🎓', iqra: 'til-miiz' }, { ar: 'تُمَام', emoji: '✅', iqra: 'tu-maam' }, { ar: 'تِين', emoji: '🍇', iqra: 'tiin' }] },
-    { char: 'ث', name: { ar: 'ثَاء', rumi: 'Tsa' }, examples: [{ ar: 'ثَعْلَب', emoji: '🦊', iqra: 'tsa-lab' }, { ar: 'ثَمَر', emoji: '🍎', iqra: 'tsa-mar' }, { ar: 'ثُوم', emoji: '🧄', iqra: 'tsuum' }] },
-    { char: 'ج', name: { ar: 'جِيم', rumi: 'Jim' }, examples: [{ ar: 'جَمَل', emoji: '🐫', iqra: 'ja-mal' }, { ar: 'جُبْن', emoji: '🧀', iqra: 'jubn' }, { ar: 'جَامِعَة', emoji: '🏫', iqra: 'ja-mi-ah' }] },
-    { char: 'ح', name: { ar: 'حَاء', rumi: 'Ha' }, examples: [{ ar: 'حَلِيب', emoji: '🥛', iqra: 'ha-lib' }, { ar: 'حُوت', emoji: '🐳', iqra: 'huut' }, { ar: 'حَجّ', emoji: '🕋', iqra: 'hajj' }] },
-    { char: 'خ', name: { ar: 'خَاء', rumi: 'Kho' }, examples: [{ ar: 'خُبْز', emoji: '🍞', iqra: 'khubz' }, { ar: 'خَرُوف', emoji: '🐏', iqra: 'kha-ruuf' }, { ar: 'خِيَار', emoji: '🥒', iqra: 'khi-yar' }] },
-    { char: 'د', name: { ar: 'دَال', rumi: 'Dal' }, examples: [{ ar: 'دِيك', emoji: '🐓', iqra: 'diik' }, { ar: 'دُبّ', emoji: '🐻', iqra: 'dubb' }, { ar: 'دَوْر', emoji: '🔄', iqra: 'daur' }] },
-    { char: 'ذ', name: { ar: 'ذَال', rumi: 'Dzal' }, examples: [{ ar: 'ذَنَب', emoji: '🐕', iqra: 'dza-nab' }, { ar: 'ذَهَب', emoji: '💛', iqra: 'dza-hab' }, { ar: 'ذِرَاع', emoji: '💪', iqra: 'dhi-raa' }] },
-    { char: 'ر', name: { ar: 'رَاء', rumi: 'Ra' }, examples: [{ ar: 'رَجُل', emoji: '🧑', iqra: 'ra-jul' }, { ar: 'رِيح', emoji: '💨', iqra: 'riih' }, { ar: 'رُمّان', emoji: '🍎', iqra: 'rum-man' }] },
-    { char: 'ز', name: { ar: 'زَاي', rumi: 'Zay' }, examples: [{ ar: 'زَهْرَة', emoji: '🌺', iqra: 'zah-rah' }, { ar: 'زَيْتُون', emoji: '🫒', iqra: 'zai-tuun' }, { ar: 'زَمَن', emoji: '⏳', iqra: 'za-man' }] },
-    { char: 'س', name: { ar: 'سِين', rumi: 'Sin' }, examples: [{ ar: 'سَمَك', emoji: '🐟', iqra: 'sa-mak' }, { ar: 'سَلَام', emoji: '🕊️', iqra: 'sa-laam' }, { ar: 'سُكَّر', emoji: '🍭', iqra: 'suk-kar' }] },
-    { char: 'ش', name: { ar: 'شِين', rumi: 'Syin' }, examples: [{ ar: 'شَمْس', emoji: '☀️', iqra: 'syams' }, { ar: 'شَاي', emoji: '🍵', iqra: 'syaay' }, { ar: 'شَرَاب', emoji: '🥤', iqra: 'sya-raab' }] },
-    { char: 'ص', name: { ar: 'صَاد', rumi: 'Shod' }, examples: [{ ar: 'صَبْر', emoji: '🧘', iqra: 'shabr' }, { ar: 'صَوْت', emoji: '🔊', iqra: 'shawt' }, { ar: 'صَحْرَاء', emoji: '🏜️', iqra: 'sah-raa' }] },
-    { char: 'ض', name: { ar: 'ضَاد', rumi: 'Dhod' }, examples: [{ ar: 'ضِفْدَع', emoji: '🐸', iqra: 'dhif-da' }, { ar: 'ضَوْء', emoji: '💡', iqra: 'dhau' }, { ar: 'ضِرْس', emoji: '🦷', iqra: 'dhir-s' }] },
-    { char: 'ط', name: { ar: 'طَاء', rumi: 'Tho' }, examples: [{ ar: 'طَائِر', emoji: '🐦', iqra: 'thaa-ir' }, { ar: 'طُول', emoji: '📏', iqra: 'thuul' }, { ar: 'طِبّ', emoji: '💉', iqra: 'thibb' }] },
-    { char: 'ظ', name: { ar: 'ظَاء', rumi: 'Zho' }, examples: [{ ar: 'ظِلّ', emoji: '🌳', iqra: 'zhill' }, { ar: 'ظُفْر', emoji: '💅', iqra: 'zhufr' }, { ar: 'ظَهْر', emoji: '🤝', iqra: 'zahr' }] },
-    { char: 'ع', name: { ar: 'عَيْن', rumi: 'Ain' }, examples: [{ ar: 'عَيْن', emoji: '👁️', iqra: 'ayn' }, { ar: 'عَسَل', emoji: '🍯', iqra: 'a-sal' }, { ar: 'عِلْم', emoji: '📚', iqra: 'ilm' }] },
-    { char: 'غ', name: { ar: 'غَيْن', rumi: 'Ghayn' }, examples: [{ ar: 'غَيْمَة', emoji: '☁️', iqra: 'ghay-mah' }, { ar: 'غَزَال', emoji: '🦌', iqra: 'gha-zaal' }, { ar: 'غُرُوب', emoji: '🌅', iqra: 'ghu-ruub' }] },
-    { char: 'ف', name: { ar: 'فَاء', rumi: 'Fa' }, examples: [{ ar: 'فِيل', emoji: '🐘', iqra: 'fiil' }, { ar: 'فَرَاشَة', emoji: '🦋', iqra: 'fa-raa-shah' }, { ar: 'فَم', emoji: '👄', iqra: 'fam' }] },
-    { char: 'ق', name: { ar: 'قَاف', rumi: 'Qaf' }, examples: [{ ar: 'قَمَر', emoji: '🌙', iqra: 'qa-mar' }, { ar: 'قَلَم', emoji: '✏️', iqra: 'qa-lam' }, { ar: 'قَرْن', emoji: '🦏', iqra: 'qarn' }] },
-    { char: 'ك', name: { ar: 'كَاف', rumi: 'Kaf' }, examples: [{ ar: 'كَلْب', emoji: '🐶', iqra: 'kalb' }, { ar: 'كِتَاب', emoji: '📖', iqra: 'ki-taab' }, { ar: 'كَأْس', emoji: '🥤', iqra: 'kas' }] },
-    { char: 'ل', name: { ar: 'لَام', rumi: 'Lam' }, examples: [{ ar: 'لَيْل', emoji: '🌙', iqra: 'layl' }, { ar: 'لَبَن', emoji: '🥛', iqra: 'la-ban' }, { ar: 'لَوْن', emoji: '🎨', iqra: 'lawn' }] },
-    { char: 'م', name: { ar: 'مِيم', rumi: 'Mim' }, examples: [{ ar: 'مَاء', emoji: '💧', iqra: 'maa' }, { ar: 'مَدْرَسَة', emoji: '🏫', iqra: 'mad-ra-sah' }, { ar: 'مِكْنَسَة', emoji: '🧹', iqra: 'mik-na-sah' }] },
-    { char: 'ن', name: { ar: 'نُون', rumi: 'Nun' }, examples: [{ ar: 'نُور', emoji: '✨', iqra: 'nuur' }, { ar: 'نَجْم', emoji: '⭐', iqra: 'najm' }, { ar: 'نَوْم', emoji: '😴', iqra: 'nawm' }] },
-    { char: 'و', name: { ar: 'وَاو', rumi: 'Waw' }, examples: [{ ar: 'وَرْدَة', emoji: '🌹', iqra: 'war-dah' }, { ar: 'وَجْه', emoji: '😊', iqra: 'wajh' }, { ar: 'وَزْن', emoji: '⚖️', iqra: 'wazn' }] },
-    { char: 'ه', name: { ar: 'هَاء', rumi: 'Ha' }, examples: [{ ar: 'هَدِيَّة', emoji: '🎁', iqra: 'ha-diy-yah' }, { ar: 'هَوَاء', emoji: '🌬️', iqra: 'ha-waa' }, { ar: 'هَاتِف', emoji: '📱', iqra: 'ha-tif' }] },
-    { char: 'ي', name: { ar: 'يَاء', rumi: 'Ya' }, examples: [{ ar: 'يَد', emoji: '🖐️', iqra: 'yad' }, { ar: 'يَوْم', emoji: '📅', iqra: 'yawm' }, { ar: 'يَمِين', emoji: '👉', iqra: 'ya-min' }] },
+    { char: 'ا', name: { ar: 'أَلِف', rumi: 'Alif' }, examples: [
+        { ar: 'أَرْنَب', emoji: '🐇', makna: 'Arnab' },
+        { ar: 'أُمّ', emoji: '👩', makna: 'Ibu' },
+        { ar: 'أَسَد', emoji: '🦁', makna: 'Singa' }
+    ] },
+    { char: 'ب', name: { ar: 'بَاء', rumi: 'Ba' }, examples: [
+        { ar: 'بُولَة', emoji: '⚽', makna: 'Bola' },
+        { ar: 'بِنْت', emoji: '👧', makna: 'Anak perempuan' },
+        { ar: 'بَاب', emoji: '🚪', makna: 'Pintu' }
+    ] },
+    { char: 'ت', name: { ar: 'تَاء', rumi: 'Ta' }, examples: [
+        { ar: 'تِلْمِيذ', emoji: '🧑‍🎓', makna: 'Murid' },
+        { ar: 'تُمَام', emoji: '✅', makna: 'Sempurna' },
+        { ar: 'تِين', emoji: '🍇', makna: 'Buah tin' }
+    ] },
+    { char: 'ث', name: { ar: 'ثَاء', rumi: 'Tsa' }, examples: [
+        { ar: 'ثَعْلَب', emoji: '🦊', makna: 'Musang' },
+        { ar: 'ثَمَر', emoji: '🍎', makna: 'Buah' },
+        { ar: 'ثُوم', emoji: '🧄', makna: 'Bawang putih' }
+    ] },
+    { char: 'ج', name: { ar: 'جِيم', rumi: 'Jim' }, examples: [
+        { ar: 'جَمَل', emoji: '🐫', makna: 'Unta' },
+        { ar: 'جُبْن', emoji: '🧀', makna: 'Keju' },
+        { ar: 'جَامِعَة', emoji: '🏫', makna: 'Universiti' }
+    ] },
+    { char: 'ح', name: { ar: 'حَاء', rumi: 'Ha' }, examples: [
+        { ar: 'حَلِيب', emoji: '🥛', makna: 'Susu' },
+        { ar: 'حُوت', emoji: '🐳', makna: 'Paus' },
+        { ar: 'حَجّ', emoji: '🕋', makna: 'Haji' }
+    ] },
+    { char: 'خ', name: { ar: 'خَاء', rumi: 'Kho' }, examples: [
+        { ar: 'خُبْز', emoji: '🍞', makna: 'Roti' },
+        { ar: 'خَرُوف', emoji: '🐏', makna: 'Kambing biri-biri' },
+        { ar: 'خِيَار', emoji: '🥒', makna: 'Timun' }
+    ] },
+    { char: 'د', name: { ar: 'دَال', rumi: 'Dal' }, examples: [
+        { ar: 'دِيك', emoji: '🐓', makna: 'Ayam jantan' },
+        { ar: 'دُبّ', emoji: '🐻', makna: 'Beruang' },
+        { ar: 'دَوْر', emoji: '🔄', makna: 'Giliran' }
+    ] },
+    { char: 'ذ', name: { ar: 'ذَال', rumi: 'Dzal' }, examples: [
+        { ar: 'ذَنَب', emoji: '🐕', makna: 'Ekor' },
+        { ar: 'ذَهَب', emoji: '💛', makna: 'Emas' },
+        { ar: 'ذِرَاع', emoji: '💪', makna: 'Lengan' }
+    ] },
+    { char: 'ر', name: { ar: 'رَاء', rumi: 'Ra' }, examples: [
+        { ar: 'رَجُل', emoji: '🧑', makna: 'Lelaki' },
+        { ar: 'رِيح', emoji: '💨', makna: 'Angin' },
+        { ar: 'رُمّان', emoji: '🍎', makna: 'Delima' }
+    ] },
+    { char: 'ز', name: { ar: 'زَاي', rumi: 'Zay' }, examples: [
+        { ar: 'زَهْرَة', emoji: '🌺', makna: 'Bunga' },
+        { ar: 'زَيْتُون', emoji: '🫒', makna: 'Zaitun' },
+        { ar: 'زَمَن', emoji: '⏳', makna: 'Masa' }
+    ] },
+    { char: 'س', name: { ar: 'سِين', rumi: 'Sin' }, examples: [
+        { ar: 'سَمَك', emoji: '🐟', makna: 'Ikan' },
+        { ar: 'سَلَام', emoji: '🕊️', makna: 'Damai' },
+        { ar: 'سُكَّر', emoji: '🍭', makna: 'Gula' }
+    ] },
+    { char: 'ش', name: { ar: 'شِين', rumi: 'Syin' }, examples: [
+        { ar: 'شَمْس', emoji: '☀️', makna: 'Matahari' },
+        { ar: 'شَاي', emoji: '🍵', makna: 'Teh' },
+        { ar: 'شَرَاب', emoji: '🥤', makna: 'Minuman' }
+    ] },
+    { char: 'ص', name: { ar: 'صَاد', rumi: 'Shod' }, examples: [
+        { ar: 'صَبْر', emoji: '🧘', makna: 'Sabar' },
+        { ar: 'صَوْت', emoji: '🔊', makna: 'Suara' },
+        { ar: 'صَحْرَاء', emoji: '🏜️', makna: 'Padang pasir' }
+    ] },
+    { char: 'ض', name: { ar: 'ضَاد', rumi: 'Dhod' }, examples: [
+        { ar: 'ضِفْدَع', emoji: '🐸', makna: 'Katak' },
+        { ar: 'ضَوْء', emoji: '💡', makna: 'Cahaya' },
+        { ar: 'ضِرْس', emoji: '🦷', makna: 'Geraham' }
+    ] },
+    { char: 'ط', name: { ar: 'طَاء', rumi: 'Tho' }, examples: [
+        { ar: 'طَائِر', emoji: '🐦', makna: 'Burung' },
+        { ar: 'طُول', emoji: '📏', makna: 'Panjang' },
+        { ar: 'طِبّ', emoji: '💉', makna: 'Perubatan' }
+    ] },
+    { char: 'ظ', name: { ar: 'ظَاء', rumi: 'Zho' }, examples: [
+        { ar: 'ظِلّ', emoji: '🌳', makna: 'Bayang-bayang' },
+        { ar: 'ظُفْر', emoji: '💅', makna: 'Kuku' },
+        { ar: 'ظَهْر', emoji: '🤝', makna: 'Belakang' }
+    ] },
+    { char: 'ع', name: { ar: 'عَيْن', rumi: 'Ain' }, examples: [
+        { ar: 'عَيْن', emoji: '👁️', makna: 'Mata' },
+        { ar: 'عَسَل', emoji: '🍯', makna: 'Madu' },
+        { ar: 'عِلْم', emoji: '📚', makna: 'Ilmu' }
+    ] },
+    { char: 'غ', name: { ar: 'غَيْن', rumi: 'Ghayn' }, examples: [
+        { ar: 'غَيْمَة', emoji: '☁️', makna: 'Awan' },
+        { ar: 'غَزَال', emoji: '🦌', makna: 'Kijang' },
+        { ar: 'غُرُوب', emoji: '🌅', makna: 'Senja' }
+    ] },
+    { char: 'ف', name: { ar: 'فَاء', rumi: 'Fa' }, examples: [
+        { ar: 'فِيل', emoji: '🐘', makna: 'Gajah' },
+        { ar: 'فَرَاشَة', emoji: '🦋', makna: 'Rama-rama' },
+        { ar: 'فَم', emoji: '👄', makna: 'Mulut' }
+    ] },
+    { char: 'ق', name: { ar: 'قَاف', rumi: 'Qaf' }, examples: [
+        { ar: 'قَمَر', emoji: '🌙', makna: 'Bulan' },
+        { ar: 'قَلَم', emoji: '✏️', makna: 'Pen' },
+        { ar: 'قَرْن', emoji: '🦏', makna: 'Tanduk' }
+    ] },
+    { char: 'ك', name: { ar: 'كَاف', rumi: 'Kaf' }, examples: [
+        { ar: 'كَلْب', emoji: '🐶', makna: 'Anjing' },
+        { ar: 'كِتَاب', emoji: '📖', makna: 'Buku' },
+        { ar: 'كَأْس', emoji: '🥤', makna: 'Cawan' }
+    ] },
+    { char: 'ل', name: { ar: 'لَام', rumi: 'Lam' }, examples: [
+        { ar: 'لَيْل', emoji: '🌙', makna: 'Malam' },
+        { ar: 'لَبَن', emoji: '🥛', makna: 'Susu' },
+        { ar: 'لَوْن', emoji: '🎨', makna: 'Warna' }
+    ] },
+    { char: 'م', name: { ar: 'مِيم', rumi: 'Mim' }, examples: [
+        { ar: 'مَاء', emoji: '💧', makna: 'Air' },
+        { ar: 'مَدْرَسَة', emoji: '🏫', makna: 'Sekolah' },
+        { ar: 'مِكْنَسَة', emoji: '🧹', makna: 'Penyapu' }
+    ] },
+    { char: 'ن', name: { ar: 'نُون', rumi: 'Nun' }, examples: [
+        { ar: 'نُور', emoji: '✨', makna: 'Cahaya' },
+        { ar: 'نَجْم', emoji: '⭐', makna: 'Bintang' },
+        { ar: 'نَوْم', emoji: '😴', makna: 'Tidur' }
+    ] },
+    { char: 'و', name: { ar: 'وَاو', rumi: 'Waw' }, examples: [
+        { ar: 'وَرْدَة', emoji: '🌹', makna: 'Bunga ros' },
+        { ar: 'وَجْه', emoji: '😊', makna: 'Muka' },
+        { ar: 'وَزْن', emoji: '⚖️', makna: 'Berat' }
+    ] },
+    { char: 'ه', name: { ar: 'هَاء', rumi: 'Ha' }, examples: [
+        { ar: 'هَدِيَّة', emoji: '🎁', makna: 'Hadiah' },
+        { ar: 'هَوَاء', emoji: '🌬️', makna: 'Udara' },
+        { ar: 'هَاتِف', emoji: '📱', makna: 'Telefon' }
+    ] },
+    { char: 'ي', name: { ar: 'يَاء', rumi: 'Ya' }, examples: [
+        { ar: 'يَد', emoji: '🖐️', makna: 'Tangan' },
+        { ar: 'يَوْم', emoji: '📅', makna: 'Hari' },
+        { ar: 'يَمِين', emoji: '👉', makna: 'Kanan' }
+    ] },
     // 4 Huruf Tambahan Jawi Melayu
-    { char: 'چ', name: { ar: 'چَا', rumi: 'Ca' }, examples: [{ ar: 'جَاوَنْ', emoji: '☕', iqra: 'ja-wan' }, { ar: 'جِجَق', emoji: '🦎', iqra: 'ji-jaq' }, { ar: 'جِنْتَا', emoji: '❤️', iqra: 'jin-ta' }] },
-    { char: 'ڤ', name: { ar: 'ڤَا', rumi: 'Pa' }, examples: [{ ar: 'بَايَڠ', emoji: '☂️', iqra: 'ba-yang' }, { ar: 'بِنْسِل', emoji: '✏️', iqra: 'bin-sil' }, { ar: 'بَاسِير', emoji: '🏖️', iqra: 'ba-sir' }] },
-    { char: 'ݢ', name: { ar: 'ݢَا', rumi: 'Ga' }, examples: [{ ar: 'جَاجَه', emoji: '🐘', iqra: 'ja-jah' }, { ar: 'جَارَم', emoji: '🧂', iqra: 'ja-ram' }, { ar: 'جَوْل', emoji: '⚽', iqra: 'jawl' }] },
-    { char: 'ڠ', name: { ar: 'ڠَا', rumi: 'Nga' }, examples: [{ ar: 'نْجِيلُو', emoji: '🦷', iqra: 'nji-lu' }, { ar: 'نْجَارَڠ', emoji: '🍽️', iqra: 'nja-rang' }, { ar: 'نْجَاڠ', emoji: '👄', iqra: 'njang' }] }
+    { char: 'چ', name: { ar: 'چَا', rumi: 'Ca' }, examples: [
+        { ar: 'جَاوَنْ', emoji: '☕', makna: 'Cawan' },
+        { ar: 'جِجَق', emoji: '🦎', makna: 'Cicak' },
+        { ar: 'جِنْتَا', emoji: '❤️', makna: 'Cinta' }
+    ] },
+    { char: 'ڤ', name: { ar: 'ڤَا', rumi: 'Pa' }, examples: [
+        { ar: 'بَايَڠ', emoji: '☂️', makna: 'Payung' },
+        { ar: 'بِنْسِل', emoji: '✏️', makna: 'Pensil' },
+        { ar: 'بَاسِير', emoji: '🏖️', makna: 'Pasir' }
+    ] },
+    { char: 'ݢ', name: { ar: 'ݢَا', rumi: 'Ga' }, examples: [
+        { ar: 'جَاجَه', emoji: '🐘', makna: 'Gajah' },
+        { ar: 'جَارَم', emoji: '🧂', makna: 'Garam' },
+        { ar: 'جَوْل', emoji: '⚽', makna: 'Gol' }
+    ] },
+    { char: 'ڠ', name: { ar: 'ڠَا', rumi: 'Nga' }, examples: [
+        { ar: 'نْجِيلُو', emoji: '🦷', makna: 'Ngilu' },
+        { ar: 'نْجَارَڠ', emoji: '🍽️', makna: 'Lapar' },
+        { ar: 'نْجَاڠ', emoji: '👄', makna: 'Nganga' }
+    ] }
 ];
 
 // ================================================================
-// FUNGSI BUNYI (Text-to-Speech) + Visualizer
+// FUNGSI BUNYI (Text-to-Speech)
 // ================================================================
 function speakText(text, lang = 'ar-SA', btnElement = null) {
     if (!window.speechSynthesis) {
@@ -54,9 +182,7 @@ function speakText(text, lang = 'ar-SA', btnElement = null) {
     let waveBox = null;
     if (btnElement) {
         const wrapper = btnElement.closest('.audio-wrapper') || btnElement.parentElement;
-        if (wrapper) {
-            waveBox = wrapper.querySelector('.wave-box');
-        }
+        if (wrapper) waveBox = wrapper.querySelector('.wave-box');
         btnElement.classList.add('playing');
         if (waveBox) waveBox.classList.add('active');
     }
@@ -65,46 +191,52 @@ function speakText(text, lang = 'ar-SA', btnElement = null) {
     utterance.lang = lang;
     utterance.rate = 0.85;
     utterance.pitch = 1.1;
-
     const voices = window.speechSynthesis.getVoices();
     const arabicVoice = voices.find(v => v.lang.startsWith('ar'));
     if (arabicVoice) utterance.voice = arabicVoice;
 
-    utterance.onend = function() {
+    utterance.onend = () => {
         if (btnElement) {
             btnElement.classList.remove('playing');
             if (waveBox) waveBox.classList.remove('active');
         }
     };
-    utterance.onerror = function() {
+    utterance.onerror = () => {
         if (btnElement) {
             btnElement.classList.remove('playing');
             if (waveBox) waveBox.classList.remove('active');
         }
     };
-
     window.speechSynthesis.speak(utterance);
 }
 
 // Pramuat suara
 if (window.speechSynthesis) {
     window.speechSynthesis.getVoices();
-    window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
-    };
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 }
 
 // ================================================================
-// FUNGSI TUTUP POPUP
+// GUNAKAN MODAL GLOBAL DARI INDEX.HTML
 // ================================================================
-function closeModal(event) {
-    const overlay = event.currentTarget.closest('.modal-overlay') || document.querySelector('.modal-overlay');
-    if (overlay) overlay.remove();
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
+function showGlobalModal(title, contentHtml) {
+    const overlay = document.getElementById('modalOverlay');
+    const contentBox = document.getElementById('modalContent');
+    if (!overlay || !contentBox) {
+        console.warn('Modal global tidak dijumpai!');
+        return;
+    }
+    let html = `<div class="modal-title">${title}</div>`;
+    html += `<div class="modal-examples">${contentHtml}</div>`;
+    contentBox.innerHTML = html;
+    overlay.classList.add('active');
 }
 
+// Fungsi tutup modal global (dari index.html sudah ada, kita guna semula)
+// Pastikan index.html ada event close untuk #modalClose dan #modalOverlay
+
 // ================================================================
-// RENDER GRID JAWI
+// RENDER GRID JAWI (GUNAKAN MODAL GLOBAL)
 // ================================================================
 function renderJawi() {
     const grid = document.getElementById('jawiGrid');
@@ -125,7 +257,7 @@ function renderJawi() {
     let html = '';
     jawiData.forEach((item, index) => {
         const bgColor = colors[index % colors.length];
-        const firstExample = item.examples[0] || { ar: '', emoji: '🔤', iqra: '' };
+        const firstExample = item.examples[0] || { ar: '', emoji: '🔤', makna: '' };
         const delay = (index % 10) * 0.12;
         html += `
             <div class="jawi-card" data-char="${item.char}" style="background:${bgColor}; animation-delay: ${delay}s;">
@@ -134,9 +266,7 @@ function renderJawi() {
                 <div class="sample-word">${firstExample.ar || ''}</div>
                 <div class="audio-wrapper">
                     <button class="audio-btn" data-letter="${item.char}" data-name="${item.name.rumi}" data-ar-name="${item.name.ar}" title="Dengar sebutan ${item.name.rumi}">🔊</button>
-                    <div class="wave-box">
-                        <span></span><span></span><span></span>
-                    </div>
+                    <div class="wave-box"><span></span><span></span><span></span></div>
                 </div>
                 <div class="click-hint">👆 klik kad</div>
             </div>
@@ -157,7 +287,7 @@ function renderJawi() {
         });
     });
 
-    // ----- Event: Klik kad -> Popup -----
+    // ----- Event: Klik kad -> Popup guna modal global -----
     grid.addEventListener('click', function(e) {
         const card = e.target.closest('.jawi-card');
         if (!card) return;
@@ -172,36 +302,24 @@ function renderJawi() {
 
         if (window.speechSynthesis) window.speechSynthesis.cancel();
 
-        let modalHtml = `
-            <div class="modal-overlay" onclick="closeModal(event)">
-                <div class="modal-content" onclick="event.stopPropagation();">
-                    <button class="modal-close" onclick="closeModal(event)">&times;</button>
-                    <div class="modal-title">
-                        <span class="big-char">${item.char}</span>
-                        <span class="letter-name-big">${item.name.rumi}</span>
-                        <button class="audio-btn-sm" onclick="speakText('${item.name.rumi}','en-US'); setTimeout(()=>speakText('${item.name.ar}','ar-SA'),700);">🔊</button>
-                    </div>
-                    <div class="example-grid">
-        `;
+        // Bina kandungan untuk modal global
+        let contentHtml = '';
         for (const ex of item.examples) {
-            modalHtml += `
-                <div class="example-item">
-                    <div class="arabic-word">${ex.ar}</div>
-                    <span class="emoji-big">${ex.emoji}</span>
-                    <div class="iqra-text">📖 Iqra: ${ex.iqra}</div>
-                    <button class="audio-btn-sm" onclick="speakText('${ex.ar}','ar-SA');">🔊</button>
+            contentHtml += `
+                <div class="example-item" style="background:#fcf7f0;border-radius:35px;padding:16px;text-align:center;border:2px solid #efe4d6;">
+                    <div style="font-size:2.8rem;font-family:'Traditional Arabic','Amiri',serif;">${ex.ar}</div>
+                    <div style="font-size:3.2rem;margin:6px 0;">${ex.emoji}</div>
+                    <div style="font-size:1.4rem;font-weight:bold;color:#4a6a3a;background:#e6f0e6;border-radius:30px;padding:2px 14px;display:inline-block;margin-top:6px;">
+                        📖 Makna: ${ex.makna}
+                    </div>
+                    <button class="audio-btn-sm" onclick="speakText('${ex.ar}','ar-SA');" style="background:#ffb347;border:none;border-radius:50%;width:44px;height:44px;font-size:1.8rem;cursor:pointer;box-shadow:0 4px 0 #c77d1a;display:inline-flex;align-items:center;justify-content:center;margin-top:8px;">🔊</button>
                 </div>
             `;
         }
-        modalHtml += `
-                    </div>
-                </div>
-            </div>
-        `;
 
-        const oldModal = document.querySelector('.modal-overlay');
-        if (oldModal) oldModal.remove();
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        // Tajuk modal
+        const title = `${item.char} - ${item.name.rumi}`;
+        showGlobalModal(title, contentHtml);
     });
 }
 
