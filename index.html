@@ -157,6 +157,31 @@
             });
         });
     });
+    // ----- Minta skrin kekal menyala (Screen Wake Lock) -----
+async function requestWakeLock() {
+    try {
+        // Semak jika 'navigator.wakeLock' disokong
+        if ('wakeLock' in navigator) {
+            const wakeLock = await navigator.wakeLock.request('screen');
+            console.log('✅ Skrin akan kekal menyala.');
+            
+            // Lepaskan wake lock apabila laman ditutup atau disembunyi
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    wakeLock.release();
+                    console.log('⏸️ Wake lock dilepaskan.');
+                }
+            });
+        } else {
+            console.warn('⚠️ Wake Lock API tidak disokong oleh pelayar ini.');
+        }
+    } catch (err) {
+        console.warn('⚠️ Gagal meminta wake lock:', err);
+    }
+}
+
+// Panggil fungsi apabila laman dimuatkan
+document.addEventListener('DOMContentLoaded', requestWakeLock);
 </script>
 </body>
 </html>
